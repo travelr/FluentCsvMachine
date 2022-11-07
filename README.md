@@ -1,1 +1,1 @@
-# readerFlu
+# readerFlu - a fluent CSV reader 
