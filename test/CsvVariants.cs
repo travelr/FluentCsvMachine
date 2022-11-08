@@ -1,5 +1,6 @@
 using readerFlu;
 using readerFlu.test.Models;
+using System.IO;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Unicode;
@@ -8,7 +9,7 @@ using System.Xml.Linq;
 namespace readerFlu.test
 {
     [TestClass]
-    public class Fixtures
+    public class CsvVariants
     {
         // ToDo: Mismatch Property Def and Class
         // ToDo: Support Basic Types
@@ -62,10 +63,30 @@ namespace readerFlu.test
             Assert.IsTrue(result[0].A == "1");
         }
 
+        /// <summary>
+        /// pokemon_id`p_desc
+        /// 1`Bulbasaur can be seen napping
+        /// 2`There is a bud on this
+        /// </summary>
         [TestMethod]
-        public void backtick()
+        public void BackTick()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/backtick.csv"));
+            var path = "../../../fixtures/backtick.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            // Not using all properties
+            var parser = new CsvParser<Basic>();
+            parser.Property<int>(c => c.B).ColumnName("pokemon_id");
+            parser.Property<string>(c => c.A).ColumnName("p_desc");
+
+            List<Basic> result = parser.Parse(path, separator: '`');
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 2);
+            Assert.IsTrue(result[0].B == 1);
+            Assert.IsTrue(result[0].A == "Bulbasaur can be seen napping");
+            Assert.IsTrue(result[1].B == 2);
+            Assert.IsTrue(result[1].A == "There is a bud on this");
         }
 
         [TestMethod]
@@ -189,22 +210,74 @@ namespace readerFlu.test
             Assert.IsTrue(File.Exists("../../../fixtures/strict.csv"));
         }
 
+        /// <summary>
+        /// a,b,c
+        /// 1,2,3
+        /// 4,5
+        /// 6,7,8
+        /// </summary>
         [TestMethod]
-        public void strictFalseLessColumns()
+        public void StrictFalseLessColumns()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/strict-false-less-columns.csv"));
+            var path = "../../../fixtures/strict-false-less-columns.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var result = BasicIntParser().Parse(path, separator: ',');
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
         }
 
+        /// <summary>
+        /// a,b,c
+        /// 1,2,3
+        /// 4,5,6,7
+        /// 8,9,10
+        /// </summary>
         [TestMethod]
-        public void strictfalsemorecolumns()
+        public void StrictFalseMoreColumns()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/strict-false-more-columns.csv"));
+            var path = "../../../fixtures/strict-false-more-columns.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var result = BasicIntParser().Parse(path, separator: ',');
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
+
+            Assert.IsTrue(result[0].A == 1);
+            Assert.IsTrue(result[1].C == 6);
+            Assert.IsTrue(result[2].B == 9);
+            Assert.IsTrue(result[2].C == 10);
         }
 
+        /// <summary>
+        /// a,b,c
+        /// h1,h2,h3
+        /// 1,2,3
+        /// 4,5,6
+        /// 7,8,9
+        /// </summary>
         [TestMethod]
-        public void strictskipLines()
+        public void StrictSkipLines()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/strict+skipLines.csv"));
+            var path = "../../../fixtures/strict+skipLines.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<BasicInt>();
+            parser.Property<int>(c => c.A).ColumnName("h1");
+            parser.Property<int>(c => c.B).ColumnName("h2");
+            parser.Property<int>(c => c.C).ColumnName("h3");
+
+            var result = parser.Parse(path, separator: ',');
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
+
+            Assert.IsTrue(result[0].A == 1);
+            Assert.IsTrue(result[1].C == 6);
+            Assert.IsTrue(result[2].B == 8);
+            Assert.IsTrue(result[2].C == 9);
         }
 
         #region File Formats
@@ -262,8 +335,17 @@ namespace readerFlu.test
         {
             var parser = new CsvParser<BasicString>();
             parser.Property<string>(c => c.A).ColumnName("a");
-            parser.Property<string>(c => c.C).ColumnName("c");
             parser.Property<string>(c => c.B).ColumnName("b");
+            parser.Property<string>(c => c.C).ColumnName("c");
+            return parser;
+        }
+
+        private static CsvParser<BasicInt> BasicIntParser()
+        {
+            var parser = new CsvParser<BasicInt>();
+            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int>(c => c.B).ColumnName("b");
+            parser.Property<int>(c => c.C).ColumnName("c");
             return parser;
         }
 
