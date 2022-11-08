@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using readerFlu.Helpers;
@@ -27,9 +28,10 @@ namespace readerFlu
         /// <typeparam name="V">value type</typeparam>
         /// <param name="accessor"></param>
         /// <returns></returns>
-        public CsvProperty<T, object> Property<V>(Expression<Func<T, object>> accessor)
+
+        public CsvProperty<T, object?> Property<V>(Expression<Func<T, object?>> accessor)
         {
-            var prop = new CsvProperty<T, object>(accessor);
+            var prop = new CsvProperty<T, object?>(accessor);
 
             if (!properties.ContainsKey(typeof(V)))
             {
@@ -90,10 +92,12 @@ namespace readerFlu
                 {
                     break;
                 }
-                else
-                {
-                    headerIndex++;
-                }
+
+                headerIndex++;
+            }
+            if (headerIndex >= csvRaw.Count)
+            {
+                throw new Exception("Header not found in CSV file, please check your delimiter or the column definition");
             }
 
             // Define Headers
@@ -178,6 +182,10 @@ namespace readerFlu
                     return value;
                 }
             },
+            { typeof(int), (x, b) => int.Parse(x) },
+            { typeof(long), (x, b) => long.Parse(x) },
+            { typeof(float), (x, b) => float.Parse(x) },
+            { typeof(double), (x, b) => double.Parse(x) },
             { typeof(decimal), (x, b) => decimal.Parse(x) },
             {
                 typeof(bool),
@@ -232,7 +240,6 @@ namespace readerFlu
             foreach (var kv in properties)
             {
                 var propertyType = kv.Key;
-                var properties = kv.Value;
 
                 // get Accessor property
                 var accessorProperty = typeof(CsvProperty<,>).MakeGenericType(typeof(T), typeof(object)).GetProperty("Accessor");
@@ -241,8 +248,8 @@ namespace readerFlu
                     throw new Exception("Accessor property has been renamed!");
                 }
 
-                foreach (var p in properties)
-
+                // Foreach property
+                foreach (var p in kv.Value)
                 {
                     if (accessorProperty.GetValue(p, null) is not Expression<Func<T, object>> accessor)
                     {
@@ -256,7 +263,7 @@ namespace readerFlu
                     var value = converterFunctions[propertyType](valueRaw, p);
 
                     // Assign to value to the object
-                    var setter = CsvParser<T>.GetSetter(accessor);
+                    var setter = CsvParser<T>.GetSetter(accessor, value.GetType());
                     setter(resultObj, value);
                 }
             }
@@ -268,7 +275,7 @@ namespace readerFlu
         /// <param name="accessor">Accessor expression to the property</param>
         /// <returns>The setter</returns>
         /// <exception cref="Exception">Should not happen, broken code?</exception>
-        private static Action<T, object> GetSetter(Expression<Func<T, object>> accessor)
+        private static Action<T, object> GetSetter(Expression<Func<T, object>> accessor, Type valueType)
         {
             // Try to get a cached setter
             if (setterCache.TryGetValue(accessor, out var result))

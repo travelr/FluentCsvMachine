@@ -9,7 +9,7 @@ namespace readerFlu
     /// <typeparam name="V">Value type of the property</typeparam>
     public class CsvProperty<T, V> : CsvPropertyBase
     {
-        public CsvProperty(Expression<Func<T, V>> accessor)
+        public CsvProperty(Expression<Func<T, V?>> accessor)
         {
             Accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
         }
@@ -17,6 +17,6 @@ namespace readerFlu
         /// <summary>
         /// Accessor of the property
         /// </summary>
-        public Expression<Func<T, V>> Accessor { get; private set; }
+        public Expression<Func<T, V?>> Accessor { get; private set; }
     }
 }
