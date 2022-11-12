@@ -4,10 +4,16 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>FluentCsvMachine</RootNamespace>
+    <AppDesignerFolder>Propertiy</AppDesignerFolder>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Property\" />
   </ItemGroup>
 
 </Project>
