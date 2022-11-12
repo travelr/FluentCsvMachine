@@ -23,7 +23,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/big-tiny.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = GetParser().Parse(path, separator: ',');
+            var result = GetParser().Parse(path, new CsvConfiguration(','));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 25);
@@ -38,7 +38,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/big-750k.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = GetParser().Parse(path, separator: ',');
+            var result = GetParser().Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 750000);

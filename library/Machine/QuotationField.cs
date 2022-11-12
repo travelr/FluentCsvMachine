@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using FluentCsvMachine.Exceptions;
+using System.Text;
 
 namespace FluentCsvMachine.Machine
 {
@@ -6,7 +7,7 @@ namespace FluentCsvMachine.Machine
     /// Machine reading quoted CSV fields according RFC 4180
     /// https://en.wikipedia.org/wiki/Comma-separated_values
     /// </summary>
-    internal class QuotationField
+    internal class QuotationField<T> where T : new()
     {
         internal enum States
         {
@@ -18,12 +19,15 @@ namespace FluentCsvMachine.Machine
 
         internal States State { get; private set; }
 
-        private readonly StringBuilder sb = new();
-        private readonly Line line;
+        public CsvConfiguration Config { get; }
 
-        public QuotationField(Line lineMachine)
+        private readonly StringBuilder sb = new();
+        private readonly Line<T> line;
+
+        public QuotationField(Line<T> lineMachine)
         {
             line = lineMachine;
+            Config = line.Config;
         }
 
         /// <summary>
@@ -34,22 +38,22 @@ namespace FluentCsvMachine.Machine
         {
             switch (c, State)
             {
-                case var t when (t.State == States.Initial && t.c == '"'):
+                case var t when (t.State == States.Initial && t.c == Config.Quote):
                     // First quote
                     State = States.Running;
                     break;
 
-                case var t when (t.State == States.Running && t.c != '"'):
+                case var t when (t.State == States.Running && t.c != Config.Quote):
                     // Quote content
                     sb.Append(c);
                     break;
 
-                case var t when (t.State == States.Running && t.c == '"'):
+                case var t when (t.State == States.Running && t.c == Config.Quote):
                     // Second quote
                     State = States.Closed;
                     break;
 
-                case var t when (t.State == States.Closed && (t.c == ',' || t.c == '\n')):
+                case var t when (t.State == States.Closed && (t.c == Config.Delimiter || t.c == Config.NewLine)):
                     // Second quote followed by a delimiter or linebreak
                     var value = sb.ToString();
                     sb.Clear();
@@ -57,14 +61,14 @@ namespace FluentCsvMachine.Machine
                     State = States.Initial;
                     break;
 
-                case var t when (t.State == States.Closed && t.c == '"'):
+                case var t when (t.State == States.Closed && t.c == Config.Quote):
                     // Quote inside a quoted field ""asd"" -> "asd"
-                    sb.Append('"');
+                    sb.Append(Config.Quote);
                     State = States.Running;
                     break;
 
                 default:
-                    throw new Exception("Unkown state");
+                    throw new CsvMachineException();
             }
         }
     }

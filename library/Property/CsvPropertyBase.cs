@@ -9,6 +9,12 @@ namespace FluentCsvMachine
     public abstract class CsvPropertyBase
     {
         /// <summary>
+        /// Type of the property
+        /// Is null on actions
+        /// </summary>
+        public Type? PropertyType { get; protected set; }
+
+        /// <summary>
         /// Name of the CSV column
         /// </summary>
         public string? ColumnName { get; set; }
@@ -29,16 +35,9 @@ namespace FluentCsvMachine
         /// <param name="headersDic">Colunm Name, Index</param>
         public void SetIndex(Dictionary<string, int> headersDic)
         {
-            if (ColumnName == null)
-            {
-                throw new Exception("set column name first");
-            }
-            else if (headersDic.IsEmpty())
-            {
-                throw new ArgumentException(null, nameof(headersDic));
-            }
+            Guard.IsNotNull(headersDic);
 
-            Index = headersDic[ColumnName];
+            Index = headersDic[ColumnName!];
         }
     }
 }

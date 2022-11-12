@@ -29,7 +29,7 @@ namespace FluentCsvMachine.Test
             parser.Property<string>(c => c.A).ColumnName("a");
             parser.Property<int>(c => c.B).ColumnName("b");
             parser.Property<decimal>(c => c.C).ColumnName("c");
-            List<Basic> result = parser.Parse(path, separator: ',');
+            List<Basic> result = parser.Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 1);
@@ -54,7 +54,7 @@ namespace FluentCsvMachine.Test
             parser.Property<decimal>(c => c.C).ColumnName("c");
             parser.Property<int>(c => c.B).ColumnName("b");
             parser.Property<string>(c => c.A).ColumnName("a");
-            List<Basic> result = parser.Parse(path, separator: ',');
+            List<Basic> result = parser.Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 1);
@@ -79,7 +79,7 @@ namespace FluentCsvMachine.Test
             parser.Property<int>(c => c.B).ColumnName("pokemon_id");
             parser.Property<string>(c => c.A).ColumnName("p_desc");
 
-            List<Basic> result = parser.Parse(path, separator: '`');
+            List<Basic> result = parser.Parse(path, new CsvConfiguration('`'));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);
@@ -237,7 +237,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/strict-false-less-columns.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = BasicIntParser().Parse(path, separator: ',');
+            var result = BasicIntParser().Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
@@ -255,7 +255,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/strict-false-more-columns.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = BasicIntParser().Parse(path, separator: ',');
+            var result = BasicIntParser().Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
@@ -284,7 +284,7 @@ namespace FluentCsvMachine.Test
             parser.Property<int>(c => c.B).ColumnName("h2");
             parser.Property<int>(c => c.C).ColumnName("h3");
 
-            var result = parser.Parse(path, separator: ',');
+            var result = parser.Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
@@ -303,7 +303,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/utf16.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = BasicStringParser().Parse(path, separator: ',', encoding: Encoding.Unicode);
+            var result = BasicStringParser().Parse(path, new CsvConfiguration(',', Encoding.Unicode));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);
@@ -318,7 +318,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/utf16-big.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = BasicStringParser().Parse(path, separator: ',', encoding: Encoding.BigEndianUnicode);
+            var result = BasicStringParser().Parse(path, new CsvConfiguration(',', Encoding.BigEndianUnicode));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);
@@ -333,7 +333,7 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/utf8.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = BasicStringParser().Parse(path, separator: ',', encoding: Encoding.UTF8);
+            var result = BasicStringParser().Parse(path, new CsvConfiguration(',', Encoding.UTF8));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);

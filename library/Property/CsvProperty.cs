@@ -7,16 +7,17 @@ namespace FluentCsvMachine
     /// </summary>
     /// <typeparam name="T">This property belongs to T type</typeparam>
     /// <typeparam name="V">Value type of the property</typeparam>
-    public class CsvProperty<T, V> : CsvPropertyBase
+    public class CsvProperty<T> : CsvPropertyBase
     {
-        public CsvProperty(Expression<Func<T, V?>> accessor)
+        public CsvProperty(Type propertyType, Expression<Func<T, object?>> accessor)
         {
+            PropertyType = propertyType;
             Accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
         }
 
         /// <summary>
         /// Accessor of the property
         /// </summary>
-        public Expression<Func<T, V?>> Accessor { get; private set; }
+        public Expression<Func<T, object?>> Accessor { get; private set; }
     }
 }
