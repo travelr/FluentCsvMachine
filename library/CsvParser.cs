@@ -2,9 +2,9 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using readerFlu.Helpers;
+using FluentCsvMachine.Helpers;
 
-namespace readerFlu
+namespace FluentCsvMachine
 {
     /// <summary>
     /// CSV parsing and automated mapping

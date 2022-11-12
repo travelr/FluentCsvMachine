@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace readerFlu.test.Models
+namespace FluentCsvMachine.Test.Models
 {
     /// <summary>
     /// https://github.com/snowindy/csv-test-data-generator

@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace readerFlu
+namespace FluentCsvMachine
 {
     public static class CsvPropertyExtensions
     {

@@ -1,12 +1,12 @@
-using readerFlu;
-using readerFlu.test.Models;
+using FluentCsvMachine;
+using FluentCsvMachine.Test.Models;
 using System.IO;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Unicode;
 using System.Xml.Linq;
 
-namespace readerFlu.test
+namespace FluentCsvMachine.Test
 {
     [TestClass]
     public class CsvVariants

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace readerFlu
+namespace FluentCsvMachine
 {
     /// <summary>
     /// CsvProperty correponds to column in a CSV file

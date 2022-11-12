@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace readerFlu.Helpers
+namespace FluentCsvMachine.Helpers
 {
     public static class EnumerablesExtension
     {

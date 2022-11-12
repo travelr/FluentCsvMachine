@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace readerFlu.Helpers
+namespace FluentCsvMachine.Helpers
 {
     /// <summary>
     /// https://stackoverflow.com/a/34775560

@@ -1,4 +1,4 @@
-﻿namespace readerFlu.test.Models
+﻿namespace FluentCsvMachine.Test.Models
 {
     internal class BasicInt
     {

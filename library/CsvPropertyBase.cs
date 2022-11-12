@@ -1,6 +1,6 @@
-﻿using readerFlu.Helpers;
+﻿using FluentCsvMachine.Helpers;
 
-namespace readerFlu
+namespace FluentCsvMachine
 {
     /// <summary>
     /// CsvPropertyBase correponds to column in a CSV file
