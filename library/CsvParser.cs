@@ -80,7 +80,36 @@ namespace FluentCsvMachine
             var allProperties = properties.SelectMany(x => x.Value).Concat(customMappingsColumn);
 
             // Parse CSV file
-            var csvRaw = ParseRaw(path, separator, encoding);
+            // Check preconditions
+            if (!properties.Any())
+            {
+                throw new Exception("define properties first");
+            }
+            else if (!File.Exists(path))
+            {
+                throw new FileNotFoundException(path);
+            }
+
+            // Set up
+            var csvRaw = new List<List<string>>();
+            var csvCleanUp = new char[] { separator, '"' };
+
+            // Read CSV
+            using var reader = new StreamReader(File.OpenRead(path), encoding ?? Encoding.GetEncoding("ISO-8859-1"));
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                if (string.IsNullOrEmpty(line)) continue;
+
+                var values = line.Split(separator).Select(x => x.Trim(csvCleanUp)).ToList();
+                csvRaw.Add(values);
+            }
+
+            // Short validation
+            if (csvRaw.Count < 2 || csvRaw[0].Count == 0)
+            {
+                throw new Exception("parsing seems to have failed");
+            }
 
             // Find Header Line
             var headerIndex = 0;
@@ -192,42 +221,6 @@ namespace FluentCsvMachine
                 (x, b) => x == "Ja" //ToDo: Better boolean parsing
             },
         };
-
-        private List<List<string>> ParseRaw(string path, char separator = ';', Encoding? encoding = null)
-        {
-            // Check preconditions
-            if (!properties.Any())
-            {
-                throw new Exception("define properties first");
-            }
-            else if (!File.Exists(path))
-            {
-                throw new FileNotFoundException(path);
-            }
-
-            // Set up
-            var result = new List<List<string>>();
-            var csvCleanUp = new char[] { separator, '"' };
-
-            // Read CSV
-            using var reader = new StreamReader(File.OpenRead(path), encoding ?? Encoding.GetEncoding("ISO-8859-1"));
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                if (string.IsNullOrEmpty(line)) continue;
-
-                var values = line.Split(separator).Select(x => x.Trim(csvCleanUp)).ToList();
-                result.Add(values);
-            }
-
-            // Short validation
-            if (result.Count < 2 || result[0].Count == 0)
-            {
-                throw new Exception("parsing seems to have failed");
-            }
-
-            return result;
-        }
 
         /// <summary>
         /// Sets the properties of the object based on the CSV line
