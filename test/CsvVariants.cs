@@ -115,6 +115,21 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
+        public void mean()
+        {
+            Assert.IsTrue(File.Exists("../../../fixtures/mean.csv"));
+        }
+
+        /// <summary>
+        /// https://en.wikipedia.org/wiki/Comma-separated_values#Example
+        /// </summary>
+        [TestMethod]
+        public void wiki()
+        {
+            Assert.IsTrue(File.Exists("../../../fixtures/wiki.csv"));
+        }
+
+        [TestMethod]
         public void geojson()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/geojson.csv"));
