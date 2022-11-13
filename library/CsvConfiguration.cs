@@ -42,7 +42,7 @@ namespace FluentCsvMachine
         /// <summary>
         /// Comment character, not defined in RFC 4180
         /// </summary>
-        public char? Comment { get; set; } = '#';
+        public char? Comment { get; set; } = null;
 
         #region Library parameters
 
