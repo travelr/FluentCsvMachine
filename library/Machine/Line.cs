@@ -30,7 +30,7 @@ namespace FluentCsvMachine.Machine
 
         internal States State { get; private set; }
 
-        internal ValueParser? Parser { get; private set; }
+        internal ValueParser Parser { get; private set; }
 
         public Line(CsvMachine<T> csv)
         {
@@ -41,7 +41,7 @@ namespace FluentCsvMachine.Machine
 
             field = new Field<T>(this);
             quote = new QuotationField<T>(this);
-            fields = new List<ResultValue?>(20); //ToDo: FIx
+            fields = new List<ResultValue?>(20); //ToDO: FIx
 
             columnNumber = 0;
         }

@@ -11,7 +11,7 @@ namespace FluentCsvMachine.Machine.Values
         private bool _isNull = false;
         private long _n = 0;
         private int? _s; // index of the floating point char
-        private int _charCount = 0; // lenght of the field
+        private int _charCount = 0; // length of the field
 
         internal override void Process(char c)
         {
