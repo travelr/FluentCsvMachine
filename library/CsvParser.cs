@@ -42,12 +42,12 @@ namespace FluentCsvMachine
         /// </summary>
         /// <param name="customAction">Action(Entity for value assignment, csv value)</param>
         /// <returns></returns>
-        public CsvPropertyCustom CustomMappingColumn(Action<object, string> customAction)
-        {
-            var prop = new CsvPropertyCustom(customAction);
-            customMappingsColumn.Add(prop);
-            return prop;
-        }
+        //public CsvPropertyCustom CustomMappingColumn(Action<object, string> customAction)
+        //{
+        //    var prop = new CsvPropertyCustom(customAction);
+        //    customMappingsColumn.Add(prop);
+        //    return prop;
+        //}
 
         /// <summary>
         /// Defines a custom mapping based on a full CSV line
@@ -106,25 +106,25 @@ namespace FluentCsvMachine
         /// <param name="line">Current CSV line</param>
         /// <param name="resultObj">Entity for value assignment</param>
         /// <exception cref="ArgumentNullException">Entity is null</exception>
-        private void RunCustomMappings(List<string> line, T resultObj)
-        {
-            if (resultObj == null)
-                throw new ArgumentNullException(nameof(resultObj));
+        //private void RunCustomMappings(List<string> line, T resultObj)
+        //{
+        //    if (resultObj == null)
+        //        throw new ArgumentNullException(nameof(resultObj));
 
-            // Column mappings
-            foreach (var cm in customMappingsColumn)
-            {
-                // Raw value form CSV
-                var valueRaw = line[cm.Index];
+        //    // Column mappings
+        //    foreach (var cm in customMappingsColumn)
+        //    {
+        //        // Raw value form CSV
+        //        var valueRaw = line[cm.Index];
 
-                cm.CustomAction(resultObj, valueRaw);
-            }
+        //        cm.CustomAction(resultObj, valueRaw);
+        //    }
 
-            // Line mappings
-            foreach (var cm in customMappingsLine)
-            {
-                cm(resultObj, line);
-            }
-        }
+        //    // Line mappings
+        //    foreach (var cm in customMappingsLine)
+        //    {
+        //        cm(resultObj, line);
+        //    }
+        //}
     }
 }

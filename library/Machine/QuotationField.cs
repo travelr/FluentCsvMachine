@@ -21,7 +21,6 @@ namespace FluentCsvMachine.Machine
 
         public CsvConfiguration Config { get; }
 
-        private readonly StringBuilder sb = new();
         private readonly Line<T> line;
 
         public QuotationField(Line<T> lineMachine)
@@ -45,7 +44,7 @@ namespace FluentCsvMachine.Machine
 
                 case var t when (t.State == States.Running && t.c != Config.Quote):
                     // Quote content
-                    sb.Append(c);
+                    line.Parser.Process(c);
                     break;
 
                 case var t when (t.State == States.Running && t.c == Config.Quote):
@@ -54,16 +53,14 @@ namespace FluentCsvMachine.Machine
                     break;
 
                 case var t when (t.State == States.Closed && (t.c == Config.Delimiter || t.c == Config.NewLine)):
-                    // Second quote followed by a delimiter or linebreak
-                    var value = sb.ToString();
-                    sb.Clear();
-                    line.Value(value);
+                    // Second quote followed by a delimiter or line break
+                    line.Value();
                     State = States.Initial;
                     break;
 
                 case var t when (t.State == States.Closed && t.c == Config.Quote):
-                    // Quote inside a quoted field ""asd"" -> "asd"
-                    sb.Append(Config.Quote);
+                    // Quote inside a quoted field ""hi"" -> "hi"
+                    line.Parser.Process(Config.Quote);
                     State = States.Running;
                     break;
 

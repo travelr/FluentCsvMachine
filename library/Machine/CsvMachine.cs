@@ -1,5 +1,6 @@
 ﻿using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine.Values;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -13,16 +14,20 @@ namespace FluentCsvMachine.Machine
             Content
         }
 
-        private States State;
         private readonly Line<T> Line;
+        private readonly List<CsvPropertyBase> _properties;
 
-        private readonly List<CsvPropertyBase> properties;
         private readonly List<T> result;
+
+        internal States State { get; private set; }
+
+        private Dictionary<int, ValueParser>? _parsers;
+        private readonly StringParser _stringParser = new();
 
         public CsvConfiguration Config { get; }
 
         /// <summary>
-        /// Caches accessor expression to a lamda compiled setter
+        /// Caches accessors expression to a lambda compiled setter
         /// </summary>
         private static readonly Dictionary<Expression<Func<T, object>>, Action<T, object>> setterCache = new();
 
@@ -36,7 +41,7 @@ namespace FluentCsvMachine.Machine
 
             Line = new Line<T>(this);
 
-            this.properties = properties;
+            _properties = properties;
             result = new List<T>();
         }
 
@@ -56,17 +61,19 @@ namespace FluentCsvMachine.Machine
         /// <summary>
         /// A full line was parsed, here is the result
         /// </summary>
-        /// <param name="fields">The line, empty strings are null</param>
-        internal void ResultLine(List<string?> fields)
+        /// <param name="line">The line, empty strings are null</param>
+        internal void ResultLine(List<ResultValue?> line)
         {
             switch (State)
             {
                 case States.HeaderSearch:
-                    FindAndSetHeaders(fields);
+                    // Header Search is only using string
+                    var strLine = line.Select(x => x != null ? (string)x.Value : null);
+                    FindAndSetHeaders(strLine);
                     break;
 
                 case States.Content:
-                    CreateEntity(fields);
+                    CreateEntity(line);
                     break;
 
                 default: throw new CsvMachineException();
@@ -92,14 +99,14 @@ namespace FluentCsvMachine.Machine
         /// Find Header Line
         /// </summary>
         /// <param name="fields">Parsed fields of the line</param>
-        private void FindAndSetHeaders(List<string?> fields)
+        private void FindAndSetHeaders(IEnumerable<string?> fields)
         {
             if (Line.LineCounter >= Config.HeaderSearchLimit)
             {
                 ThrowHelper.ThrowCsvMalformedException("Header not found in CSV file, please check your delimiter or the column definition!");
             }
 
-            var headers = properties.Select(x => x.ColumnName!);
+            var headers = _properties.Select(x => x.ColumnName!);
 
             if (headers.All(x => fields.Any(y => y != null && x == y)))
             {
@@ -117,55 +124,31 @@ namespace FluentCsvMachine.Machine
                 }
 
                 // Set CSV row index for all properties
-                properties.ForEach(x => x.SetIndex(headersDic));
+                _properties.ForEach(x => x.SetIndex(headersDic));
 
-                // Fokus on content now
+                // Focus on content now
                 State = States.Content;
+
+                // Generate parser dictionary
+                _parsers = _properties.Where(x => x.Index.HasValue).ToDictionary(x => x.Index!.Value, x => x.ValueParser!);
+                foreach (var p in _parsers.Where(x => x.Value != null))
+                {
+                    p.Value.Config = Config;
+                }
             }
         }
 
-        private void CreateEntity(List<string?> fields)
+        private void CreateEntity(List<ResultValue?> line)
         {
             var resultObj = new T();
 
             // Set the properties of the object based on the CSV line
-            SetProperties(fields, resultObj);
-            // Set remaming properties which require custom mappings
+            SetProperties(line, resultObj);
+            // Set remaining properties which require custom mappings
             //RunCustomMappings(line, resultObj);
 
             result.Add(resultObj);
         }
-
-        private static readonly Dictionary<Type, Func<string, CsvPropertyBase, object>> converterFunctions = new()
-        {
-            { typeof(string), (x, b) => x },
-            {
-                typeof(DateTime),
-                (x, b) =>
-                {
-                    DateTime value;
-                    if (b.InputFormat == null)
-                    {
-                        value = DateTime.Parse(x);
-                    }
-                    else
-                    {
-                        value = DateTime.ParseExact(x, b.InputFormat, null);
-                    }
-
-                    return value;
-                }
-            },
-            { typeof(int), (x, b) => int.Parse(x) },
-            { typeof(long), (x, b) => long.Parse(x) },
-            { typeof(float), (x, b) => float.Parse(x) },
-            { typeof(double), (x, b) => double.Parse(x) },
-            { typeof(decimal), (x, b) => decimal.Parse(x) },
-            {
-                typeof(bool),
-                (x, b) => x == "Ja" //ToDo: Better boolean parsing
-            },
-        };
 
         /// <summary>
         /// Sets the properties of the object based on the CSV line
@@ -173,9 +156,9 @@ namespace FluentCsvMachine.Machine
         /// <param name="line">CSV line</param>
         /// <param name="resultObj">corresponding object</param>
         /// <exception cref="Exception">CsvProperty has no property Accessor</exception>
-        private void SetProperties(List<string?> line, T resultObj)
+        private void SetProperties(List<ResultValue?> line, T resultObj)
         {
-            foreach (var p in properties)
+            foreach (var p in _properties)
             {
                 // get Accessor property
                 var accessorProperty = typeof(CsvProperty<>).MakeGenericType(typeof(T)).GetProperty("Accessor");
@@ -190,14 +173,14 @@ namespace FluentCsvMachine.Machine
                 }
 
                 // Raw value form CSV
-                var valueRaw = line[p.Index];
-                if (valueRaw == null)
+                var resultValue = line[p.Index!.Value];
+                if (resultValue == null)
                 {
                     continue;
                 }
 
                 // Convert raw value based on defined methods
-                var value = converterFunctions[p.PropertyType](valueRaw, p);
+                var value = Convert.ChangeType(resultValue.Value, resultValue.Type);
 
                 // Assign to value to the object
                 var setter = GetSetter(accessor);
@@ -230,7 +213,7 @@ namespace FluentCsvMachine.Machine
             // Double check if everything could be resolved
             if (selectorExpr == null || selectorExpr.Member is not PropertyInfo property || property.DeclaringType == null)
             {
-                throw new Exception("unkown expression type");
+                throw new Exception("unknown expression type");
             }
 
             // Based on https://stackoverflow.com/a/17669142
@@ -244,6 +227,19 @@ namespace FluentCsvMachine.Machine
 
             setterCache.Add(accessor, action);
             return action;
+        }
+
+        internal ValueParser GetParser(int columnNumber)
+        {
+            if (_parsers!.TryGetValue(columnNumber, out var result))
+            {
+                return result;
+            }
+            else
+            {
+                // ToDo: Is skip working?
+                return _stringParser;
+            }
         }
 
         #endregion Private

@@ -31,5 +31,40 @@ namespace FluentCsvMachine.Helpers
 
             ThrowHelper.ThrowArgumentNullExceptionForIsNotNull<T>(name);
         }
+
+        /// <summary>
+        /// Asserts that the input <see cref="string"/> instance must be <see langword="null"/> or empty.
+        /// </summary>
+        /// <param name="text">The input <see cref="string"/> instance to test.</param>
+        /// <param name="name">The name of the input parameter being tested.</param>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="text"/> is neither <see langword="null"/> nor empty.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void IsNullOrEmpty(string? text, [CallerArgumentExpression("text")] string name = "")
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            ThrowHelper.ThrowArgumentExceptionForIsNullOrEmpty(text, name);
+        }
+
+        /// <summary>
+        /// Asserts that the input <see cref="string"/> instance must not be <see langword="null"/> or empty.
+        /// </summary>
+        /// <param name="text">The input <see cref="string"/> instance to test.</param>
+        /// <param name="name">The name of the input parameter being tested.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="text"/> is empty.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void IsNotNullOrEmpty([NotNull] string? text, [CallerArgumentExpression("text")] string name = "")
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            ThrowHelper.ThrowArgumentExceptionForIsNotNullOrEmpty(text, name);
+        }
     }
 }

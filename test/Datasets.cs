@@ -11,7 +11,6 @@ namespace FluentCsvMachine.Test
         /// 1,2,3
         /// </summary>
         [TestMethod]
-        [Ignore("Localisation for parsing not implemented")]
         public void Tiny()
         {
             var path = "../../../fixtures/big-tiny.csv";
@@ -27,7 +26,6 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        [Ignore("Needs investigation")]
         public void Huge750K()
         {
             var path = "../../../fixtures/big-750k.csv";
@@ -61,14 +59,7 @@ namespace FluentCsvMachine.Test
             parser.Property<DateTime>(c => c.Date).ColumnName("date").InputFormat("yyyy/MM/dd");
             parser.Property<double>(c => c.Latitude).ColumnName("latitude");
             parser.Property<double>(c => c.Longitude).ColumnName("longitude");
-            parser.CustomMappingColumn((obj, value) =>
-            {
-                if (value == null || obj is not LargeDataSet d)
-                {
-                    return;
-                }
-                d.Pick = EnumHelpers<LargeDataSetPick>.Convert(value);
-            }).ColumnName("pick");
+            parser.Property<LargeDataSetPick>(c => c.Pick).ColumnName("pick");
             parser.Property<string>(c => c.String).ColumnName("string");
             return parser;
         }

@@ -1,9 +1,5 @@
 ﻿using FluentCsvMachine.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FluentCsvMachine.Machine.Values;
 
 namespace FluentCsvMachine.Machine
 {
@@ -11,10 +7,13 @@ namespace FluentCsvMachine.Machine
     {
         internal enum States
         {
+            // New field
             Initial,
+
             Field,
             FieldQuoted,
-            Comment
+            Comment,
+            Skip // Column, because it is not mapped
         }
 
         private readonly CsvMachine<T> csv;
@@ -22,24 +21,29 @@ namespace FluentCsvMachine.Machine
         private readonly QuotationField<T> quote;
 
         // Fields of the current line
-        private readonly List<string?> fields;
+        private readonly List<ResultValue?> fields;
 
         // Column number in this line
-        private int colCount;
+        private int columnNumber;
 
         public CsvConfiguration Config { get; }
 
         internal States State { get; private set; }
 
+        internal ValueParser? Parser { get; private set; }
+
         public Line(CsvMachine<T> csv)
         {
-            State = States.Initial;
             this.csv = csv;
+            State = States.Initial;
             Config = csv.Config;
+            Parser = new StringParser();
+
             field = new Field<T>(this);
             quote = new QuotationField<T>(this);
-            fields = new List<string?>(20); //ToDO: FIx
-            colCount = 0;
+            fields = new List<ResultValue?>(20); //ToDo: FIx
+
+            columnNumber = 0;
         }
 
         public int LineCounter { get; private set; }
@@ -54,14 +58,16 @@ namespace FluentCsvMachine.Machine
             switch (c, State)
             {
                 case var t when (t.State == States.Initial && (t.c != Config.Quote && c != Config.NewLine && c != Config.Comment)):
-                    // Normal new line, first field without a quote
+                    // New field without a quote
                     State = States.Field;
+
                     field.Process(c);
                     break;
 
                 case var t when (t.State == States.Initial && t.c == Config.Quote):
-                    // Normal new line, first field with a quote
+                    // New field with a quote
                     State = States.FieldQuoted;
+
                     quote.Process(c);
                     break;
 
@@ -89,6 +95,15 @@ namespace FluentCsvMachine.Machine
                     // Reading comment field
                     return;
 
+                case var t when (t.State == States.Skip && t.c != Config.Delimiter):
+                    // Char of skip column
+                    return;
+
+                case var t when (t.State == States.Skip && t.c == Config.Delimiter):
+                    columnNumber++;
+                    SetParserAndState();
+                    return;
+
                 default:
                     if (c != Config.NewLine)
                     {
@@ -111,12 +126,12 @@ namespace FluentCsvMachine.Machine
             {
                 csv.ResultLine(fields);
                 fields.Clear();
-                colCount = 0;
+                columnNumber = 0;
             }
 
             // Reset machine
             LineCounter++;
-            State = States.Initial;
+            SetParserAndState();
         }
 
         /// <summary>
@@ -124,11 +139,26 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="value">csv field value</param>
         /// <exception cref="Exception"></exception>
-        internal void Value(string value)
+        internal void Value()
         {
-            fields.Add(value != string.Empty ? value : null);
-            colCount++;
-            State = States.Initial;
+            var value = Parser.GetResult();
+            fields.Add(value);
+            columnNumber++;
+            SetParserAndState();
+        }
+
+        private void SetParserAndState()
+        {
+            if (csv.State == CsvMachine<T>.States.Content)
+            {
+                Parser = csv.GetParser(columnNumber);
+                State = Parser != null ? States.Initial : States.Skip;
+            }
+            else
+            {
+                // Header Search
+                State = States.Initial;
+            }
         }
     }
 }

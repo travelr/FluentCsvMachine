@@ -10,6 +10,8 @@ namespace FluentCsvMachine.Test
         // ToDo: Mismatch Property Def and Class
         // ToDo: Support nullable!
         // ToDo: Support strict mode?
+        // ToDo: Do not map last column
+
 
         /// <summary>
         /// a,b,c
@@ -59,9 +61,9 @@ namespace FluentCsvMachine.Test
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 1);
-            Assert.IsTrue(result[0].C == 3);
-            Assert.IsTrue(result[0].B == 2);
             Assert.IsTrue(result[0].A == "1");
+            Assert.IsTrue(result[0].B == 2222);
+            Assert.IsTrue(result[0].C == 33333.33m);
         }
 
         /// <summary>

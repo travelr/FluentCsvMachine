@@ -20,7 +20,7 @@ namespace FluentCsvMachine
         }
 
         /// <summary>
-        /// Delimiter seperating columns
+        /// Delimiter separating columns
         /// </summary>
         public char Delimiter { get; set; } = ',';
 
@@ -43,6 +43,11 @@ namespace FluentCsvMachine
         /// Comment character, not defined in RFC 4180
         /// </summary>
         public char? Comment { get; set; } = null;
+
+        /// <summary>
+        /// Char to separate number and fraction e.g. 3.33
+        /// </summary>
+        public char FloatingPoint { get; set; } = '.';
 
         #region Library parameters
 

@@ -30,6 +30,6 @@ namespace FluentCsvMachine.Test.Models
 
     internal enum LargeDataSetPick
     {
-        RED, BLUE, YELLOW, GREEN, WHITE
+        RED, BLUE, YELLOW, GREEN, WHITE, RED2
     }
 }

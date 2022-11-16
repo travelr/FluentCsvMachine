@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using ParserStates = FluentCsvMachine.Machine.Values.ValueParser.States;
 
 namespace FluentCsvMachine.Machine
 {
@@ -7,15 +7,14 @@ namespace FluentCsvMachine.Machine
     /// </summary>
     internal class Field<T> where T : new()
     {
-        private readonly StringBuilder sb = new();
-        private readonly Line<T> line;
+        private readonly Line<T> _line;
 
         public CsvConfiguration Config { get; }
 
         public Field(Line<T> lineMachine)
         {
-            line = lineMachine;
-            Config = line.Config;
+            _line = lineMachine;
+            Config = _line.Config;
         }
 
         public void Process(char c)
@@ -23,14 +22,12 @@ namespace FluentCsvMachine.Machine
             if (c == Config.Delimiter || c == Config.NewLine)
             {
                 // End field on the delimiter or line break
-                var value = sb.ToString();
-                sb.Clear();
-                line.Value(value);
+                _line.Value();
             }
-            else
+            else if (_line.Parser.State != ParserStates.FastForward)
             {
                 // Allowed char
-                sb.Append(c);
+                _line.Parser.Process(c);
             }
         }
     }

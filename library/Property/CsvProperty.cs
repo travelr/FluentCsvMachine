@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using FluentCsvMachine.Machine;
+using FluentCsvMachine.Machine.Values;
+using System.Linq.Expressions;
 
 namespace FluentCsvMachine
 {
@@ -13,6 +15,28 @@ namespace FluentCsvMachine
         {
             PropertyType = propertyType;
             Accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
+
+            if (propertyType != typeof(DateTime))
+            {
+                // DateTime requires InputFormat
+                ValueParser = ValueParserProvider.GetParser(propertyType);
+            }
+        }
+
+        private string? _inputFormat;
+
+        public override string? InputFormat
+        {
+            get => _inputFormat;
+            set
+            {
+                _inputFormat = value;
+
+                if (PropertyType == typeof(DateTime))
+                {
+                    ValueParser = ValueParserProvider.GetParser(PropertyType, value);
+                }
+            }
         }
 
         /// <summary>

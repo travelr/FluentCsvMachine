@@ -1,4 +1,5 @@
 ﻿using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine.Values;
 
 namespace FluentCsvMachine
 {
@@ -22,12 +23,14 @@ namespace FluentCsvMachine
         /// <summary>
         /// InputFormat for DateTime, ...
         /// </summary>
-        public string? InputFormat { get; set; }
+        public virtual string? InputFormat { get; set; }
 
         /// <summary>
         /// Column Index in CSV
         /// </summary>
-        public int Index { get; private set; }
+        public int? Index { get; private set; }
+
+        internal ValueParser? ValueParser { get; set; }
 
         /// <summary>
         /// Reference Column Index in CSV
