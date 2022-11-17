@@ -12,7 +12,6 @@ namespace FluentCsvMachine.Test
         // ToDo: Support strict mode?
         // ToDo: Do not map last column
 
-
         /// <summary>
         /// a,b,c
         /// 1,2,3
@@ -486,7 +485,7 @@ namespace FluentCsvMachine.Test
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);
-            Assert.IsTrue(result[1].C == "©");
+            Assert.IsTrue(result[1].C == Encoding.Latin1.GetString(new byte[] { 0xA9 }));
         }
 
         [TestMethod]
