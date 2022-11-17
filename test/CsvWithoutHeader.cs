@@ -12,14 +12,14 @@ namespace FluentCsvMachine.Test
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void baddata()
+        public void Baddata()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/bad-data.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void emptycolumns()
+        public void Emptycolumns()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/empty-columns.csv"));
         }

@@ -1,6 +1,7 @@
 ﻿using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Values;
+using FluentCsvMachine.Property;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -14,7 +15,7 @@ namespace FluentCsvMachine.Machine
             Content
         }
 
-        private readonly Line<T> Line;
+        private readonly Line<T> _line;
         private readonly List<CsvPropertyBase> _properties;
 
         private readonly List<T> result;
@@ -29,7 +30,7 @@ namespace FluentCsvMachine.Machine
         /// <summary>
         /// Caches accessors expression to a lambda compiled setter
         /// </summary>
-        private static readonly Dictionary<Expression<Func<T, object>>, Action<T, object>> setterCache = new();
+        private static readonly Dictionary<Expression<Func<T, object>>, Action<T, object>> SetterCache = new();
 
         internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties)
         {
@@ -39,7 +40,7 @@ namespace FluentCsvMachine.Machine
             Config = config;
             State = States.HeaderSearch;
 
-            Line = new Line<T>(this);
+            _line = new Line<T>(this);
 
             _properties = properties;
             result = new List<T>();
@@ -54,7 +55,7 @@ namespace FluentCsvMachine.Machine
                     continue;
                 }
 
-                Line.Process(buffer[i]);
+                _line.Process(buffer[i]);
             }
         }
 
@@ -85,9 +86,9 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         internal List<T> EndOfFile()
         {
-            if (Line.State != Line<T>.States.Initial)
+            if (_line.State != Line<T>.States.Initial)
             {
-                Line.Process(Config.NewLine);
+                _line.Process(Config.NewLine);
             }
 
             return result;
@@ -101,40 +102,45 @@ namespace FluentCsvMachine.Machine
         /// <param name="fields">Parsed fields of the line</param>
         private void FindAndSetHeaders(IEnumerable<string?> fields)
         {
-            if (Line.LineCounter >= Config.HeaderSearchLimit)
+            if (_line.LineCounter >= Config.HeaderSearchLimit)
             {
-                ThrowHelper.ThrowCsvMalformedException("Header not found in CSV file, please check your delimiter or the column definition!");
+                ThrowHelper.ThrowCsvMalformedException(
+                    "Header not found in CSV file, please check your delimiter or the column definition!");
             }
 
             var headers = _properties.Select(x => x.ColumnName!);
 
-            if (headers.All(x => fields.Any(y => y != null && x == y)))
+            if (!headers.All(x => fields.Any(y => y != null && x == y)))
             {
-                // All header Strings are included in the CSV line
-                // Create structure so the CSV index to the properties
-                var i = 0;
-                var headersDic = new Dictionary<string, int>();
-                foreach (var header in fields)
+                return;
+            }
+
+
+            // All header Strings are included in the CSV line
+            // Create structure so the CSV index to the properties
+            var i = 0;
+            var headersDic = new Dictionary<string, int>();
+            foreach (var header in fields)
+            {
+                if (header != null)
                 {
-                    if (header != null)
-                    {
-                        headersDic[header] = i;
-                    }
-                    i++;
+                    headersDic[header] = i;
                 }
 
-                // Set CSV row index for all properties
-                _properties.ForEach(x => x.SetIndex(headersDic));
+                i++;
+            }
 
-                // Focus on content now
-                State = States.Content;
+            // Set CSV row index for all properties
+            _properties.ForEach(x => x.SetIndex(headersDic));
 
-                // Generate parser dictionary
-                _parsers = _properties.Where(x => x.Index.HasValue).ToDictionary(x => x.Index!.Value, x => x.ValueParser!);
-                foreach (var p in _parsers.Where(x => x.Value != null))
-                {
-                    p.Value.Config = Config;
-                }
+            // Focus on content now
+            State = States.Content;
+
+            // Generate parser dictionary
+            _parsers = _properties.Where(x => x.Index.HasValue).ToDictionary(x => x.Index!.Value, x => x.ValueParser!);
+            foreach (var p in _parsers.Where(x => x.Value != null))
+            {
+                p.Value.Config = Config;
             }
         }
 
@@ -197,7 +203,7 @@ namespace FluentCsvMachine.Machine
         private static Action<T, object> GetSetter(Expression<Func<T, object>> accessor)
         {
             // Try to get a cached setter
-            if (setterCache.TryGetValue(accessor, out var result))
+            if (SetterCache.TryGetValue(accessor, out var result))
             {
                 return result;
             }
@@ -211,7 +217,8 @@ namespace FluentCsvMachine.Machine
             }
 
             // Double check if everything could be resolved
-            if (selectorExpr == null || selectorExpr.Member is not PropertyInfo property || property.DeclaringType == null)
+            if (selectorExpr == null || selectorExpr.Member is not PropertyInfo property ||
+                property.DeclaringType == null)
             {
                 throw new Exception("unknown expression type");
             }
@@ -225,7 +232,7 @@ namespace FluentCsvMachine.Machine
             var lambda = Expression.Lambda<Action<T, object>>(exBody, exInstance, exValue);
             var action = lambda.Compile();
 
-            setterCache.Add(accessor, action);
+            SetterCache.Add(accessor, action);
             return action;
         }
 

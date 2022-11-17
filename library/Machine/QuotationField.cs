@@ -1,5 +1,4 @@
 ﻿using FluentCsvMachine.Exceptions;
-using System.Text;
 
 namespace FluentCsvMachine.Machine
 {
@@ -14,7 +13,7 @@ namespace FluentCsvMachine.Machine
             Initial,
             Running, // Quote Open
             Closed,  // Second Quote
-            //Initial -> Closed and Delimiter or Linebreak
+            //Initial -> Closed and Delimiter or line-break
         }
 
         internal States State { get; private set; }
@@ -37,28 +36,28 @@ namespace FluentCsvMachine.Machine
         {
             switch (c, State)
             {
-                case var t when (t.State == States.Initial && t.c == Config.Quote):
+                case { State: States.Initial } t when t.c == Config.Quote:
                     // First quote
                     State = States.Running;
                     break;
 
-                case var t when (t.State == States.Running && t.c != Config.Quote):
+                case { State: States.Running } t when t.c != Config.Quote:
                     // Quote content
                     line.Parser.Process(c);
                     break;
 
-                case var t when (t.State == States.Running && t.c == Config.Quote):
+                case { State: States.Running } t when t.c == Config.Quote:
                     // Second quote
                     State = States.Closed;
                     break;
 
-                case var t when (t.State == States.Closed && (t.c == Config.Delimiter || t.c == Config.NewLine)):
+                case { State: States.Closed } t when (t.c == Config.Delimiter || t.c == Config.NewLine):
                     // Second quote followed by a delimiter or line break
                     line.Value();
                     State = States.Initial;
                     break;
 
-                case var t when (t.State == States.Closed && t.c == Config.Quote):
+                case { State: States.Closed } t when t.c == Config.Quote:
                     // Quote inside a quoted field ""hi"" -> "hi"
                     line.Parser.Process(Config.Quote);
                     State = States.Running;

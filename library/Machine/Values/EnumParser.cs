@@ -1,8 +1,6 @@
 ﻿using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Tree;
-using System.Data;
-using System.Linq;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -53,7 +51,7 @@ namespace FluentCsvMachine.Machine.Values
             _currentNode = node;
         }
 
-        internal override ResultValue? GetResult()
+        internal override ResultValue GetResult()
         {
             if (_currentNode.Index == null)
             {

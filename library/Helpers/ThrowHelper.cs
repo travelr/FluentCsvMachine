@@ -91,7 +91,7 @@ namespace FluentCsvMachine.Helpers
         {
             return obj switch
             {
-                string _ => $"\"{obj}\"",
+                string => $"\"{obj}\"",
                 null => "null",
                 _ => $"<{obj}>"
             };

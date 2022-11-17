@@ -7,7 +7,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("-", "."))</RootNamespace>
+    <RootNamespace>FluentCsvMachine.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

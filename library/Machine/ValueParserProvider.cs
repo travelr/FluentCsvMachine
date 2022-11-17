@@ -9,7 +9,7 @@ namespace FluentCsvMachine.Machine
     /// </summary>
     internal static class ValueParserProvider
     {
-        private static readonly Dictionary<Type, ValueParser> valueParsers = new()
+        private static readonly Dictionary<Type, ValueParser> ValueParsers = new()
         {
             { typeof(string),  new StringParser() },
             { typeof(byte),  new BinaryIntegerParser<byte>() },
@@ -21,7 +21,7 @@ namespace FluentCsvMachine.Machine
             { typeof(decimal),  new FloatingPointParser<decimal>() },
         };
 
-        private static readonly Dictionary<string, ValueParser> dateParsers = new();
+        private static readonly Dictionary<string, ValueParser> DateParsers = new();
 
         /// <summary>
         /// Gets the correct parser based on the passed type
@@ -35,32 +35,28 @@ namespace FluentCsvMachine.Machine
         {
             Guard.IsNotNull(type);
 
-            if (type.IsEnum && !valueParsers.ContainsKey(type))
+            if (type.IsEnum && !ValueParsers.ContainsKey(type))
             {
                 var enumMachine = (ValueParser?)Activator.CreateInstance(typeof(EnumParser<>).MakeGenericType(type), type);
-                if (enumMachine == null)
-                {
-                    throw new InvalidOperationException($"Couldn't create EnumParser<> of type {type}");
-                }
-                valueParsers[type] = enumMachine;
+                ValueParsers[type] = enumMachine ?? throw new InvalidOperationException($"Couldn't create EnumParser<> of type {type}");
             }
             else if (type == typeof(DateTime))
             {
-                if (inputFormat == null || inputFormat == string.Empty)
+                if (string.IsNullOrEmpty(inputFormat))
                 {
                     ThrowHelper.ThrowCsvConfigurationException("Each DateTime column requires InputFormat()");
                 }
 
-                if (!dateParsers.TryGetValue(inputFormat, out var dateParser))
+                if (!DateParsers.TryGetValue(inputFormat, out var dateParser))
                 {
                     dateParser = new DateTimeParser(inputFormat);
-                    dateParsers.Add(inputFormat, dateParser);
+                    DateParsers.Add(inputFormat, dateParser);
                 }
 
                 return dateParser;
             }
 
-            if (!valueParsers.TryGetValue(type, out ValueParser? returnValue))
+            if (!ValueParsers.TryGetValue(type, out ValueParser? returnValue))
             {
                 throw new KeyNotFoundException($"Unknown ValueParser type {type}! Please create a bug ticket!");
             }

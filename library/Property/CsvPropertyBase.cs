@@ -1,10 +1,10 @@
 ﻿using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Values;
 
-namespace FluentCsvMachine
+namespace FluentCsvMachine.Property
 {
     /// <summary>
-    /// CsvPropertyBase correponds to column in a CSV file
+    /// CsvPropertyBase corresponds to column in a CSV file
     /// Abstract class to have one common type for lists
     /// </summary>
     public abstract class CsvPropertyBase
@@ -35,7 +35,7 @@ namespace FluentCsvMachine
         /// <summary>
         /// Reference Column Index in CSV
         /// </summary>
-        /// <param name="headersDic">Colunm Name, Index</param>
+        /// <param name="headersDic">Column Name, Index</param>
         public void SetIndex(Dictionary<string, int> headersDic)
         {
             Guard.IsNotNull(headersDic);

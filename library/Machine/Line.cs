@@ -57,49 +57,49 @@ namespace FluentCsvMachine.Machine
             // Always process the sub state machine before continuing with this one
             switch (c, State)
             {
-                case var t when (t.State == States.Initial && (t.c != Config.Quote && c != Config.NewLine && c != Config.Comment)):
+                case { State: States.Initial } t when (t.c != Config.Quote && c != Config.NewLine && c != Config.Comment):
                     // New field without a quote
                     State = States.Field;
 
                     field.Process(c);
                     break;
 
-                case var t when (t.State == States.Initial && t.c == Config.Quote):
+                case { State: States.Initial } t when t.c == Config.Quote:
                     // New field with a quote
                     State = States.FieldQuoted;
 
                     quote.Process(c);
                     break;
 
-                case var t when (t.State == States.Initial && Config.Comment.HasValue && t.c == Config.Comment):
+                case { State: States.Initial } t when Config.Comment.HasValue && t.c == Config.Comment:
                     // Comment line, nothing to do
                     State = States.Comment;
                     return;
 
-                case var t when (t.State == States.Initial && t.c == Config.NewLine):
+                case { State: States.Initial } t when t.c == Config.NewLine:
                     // Empty Line, nothing to do
                     LineCounter++;
                     return;
 
-                case var t when (t.State == States.Field):
+                case { State: States.Field }:
                     // Reading unquoted field
                     field.Process(c);
                     break;
 
-                case var t when (t.State == States.FieldQuoted):
+                case { State: States.FieldQuoted }:
                     // Reading quoted field
                     quote.Process(c);
                     break;
 
-                case var t when (t.State == States.Comment && t.c != Config.NewLine):
+                case { State: States.Comment } t when t.c != Config.NewLine:
                     // Reading comment field
                     return;
 
-                case var t when (t.State == States.Skip && t.c != Config.Delimiter):
+                case { State: States.Skip } t when t.c != Config.Delimiter:
                     // Char of skip column
                     return;
 
-                case var t when (t.State == States.Skip && t.c == Config.Delimiter):
+                case { State: States.Skip } t when t.c == Config.Delimiter:
                     columnNumber++;
                     SetParserAndState();
                     return;
@@ -137,7 +137,6 @@ namespace FluentCsvMachine.Machine
         /// <summary>
         /// Sub state machine calls this method when a csv field has been fully read
         /// </summary>
-        /// <param name="value">csv field value</param>
         /// <exception cref="Exception"></exception>
         internal void Value()
         {
@@ -152,6 +151,7 @@ namespace FluentCsvMachine.Machine
             if (csv.State == CsvMachine<T>.States.Content)
             {
                 Parser = csv.GetParser(columnNumber);
+                //ToDo: Always true
                 State = Parser != null ? States.Initial : States.Skip;
             }
             else

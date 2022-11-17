@@ -1,4 +1,4 @@
-﻿namespace test.Models
+﻿namespace FluentCsvMachine.Test.Models
 {
     internal class AddressData
     {

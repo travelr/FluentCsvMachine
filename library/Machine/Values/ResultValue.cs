@@ -14,11 +14,11 @@
         /// <summary>
         /// Type of the CSV column (field)
         /// </summary>
-        internal Type Type { get; private set; }
+        internal Type Type { get; }
 
         /// <summary>
         /// Value of the CSV column (field)
         /// </summary>
-        internal object Value { get; private set; }
+        internal object Value { get; }
     }
 }

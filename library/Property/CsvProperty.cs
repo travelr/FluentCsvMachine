@@ -1,14 +1,12 @@
-﻿using FluentCsvMachine.Machine;
-using FluentCsvMachine.Machine.Values;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using FluentCsvMachine.Machine;
 
-namespace FluentCsvMachine
+namespace FluentCsvMachine.Property
 {
     /// <summary>
-    /// CsvProperty correponds to column in a CSV file
+    /// CsvProperty correspond to column in a CSV file
     /// </summary>
     /// <typeparam name="T">This property belongs to T type</typeparam>
-    /// <typeparam name="V">Value type of the property</typeparam>
     public class CsvProperty<T> : CsvPropertyBase
     {
         public CsvProperty(Type propertyType, Expression<Func<T, object?>> accessor)
@@ -42,6 +40,6 @@ namespace FluentCsvMachine
         /// <summary>
         /// Accessor of the property
         /// </summary>
-        public Expression<Func<T, object?>> Accessor { get; private set; }
+        public Expression<Func<T, object?>> Accessor { get; }
     }
 }

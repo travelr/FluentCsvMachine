@@ -1,6 +1,6 @@
+using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
 using System.Text;
-using test.Models;
 
 namespace FluentCsvMachine.Test
 {
@@ -142,7 +142,7 @@ namespace FluentCsvMachine.Test
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void mean()
+        public void Mean()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/mean.csv"));
         }
@@ -158,7 +158,7 @@ namespace FluentCsvMachine.Test
         /// </summary>
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void wiki()
+        public void Wiki()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/wiki.csv"));
         }
@@ -194,49 +194,49 @@ namespace FluentCsvMachine.Test
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void largedataset()
+        public void Largedataset()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/large-dataset.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void macnewlines()
+        public void Macnewlines()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/mac-newlines.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void newlines()
+        public void Newlines()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/newlines.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void noheaders()
+        public void Noheaders()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/no-headers.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void optioncomment()
+        public void Optioncomment()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/option-comment.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void optionescape()
+        public void Optionescape()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/option-escape.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void optionmaxRowBytes()
+        public void OptionmaxRowBytes()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/option-maxRowBytes.csv"));
         }
@@ -378,14 +378,14 @@ namespace FluentCsvMachine.Test
         /// </summary>
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void quotesnewlines()
+        public void Quotesnewlines()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/quotes+newlines.csv"));
         }
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void strict()
+        public void Strict()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/strict.csv"));
         }
@@ -489,7 +489,7 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        public void UTF16()
+        public void Utf16()
         {
             var path = "../../../fixtures/utf16.csv";
             Assert.IsTrue(File.Exists(path));
@@ -504,7 +504,7 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        public void UTF16Big()
+        public void Utf16Big()
         {
             var path = "../../../fixtures/utf16-big.csv";
             Assert.IsTrue(File.Exists(path));
@@ -519,7 +519,7 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        public void UTF8()
+        public void Utf8()
         {
             var path = "../../../fixtures/utf8.csv";
             Assert.IsTrue(File.Exists(path));

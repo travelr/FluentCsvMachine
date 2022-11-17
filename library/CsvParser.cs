@@ -1,12 +1,13 @@
 ﻿using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine;
+using FluentCsvMachine.Property;
 using System.Linq.Expressions;
 
 namespace FluentCsvMachine
 {
     /// <summary>
     /// CSV parsing and automated mapping
-    /// Fluent property defintions
+    /// Fluent property definitions
     /// </summary>
     /// <typeparam name="T">Type of </typeparam>
     public class CsvParser<T> where T : new()
@@ -18,15 +19,15 @@ namespace FluentCsvMachine
         /// <summary>
         /// Defines a Column / Property
         /// </summary>
-        /// <typeparam name="V">value type</typeparam>
+        /// <typeparam name="TV">value type</typeparam>
         /// <param name="accessor"></param>
         /// <returns></returns>
 
-        public CsvProperty<T> Property<V>(Expression<Func<T, object?>> accessor)
+        public CsvProperty<T> Property<TV>(Expression<Func<T, object?>> accessor)
         {
             Guard.IsNotNull(accessor);
 
-            var prop = new CsvProperty<T>(typeof(V), accessor);
+            var prop = new CsvProperty<T>(typeof(TV), accessor);
             if (properties.Any(x => x.ColumnName == prop.ColumnName))
             {
                 ThrowHelper.ThrowCsvConfigurationException("Duplicate column names");

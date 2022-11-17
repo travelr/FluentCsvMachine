@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-
-namespace FluentCsvMachine
+﻿namespace FluentCsvMachine.Property
 {
     public static class CsvPropertyExtensions
     {

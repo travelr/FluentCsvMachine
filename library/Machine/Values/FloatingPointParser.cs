@@ -8,10 +8,10 @@ namespace FluentCsvMachine.Machine.Values
     /// <typeparam name="T">Type e.g. decimal</typeparam>
     internal class FloatingPointParser<T> : ValueParser where T : IFloatingPoint<T>
     {
-        private bool _isNull = false;
-        private long _n = 0;
+        private bool _isNull;
+        private long _n;
         private int? _s; // index of the floating point char
-        private int _charCount = 0; // length of the field
+        private int _charCount; // length of the field
 
         internal override void Process(char c)
         {

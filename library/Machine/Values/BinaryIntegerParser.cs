@@ -8,7 +8,7 @@ namespace FluentCsvMachine.Machine.Values
     /// <typeparam name="T">IBinaryInteger</typeparam>
     internal class BinaryIntegerParser<T> : ValueParser where T : IBinaryInteger<T>
     {
-        private bool _isNull = false;
+        private bool _isNull;
         private T _result = T.CreateChecked(0);
 
         // Look up table, X == 10
@@ -30,7 +30,7 @@ namespace FluentCsvMachine.Machine.Values
         internal override void Process(char c)
         {
             // Input check
-            if (!(c >= '0' && c <= '9'))
+            if (!(c is >= '0' and <= '9'))
             {
                 _isNull = true;
                 State = States.FastForward;

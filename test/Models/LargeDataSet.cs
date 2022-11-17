@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FluentCsvMachine.Test.Models
+﻿namespace FluentCsvMachine.Test.Models
 {
     /// <summary>
     /// https://github.com/snowindy/csv-test-data-generator
@@ -30,6 +23,11 @@ namespace FluentCsvMachine.Test.Models
 
     internal enum LargeDataSetPick
     {
-        RED, BLUE, YELLOW, GREEN, WHITE, RED2
+        RED,
+        BLUE,
+        YELLOW,
+        GREEN,
+        WHITE,
+        RED2
     }
 }

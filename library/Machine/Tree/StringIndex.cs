@@ -14,11 +14,11 @@
         /// <summary>
         /// Element index in the original array
         /// </summary>
-        public int Index { get; private set; }
+        public int Index { get; }
 
         /// <summary>
         /// Element value
         /// </summary>
-        public string Value { get; private set; }
+        public string Value { get; }
     }
 }

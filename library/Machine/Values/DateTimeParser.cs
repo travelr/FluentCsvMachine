@@ -1,10 +1,4 @@
 ﻿using FluentCsvMachine.Helpers;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -16,15 +10,15 @@ namespace FluentCsvMachine.Machine.Values
     {
         private readonly string _inputFormat;
 
-        private int _charCount = 0;
-        private int _year = 0;
-        private int _month = 0;
-        private int _day = 0;
-        private int _hour = 0;
-        private int _minute = 0;
-        private int _second = 0;
-        private int _hourOffset = 0;
-        private int _ms = 0;
+        private int _charCount;
+        private int _year;
+        private int _month;
+        private int _day;
+        private int _hour;
+        private int _minute;
+        private int _second;
+        private int _hourOffset;
+        private int _ms;
 
         public DateTimeParser(string inputFormat)
         {
@@ -86,7 +80,7 @@ namespace FluentCsvMachine.Machine.Values
             _charCount++;
         }
 
-        internal override ResultValue? GetResult()
+        internal override ResultValue GetResult()
         {
             DateTime? resultValue = null;
             try

@@ -1,6 +1,4 @@
-﻿using FluentCsvMachine.Helpers;
-
-namespace FluentCsvMachine.Machine.Values
+﻿namespace FluentCsvMachine.Machine.Values
 {
     internal abstract class ValueParser
     {

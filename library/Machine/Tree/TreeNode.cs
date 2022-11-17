@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace FluentCsvMachine.Machine.Tree
+﻿namespace FluentCsvMachine.Machine.Tree
 {
     internal class TreeNode
     {
@@ -10,7 +8,7 @@ namespace FluentCsvMachine.Machine.Tree
         /// Current char serves as the ID of the node
         /// Null means Root
         /// </summary>
-        public char? Character { get; private set; }
+        public char? Character { get; }
 
         /// <summary>
         /// Node matches a full value, Index of the value in the source array

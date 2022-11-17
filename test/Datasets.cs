@@ -1,4 +1,4 @@
-using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
 
 namespace FluentCsvMachine.Test
