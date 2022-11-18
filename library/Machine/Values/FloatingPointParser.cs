@@ -17,7 +17,7 @@ namespace FluentCsvMachine.Machine.Values
         {
             // Input check
             var isFloatingPointChar = c == Config!.FloatingPoint;
-            if ((c < '0' || c > '9') && !isFloatingPointChar)
+            if (c is < '0' or > '9' && !isFloatingPointChar)
             {
                 _isNull = true;
                 State = States.FastForward;
@@ -37,17 +37,22 @@ namespace FluentCsvMachine.Machine.Values
             _charCount++;
         }
 
-        internal override ResultValue? GetResult()
+        internal override ResultValue GetResult()
         {
-            ResultValue? result = null;
+            ResultValue result;
 
             // Create result if it is a valid field
             if (!_isNull)
             {
                 // Based on https://stackoverflow.com/a/8458496
-                var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, false, (byte)(_charCount - (_s ?? _charCount)));
+                var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, false,
+                    (byte)(_charCount - (_s ?? _charCount)));
                 // Cast will happen later
                 result = new ResultValue(typeof(T), resultValue);
+            }
+            else
+            {
+                result = new ResultValue();
             }
 
             // Reset variables

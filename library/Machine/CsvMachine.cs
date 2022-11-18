@@ -32,6 +32,8 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         private static readonly Dictionary<Expression<Func<T, object>>, Action<T, object>> SetterCache = new();
 
+        private readonly EntityFactory<T> _factory;
+
         internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties)
         {
             Guard.IsNotNull(config);
@@ -44,6 +46,8 @@ namespace FluentCsvMachine.Machine
 
             _properties = properties;
             result = new List<T>();
+
+            _factory = new EntityFactory<T>(properties);
         }
 
         internal void Process(char[] buffer, int count)
@@ -63,18 +67,19 @@ namespace FluentCsvMachine.Machine
         /// A full line was parsed, here is the result
         /// </summary>
         /// <param name="line">The line, empty strings are null</param>
-        internal void ResultLine(List<ResultValue?> line)
+        internal void ResultLine(List<ResultValue> line)
         {
             switch (State)
             {
                 case States.HeaderSearch:
                     // Header Search is only using string
-                    var strLine = line.Select(x => x != null ? (string)x.Value : null);
+                    var strLine = line.Select(x => !x.IsNull ? (string)x.Value! : null);
                     FindAndSetHeaders(strLine);
                     break;
 
                 case States.Content:
-                    CreateEntity(line);
+                    var entity = _factory.Create(line);
+                    result.Add(entity);
                     break;
 
                 default: throw new CsvMachineException();
@@ -144,97 +149,6 @@ namespace FluentCsvMachine.Machine
             }
         }
 
-        private void CreateEntity(List<ResultValue?> line)
-        {
-            var resultObj = new T();
-
-            // Set the properties of the object based on the CSV line
-            SetProperties(line, resultObj);
-            // Set remaining properties which require custom mappings
-            //RunCustomMappings(line, resultObj);
-
-            result.Add(resultObj);
-        }
-
-        /// <summary>
-        /// Sets the properties of the object based on the CSV line
-        /// </summary>
-        /// <param name="line">CSV line</param>
-        /// <param name="resultObj">corresponding object</param>
-        /// <exception cref="Exception">CsvProperty has no property Accessor</exception>
-        private void SetProperties(List<ResultValue?> line, T resultObj)
-        {
-            foreach (var p in _properties)
-            {
-                // get Accessor property
-                var accessorProperty = typeof(CsvProperty<>).MakeGenericType(typeof(T)).GetProperty("Accessor");
-                if (accessorProperty == null)
-                {
-                    throw new Exception("Accessor property has been renamed!");
-                }
-
-                if (accessorProperty.GetValue(p, null) is not Expression<Func<T, object>> accessor)
-                {
-                    throw new Exception("accessor is null");
-                }
-
-                // Raw value form CSV
-                var resultValue = line[p.Index!.Value];
-                if (resultValue == null)
-                {
-                    continue;
-                }
-
-                // Convert raw value based on defined methods
-                var value = Convert.ChangeType(resultValue.Value, resultValue.Type);
-
-                // Assign to value to the object
-                var setter = GetSetter(accessor);
-                setter(resultObj, value);
-            }
-        }
-
-        /// <summary>
-        /// Creates or gets a setter to a setter
-        /// </summary>
-        /// <param name="accessor">Accessor expression to the property</param>
-        /// <returns>The setter</returns>
-        /// <exception cref="Exception">Should not happen, broken code?</exception>
-        private static Action<T, object> GetSetter(Expression<Func<T, object>> accessor)
-        {
-            // Try to get a cached setter
-            if (SetterCache.TryGetValue(accessor, out var result))
-            {
-                return result;
-            }
-
-            // Try get to get the property
-            MemberExpression? selectorExpr = accessor.Body as MemberExpression;
-            if (selectorExpr == null)
-            {
-                var unary = accessor.Body as UnaryExpression;
-                selectorExpr = unary?.Operand as MemberExpression;
-            }
-
-            // Double check if everything could be resolved
-            if (selectorExpr == null || selectorExpr.Member is not PropertyInfo property ||
-                property.DeclaringType == null)
-            {
-                throw new Exception("unknown expression type");
-            }
-
-            // Based on https://stackoverflow.com/a/17669142
-            var exInstance = Expression.Parameter(property.DeclaringType, "t");
-            var exMemberAccess = Expression.MakeMemberAccess(exInstance, property);
-            var exValue = Expression.Parameter(typeof(object), "p");
-            var exConvertedValue = Expression.Convert(exValue, property.PropertyType);
-            var exBody = Expression.Assign(exMemberAccess, exConvertedValue);
-            var lambda = Expression.Lambda<Action<T, object>>(exBody, exInstance, exValue);
-            var action = lambda.Compile();
-
-            SetterCache.Add(accessor, action);
-            return action;
-        }
 
         internal ValueParser GetParser(int columnNumber)
         {

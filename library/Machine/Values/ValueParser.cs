@@ -26,6 +26,6 @@
         /// CSV field ended, get the result
         /// </summary>
         /// <returns>ResultValue</returns>
-        internal abstract ResultValue? GetResult();
+        internal abstract ResultValue GetResult();
     }
 }

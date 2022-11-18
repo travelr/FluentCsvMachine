@@ -11,9 +11,9 @@ namespace FluentCsvMachine.Machine.Values
             _sb.Append(c);
         }
 
-        internal override ResultValue? GetResult()
+        internal override ResultValue GetResult()
         {
-            var returnValue = _sb.Length > 0 ? new ResultValue(typeof(string), _sb.ToString()) : null;
+            var returnValue = _sb.Length > 0 ? new ResultValue(typeof(string), _sb.ToString()) : new ResultValue();
             _sb.Clear();
             return returnValue;
         }

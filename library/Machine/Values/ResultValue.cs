@@ -3,8 +3,13 @@
     /// <summary>
     /// Result of a ValueParser
     /// </summary>
-    internal class ResultValue
+    readonly struct ResultValue
     {
+        public ResultValue()
+        {
+            IsNull = true;
+        }
+
         public ResultValue(Type t, object value)
         {
             Type = t;
@@ -12,13 +17,19 @@
         }
 
         /// <summary>
+        /// Type and Value are null
+        /// structs cannot be null
+        /// </summary>
+        internal bool IsNull { get; }
+
+        /// <summary>
         /// Type of the CSV column (field)
         /// </summary>
-        internal Type Type { get; }
+        internal Type? Type { get; }
 
         /// <summary>
         /// Value of the CSV column (field)
         /// </summary>
-        internal object Value { get; }
+        internal object? Value { get; }
     }
 }

@@ -5,21 +5,18 @@ namespace FluentCsvMachine.Machine
     /// <summary>
     /// Machine reading unquoted CSV fields
     /// </summary>
-    internal class Field<T> where T : new()
+    internal class Field<T> : CsvBaseElement where T : new()
     {
         private readonly Line<T> _line;
 
-        public CsvConfiguration Config { get; }
-
-        public Field(Line<T> lineMachine)
+        public Field(Line<T> line, CsvConfiguration config) : base(config)
         {
-            _line = lineMachine;
-            Config = _line.Config;
+            _line = line;
         }
 
         public void Process(char c)
         {
-            if (c == Config.Delimiter || c == Config.NewLine)
+            if (c == Delimiter || c == NewLine)
             {
                 // End field on the delimiter or line break
                 _line.Value();

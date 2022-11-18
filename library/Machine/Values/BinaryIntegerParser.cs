@@ -41,9 +41,9 @@ namespace FluentCsvMachine.Machine.Values
             _result = _convert['X'] * _result + _convert[c];
         }
 
-        internal override ResultValue? GetResult()
+        internal override ResultValue GetResult()
         {
-            var result = !_isNull ? new ResultValue(typeof(T), _result) : null;
+            var result = !_isNull ? new ResultValue(typeof(T), _result) : new ResultValue();
 
             // Reset variables
             _result = T.CreateChecked(0);

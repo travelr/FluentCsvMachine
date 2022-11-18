@@ -6,7 +6,7 @@ namespace FluentCsvMachine.Machine
     /// Machine reading quoted CSV fields according RFC 4180
     /// https://en.wikipedia.org/wiki/Comma-separated_values
     /// </summary>
-    internal class QuotationField<T> where T : new()
+    internal class QuotationField<T> : CsvBaseElement where T : new()
     {
         internal enum States
         {
@@ -18,14 +18,13 @@ namespace FluentCsvMachine.Machine
 
         internal States State { get; private set; }
 
-        public CsvConfiguration Config { get; }
 
         private readonly Line<T> line;
 
-        public QuotationField(Line<T> lineMachine)
+
+        public QuotationField(Line<T> lineMachine, CsvConfiguration config) : base(config)
         {
             line = lineMachine;
-            Config = line.Config;
         }
 
         /// <summary>
@@ -36,30 +35,30 @@ namespace FluentCsvMachine.Machine
         {
             switch (c, State)
             {
-                case { State: States.Initial } t when t.c == Config.Quote:
+                case { State: States.Initial } t when t.c == Quote:
                     // First quote
                     State = States.Running;
                     break;
 
-                case { State: States.Running } t when t.c != Config.Quote:
+                case { State: States.Running } t when t.c != Quote:
                     // Quote content
                     line.Parser.Process(c);
                     break;
 
-                case { State: States.Running } t when t.c == Config.Quote:
+                case { State: States.Running } t when t.c == Quote:
                     // Second quote
                     State = States.Closed;
                     break;
 
-                case { State: States.Closed } t when (t.c == Config.Delimiter || t.c == Config.NewLine):
+                case { State: States.Closed } t when (t.c == Delimiter || t.c == NewLine):
                     // Second quote followed by a delimiter or line break
                     line.Value();
                     State = States.Initial;
                     break;
 
-                case { State: States.Closed } t when t.c == Config.Quote:
+                case { State: States.Closed } t when t.c == Quote:
                     // Quote inside a quoted field ""hi"" -> "hi"
-                    line.Parser.Process(Config.Quote);
+                    line.Parser.Process(Quote);
                     State = States.Running;
                     break;
 

@@ -9,9 +9,9 @@
             r = c;
         }
 
-        internal override ResultValue? GetResult()
+        internal override ResultValue GetResult()
         {
-            var returnValue = r != null ? new ResultValue(typeof(char), r) : null;
+            var returnValue = r != null ? new ResultValue(typeof(char), r) : new ResultValue();
             r = null;
             return returnValue;
         }
