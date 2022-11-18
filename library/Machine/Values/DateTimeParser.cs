@@ -1,9 +1,11 @@
 ﻿using FluentCsvMachine.Helpers;
+using System.Runtime.CompilerServices;
 
 namespace FluentCsvMachine.Machine.Values
 {
     /// <summary>
     /// DateTime parser
+    /// Input format requires to be a even number of input chars 
     /// Roughly based on https://stackoverflow.com/a/16920747
     /// </summary>
     internal class DateTimeParser : ValueParser
@@ -20,6 +22,9 @@ namespace FluentCsvMachine.Machine.Values
         private int _hourOffset;
         private int _ms;
 
+        private int _inputCount;
+        private char? _lastInputChar;
+
         public DateTimeParser(string inputFormat)
         {
             Guard.IsNotNullOrEmpty(inputFormat);
@@ -34,48 +39,82 @@ namespace FluentCsvMachine.Machine.Values
                 ThrowHelper.ThrowCsvMalformedException($"Cannot parse DateTime. Column is longer than the input format ({_inputFormat}");
             }
 
-            switch (_inputFormat[_charCount])
+            var inputChar = _inputFormat[_charCount];
+
+            if (c is >= '0' and <= '9' || (inputChar is 'T' && c is 'p' or 'P'))
             {
-                case 'y':
-                    _year = _year * 10 + (c - '0');
-                    break;
+                // Is a number
+                var value = (c - '0');
 
-                case 'M':
-                    _month = _month * 10 + (c - '0');
-                    break;
+                switch (inputChar)
+                {
+                    case 'y':
+                        _year = _year * 10 + value;
+                        CountInput('y');
+                        break;
 
-                case 'd':
-                    _day = _day * 10 + (c - '0');
-                    break;
+                    case 'M':
+                        _month = _month * 10 + value;
+                        CountInput('M');
+                        break;
 
-                case 'T':
-                    if (c == 'p' || c == 'P')
-                        _hourOffset = 12;
-                    break;
+                    case 'd':
+                        _day = _day * 10 + value;
+                        CountInput('d');
+                        break;
 
-                case 'h':
-                    _hour = _hour * 10 + (c - '0');
-                    if (_hour == 12) _hour = 0;
-                    break;
+                    case 'T':
+                        if (c is 'p' or 'P')
+                            _hourOffset = 12;
+                        break;
 
-                case 'H':
+                    case 'h':
+                        _hour = _hour * 10 + value;
+                        if (_hour == 12) _hour = 0;
+                        CountInput('h');
+                        break;
 
-                    _hour = _hour * 10 + (c - '0');
-                    _hourOffset = 0;
-                    break;
+                    case 'H':
 
-                case 'm':
-                    _minute = _minute * 10 + (c - '0');
-                    break;
+                        _hour = _hour * 10 + value;
+                        _hourOffset = 0;
+                        CountInput('H');
+                        break;
 
-                case 's':
-                    _second = _second * 10 + (c - '0');
-                    break;
+                    case 'm':
+                        _minute = _minute * 10 + value;
+                        CountInput('m');
+                        break;
 
-                case 'f':
-                    _ms = _ms * 10 + (c - '0');
-                    break;
+                    case 's':
+                        _second = _second * 10 + value;
+                        CountInput('s');
+                        break;
+
+                    case 'f':
+                        _ms = _ms * 10 + value;
+                        CountInput('f');
+                        break;
+                }
+
+                // Remember last input char so that you can count _inputCount
+                _lastInputChar = inputChar;
             }
+            else
+            {
+                // Not a number
+
+                // Assumes that all input formats have a number of two place holders
+                if (_inputCount % 2 > 0)
+                {
+                    // If the input does not match that skip a char in the input value
+                    _charCount++;
+                }
+
+                _inputCount = 0;
+                _lastInputChar = null;
+            }
+
 
             _charCount++;
         }
@@ -106,8 +145,24 @@ namespace FluentCsvMachine.Machine.Values
             _second = 0;
             _hourOffset = 0;
             _ms = 0;
+            _inputCount = 0;
+            _lastInputChar = null;
 
             return new ResultValue(typeof(DateTime), resultValue);
+        }
+
+
+        /// <summary>
+        /// Counts the number of input chars (e.g. (dd.MM.yyyy) where d M Y are all input chars)
+        /// </summary>
+        /// <param name="inputChar">what char to compare to</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void CountInput(char inputChar)
+        {
+            if (_lastInputChar == null || _lastInputChar == inputChar)
+            {
+                _inputCount++;
+            }
         }
     }
 }

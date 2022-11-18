@@ -30,7 +30,7 @@ namespace FluentCsvMachine.Machine.Values
         internal override void Process(char c)
         {
             // Input check
-            if (!(c is >= '0' and <= '9'))
+            if (c is not (>= '0' and <= '9'))
             {
                 _isNull = true;
                 State = States.FastForward;

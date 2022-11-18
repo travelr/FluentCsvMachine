@@ -11,14 +11,15 @@ namespace FluentCsvMachine.Machine
     {
         private static readonly Dictionary<Type, ValueParser> ValueParsers = new()
         {
-            { typeof(string),  new StringParser() },
-            { typeof(byte),  new BinaryIntegerParser<byte>() },
-            { typeof(short),  new BinaryIntegerParser<short>() },
-            { typeof(int),  new BinaryIntegerParser<int>() },
-            { typeof(long),  new BinaryIntegerParser<long>() },
-            { typeof(float),  new FloatingPointParser<float>() },
-            { typeof(double),  new FloatingPointParser<double>() },
-            { typeof(decimal),  new FloatingPointParser<decimal>() },
+            { typeof(string), new StringParser() },
+            { typeof(char), new CharParser() },
+            { typeof(byte), new BinaryIntegerParser<byte>() },
+            { typeof(short), new BinaryIntegerParser<short>() },
+            { typeof(int), new BinaryIntegerParser<int>() },
+            { typeof(long), new BinaryIntegerParser<long>() },
+            { typeof(float), new FloatingPointParser<float>() },
+            { typeof(double), new FloatingPointParser<double>() },
+            { typeof(decimal), new FloatingPointParser<decimal>() },
         };
 
         private static readonly Dictionary<string, ValueParser> DateParsers = new();

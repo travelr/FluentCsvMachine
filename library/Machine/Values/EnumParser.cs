@@ -1,4 +1,5 @@
-﻿using FluentCsvMachine.Exceptions;
+﻿using System.Net.Quic;
+using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Tree;
 
@@ -33,7 +34,8 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override void Process(char c)
         {
-            if (State == States.Finished)
+            // Only allow A-Z or a-z, assume Enum values have been stripped of all other chars
+            if (State == States.Finished || c is not ((>= 'a' and <= 'z') or (>= 'A' and <= 'Z')))
             {
                 return;
             }
