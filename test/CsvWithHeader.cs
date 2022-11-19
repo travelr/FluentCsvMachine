@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
 using System.Text;
@@ -20,7 +19,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void Basic()
         {
-            var path = "../../../fixtures/basic.csv";
+            const string path = "../../../fixtures/basic.csv";
             Assert.IsTrue(File.Exists(path));
 
             // Try a view different property types
@@ -45,7 +44,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void Comment()
         {
-            var path = "../../../fixtures/comment.csv";
+            const string path = "../../../fixtures/comment.csv";
             Assert.IsTrue(File.Exists(path));
 
             // Try a different column order
@@ -76,7 +75,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void BackTick()
         {
-            var path = "../../../fixtures/backtick.csv";
+            const string path = "../../../fixtures/backtick.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic>();
@@ -119,7 +118,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void CommaInQuote()
         {
-            var path = "../../../fixtures/comma-in-quote.csv";
+            const string path = "../../../fixtures/comma-in-quote.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<AddressData>();
@@ -145,7 +144,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void EscapeQuotes()
         {
-            var path = "../../../fixtures/escape-quotes.csv";
+            const string path = "../../../fixtures/escape-quotes.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<BasicString>();
@@ -193,7 +192,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void GeoJson()
         {
-            var path = "../../../fixtures/geojson.csv";
+            const string path = "../../../fixtures/geojson.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<BasicString>();
@@ -220,39 +219,135 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists("../../../fixtures/large-dataset.csv"));
         }
 
+        /// <summary>
+        /// a,b,c
+        /// 1,2,3
+        /// "Once upon 
+        /// a time",5,6
+        /// </summary>
+        /// <remarks>\r as line breaks</remarks>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Macnewlines()
+        public void MacNewlines()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/mac-newlines.csv"));
+            const string path = "../../../fixtures/mac-newlines.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<BasicString>();
+            parser.Property<string>(c => c.A).ColumnName("a");
+
+            var result = parser.Parse(path, new CsvConfiguration() { NewLine = '\r' });
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 2);
+            Assert.IsTrue(result[1].A == "Once upon\ra time");
         }
 
+        /// <summary>
+        /// a,b,c
+        /// 1,2,3
+        /// "Once upon 
+        /// a time",5,6
+        /// 7,8,9
+        /// </summary>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Newlines()
+        public void NewLines()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/newlines.csv"));
+            const string path = "../../../fixtures/newlines.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<BasicString>();
+            parser.Property<string>(c => c.A).ColumnName("a");
+
+            var result = parser.Parse(path);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
+            Assert.IsTrue(result[1].A == "Once upon \na time");
         }
 
+        /// <summary>
+        /// a,b,c
+        /// 1,2,3
+        /// 4,5,6
+        /// 7,8,9,10
+        /// </summary>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Noheaders()
+        public void NoHeaders()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/no-headers.csv"));
+            const string path = "../../../fixtures/no-headers.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<BasicInt>();
+            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int>(c => c.B).ColumnName("b");
+            parser.Property<int>(c => c.C).ColumnName("c");
+            var result = parser.Parse(path);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
+            Assert.IsTrue(result[2].A == 7);
+            Assert.IsTrue(result[2].B == 8);
+            Assert.IsTrue(result[2].C == 9);
         }
 
+        /// <summary>
+        /// ~ comment
+        /// a,b,c
+        /// 1,2,3
+        /// </summary>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Optioncomment()
+        public void OptionComment()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/option-comment.csv"));
+
+            const string path = "../../../fixtures/option-comment.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<BasicInt>();
+            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int>(c => c.B).ColumnName("b");
+            parser.Property<int>(c => c.C).ColumnName("c");
+            CsvConfiguration config = new()
+            {
+                Comment = '~'
+            };
+            var result = parser.Parse(path, config);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 1);
+            Assert.IsTrue(result[0].A == 1);
+            Assert.IsTrue(result[0].B == 2);
+            Assert.IsTrue(result[0].C == 3);
         }
 
+        /// <summary>
+        /// a,b,c
+        /// 1,"some \"escaped\" value",2
+        /// 3,"\"\"",4
+        /// 5,6,7
+        /// </summary>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Optionescape()
+        [Ignore("Not supported yet")]
+        public void OptionEscape()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/option-escape.csv"));
+
+            const string path = "../../../fixtures/option-escape.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<Basic2>();
+            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<string>(c => c.B).ColumnName("b");
+            parser.Property<int>(c => c.C).ColumnName("c");
+
+            var result = parser.Parse(path);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
+
+            Assert.IsTrue(result[0].B == "some \"escaped\" value");
+            Assert.IsTrue(result[1].B == "\"\"");
+            Assert.IsTrue(result[2].B == "6");
         }
 
         [TestMethod]
@@ -268,7 +363,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void OptionNewline()
         {
-            var path = "../../../fixtures/option-newline.csv";
+            const string path = "../../../fixtures/option-newline.csv";
             Assert.IsTrue(File.Exists(path));
 
             // X as \n
@@ -299,7 +394,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void OptionQuote()
         {
-            var path = "../../../fixtures/option-quote.csv";
+            const string path = "../../../fixtures/option-quote.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
@@ -331,7 +426,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void OptionQuoteEscape()
         {
-            var path = "../../../fixtures/option-quote-escape.csv";
+            const string path = "../../../fixtures/option-quote-escape.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
@@ -364,18 +459,15 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void OptionQuoteMany()
         {
-            var path = "../../../fixtures/option-quote-many.csv";
+            const string path = "../../../fixtures/option-quote-many.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
             parser.Property<int>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
             parser.Property<int>(c => c.C).ColumnName("c");
-            CsvConfiguration config = new()
-            {
-                Quote = '\''
-            };
-            var result = parser.Parse(path, config);
+
+            var result = parser.Parse(path, new CsvConfiguration() { Quote = '\'' });
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
@@ -398,18 +490,25 @@ namespace FluentCsvMachine.Test
         /// 3,4
         /// </summary>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Quotesnewlines()
+        public void QuotesNewlines()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/quotes+newlines.csv"));
+            const string path = "../../../fixtures/quotes+newlines.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<Basic2>();
+            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<string>(c => c.B).ColumnName("b");
+
+            var result = parser.Parse(path);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 3);
+            Assert.IsTrue(result[0].B == "ha \n\"ha\" \nha");
+            Assert.IsTrue(result[1].B == " \n\"\" \n");
+            Assert.IsTrue(result[2].A == 3);
+            Assert.IsTrue(result[2].B == "4");
         }
 
-        [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Strict()
-        {
-            Assert.IsTrue(File.Exists("../../../fixtures/strict.csv"));
-        }
 
         /// <summary>
         /// a,b,c
@@ -419,9 +518,9 @@ namespace FluentCsvMachine.Test
         /// </summary>
         [Ignore("Nullable not implemented")]
         [TestMethod]
-        public void StrictFalseLessColumns()
+        public void FalseLessColumns()
         {
-            var path = "../../../fixtures/strict-false-less-columns.csv";
+            const string path = "../../../fixtures/strict-false-less-columns.csv";
             Assert.IsTrue(File.Exists(path));
 
             var result = BasicIntParser().Parse(path);
@@ -437,9 +536,9 @@ namespace FluentCsvMachine.Test
         /// 8,9,10
         /// </summary>
         [TestMethod]
-        public void StrictFalseMoreColumns()
+        public void FalseMoreColumns()
         {
-            var path = "../../../fixtures/strict-false-more-columns.csv";
+            const string path = "../../../fixtures/strict-false-more-columns.csv";
             Assert.IsTrue(File.Exists(path));
 
             var result = BasicIntParser().Parse(path);
@@ -461,9 +560,9 @@ namespace FluentCsvMachine.Test
         /// 7,8,9
         /// </summary>
         [TestMethod]
-        public void StrictSkipLines()
+        public void SkipLines()
         {
-            var path = "../../../fixtures/strict+skipLines.csv";
+            const string path = "../../../fixtures/strict+skipLines.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<BasicInt>();
@@ -494,7 +593,7 @@ namespace FluentCsvMachine.Test
         {
             Assert.IsTrue(File.Exists("../../../fixtures/latin.csv"));
 
-            var path = "../../../fixtures/latin.csv";
+            const string path = "../../../fixtures/latin.csv";
             Assert.IsTrue(File.Exists(path));
 
             // Try a view different property types
@@ -512,7 +611,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void Utf16()
         {
-            var path = "../../../fixtures/utf16.csv";
+            const string path = "../../../fixtures/utf16.csv";
             Assert.IsTrue(File.Exists(path));
 
             var result = BasicStringParser().Parse(path, new CsvConfiguration(',', Encoding.Unicode));
@@ -527,7 +626,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void Utf16Big()
         {
-            var path = "../../../fixtures/utf16-big.csv";
+            const string path = "../../../fixtures/utf16-big.csv";
             Assert.IsTrue(File.Exists(path));
 
             var result = BasicStringParser().Parse(path, new CsvConfiguration(',', Encoding.BigEndianUnicode));
@@ -542,7 +641,7 @@ namespace FluentCsvMachine.Test
         [TestMethod]
         public void Utf8()
         {
-            var path = "../../../fixtures/utf8.csv";
+            const string path = "../../../fixtures/utf8.csv";
             Assert.IsTrue(File.Exists(path));
 
             var result = BasicStringParser().Parse(path, new CsvConfiguration(',', Encoding.UTF8));

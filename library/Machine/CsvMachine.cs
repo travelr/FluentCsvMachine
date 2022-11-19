@@ -35,6 +35,7 @@ namespace FluentCsvMachine.Machine
         private EntityFactory<T>? _factory;
 
         private readonly List<Action<T, IReadOnlyList<object?>>> _lineActions;
+        private readonly char _skipNewLineChar;
 
         internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties, List<Action<T, IReadOnlyList<object?>>> lineActions)
         {
@@ -43,6 +44,7 @@ namespace FluentCsvMachine.Machine
 
             Config = config;
             State = States.HeaderSearch;
+            _skipNewLineChar = config.NewLine == '\n' ? '\r' : '\0';
 
             _line = new Line<T>(this);
 
@@ -56,7 +58,7 @@ namespace FluentCsvMachine.Machine
         {
             for (int i = 0; i < count; i++)
             {
-                if (buffer[i] == '\r')
+                if (buffer[i] == _skipNewLineChar)
                 {
                     continue;
                 }

@@ -23,7 +23,7 @@ namespace FluentCsvMachine.Machine
             var validProperties = properties.Where(x => x.Index.HasValue).ToList();
 
             var maxColNumber = validProperties.Max(x => x.Index!.Value) + 1;
-            if (maxColNumber == 1)
+            if (maxColNumber < 1)
             {
                 throw new CsvMachineException("EntityFactory algorithm failed, set Index on properties first");
             }
