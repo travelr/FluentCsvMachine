@@ -1,6 +1,7 @@
 ﻿using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Machine.Values;
 using FluentCsvMachine.Property;
+using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -8,7 +9,8 @@ namespace FluentCsvMachine.Machine
 {
     internal class EntityFactory<T> where T : new()
     {
-        private readonly IEnumerable<CsvPropertyBase> _properties;
+        private readonly IReadOnlyList<CsvProperty<T>> _properties;
+        private readonly IReadOnlyList<CsvPropertyBase> _custom;
 
         /// <summary>
         /// Caches accessors expression to a lambda compiled setter
@@ -20,12 +22,21 @@ namespace FluentCsvMachine.Machine
 
         public EntityFactory(IEnumerable<CsvPropertyBase> properties)
         {
-            _properties = properties.Where(x => x.Index.HasValue).ToList();
+            var validProperties = properties.Where(x => x.Index.HasValue).ToList();
 
-            var maxColNumber = _properties.Max(x => x.Index!.Value) + 1;
+            var maxColNumber = validProperties.Max(x => x.Index!.Value) + 1;
+            if (maxColNumber == 1)
+            {
+                throw new CsvMachineException("EntityFactory algorithm failed, set Index on properties first");
+            }
+
             setterCache = new Action<T, object>[maxColNumber];
             accessorCache = new Expression<Func<T, object>>[maxColNumber];
+
+            _properties = validProperties.Where(x => !x.IsCustom).Cast<CsvProperty<T>>().ToList();
+            _custom = validProperties.Where(x => x.IsCustom).ToList();
         }
+
 
         internal T Create(IReadOnlyList<ResultValue> line)
         {
@@ -33,6 +44,11 @@ namespace FluentCsvMachine.Machine
 
             // Set the properties of the object based on the CSV line
             SetProperties(line, resultObj);
+
+            if (_custom.Count > 0)
+            {
+                CustomColumns(line, resultObj);
+            }
 
             return resultObj;
         }
@@ -74,20 +90,63 @@ namespace FluentCsvMachine.Machine
                 }
 
 
-                // Raw value form CSV
-                var resultValue = line[index];
-                if (resultValue.IsNull)
+                if (!GetValue(line, index, out object? value))
                 {
                     continue;
                 }
-
-                // Convert raw value based on defined methods
-                var value = Convert.ChangeType(resultValue.Value, resultValue.Type!);
 
                 // Assign to value to the object
                 var setter = GetSetter(accessor, index);
                 setter(resultObj, value!);
             }
+        }
+
+        /// <summary>
+        /// Runs customMappingsColumn or customMappingsLine
+        /// </summary>
+        /// <param name="line">Current CSV line</param>
+        /// <param name="resultObj">Entity for value assignment</param>
+        /// <exception cref="ArgumentNullException">Entity is null</exception>
+        private void CustomColumns(IReadOnlyList<ResultValue> line, T resultObj)
+        {
+            foreach (var custom in _custom)
+            {
+                if (!GetValue(line, custom.Index!.Value, out object? value))
+                {
+                    continue;
+                }
+
+                // ToDo: Cache the method
+                var customAction = custom.GetType().GetMethod("CustomAction");
+                if (customAction == null)
+                {
+                    throw new CsvMachineException("EntityFactory algorithm failed, CustomAction method has been renamed!");
+                }
+
+                customAction.Invoke(custom, new[] { resultObj, value });
+            }
+        }
+
+        /// <summary>
+        /// From CSV line to typed field value
+        /// </summary>
+        /// <param name="line">CSV line</param>
+        /// <param name="index">Index of the field</param>
+        /// <param name="value">typed value, may be null if the CSV field was empty or was not valid</param>
+        /// <returns></returns>
+        private static bool GetValue(IReadOnlyList<ResultValue> line, int index, out object? value)
+        {
+            // Raw value form CSV
+            var resultValue = line[index];
+            if (resultValue.IsNull)
+            {
+                value = null;
+                return false;
+            }
+
+            // Convert raw value based on defined methods
+            value = Convert.ChangeType(resultValue.Value, resultValue.Type!);
+            return true;
         }
 
         /// <summary>

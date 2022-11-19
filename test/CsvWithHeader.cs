@@ -76,19 +76,20 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/backtick.csv";
             Assert.IsTrue(File.Exists(path));
 
-            // Not using all properties
+            // Lets use a custom property
             var parser = new CsvParser<Basic>();
+            parser.PropertyCustom<string>(c => c.A, (entity, value) => { entity.A = value.ToLowerInvariant(); })
+                .ColumnName("p_desc");
             parser.Property<int>(c => c.B).ColumnName("pokemon_id");
-            parser.Property<string>(c => c.A).ColumnName("p_desc");
 
             List<Basic> result = parser.Parse(path, new CsvConfiguration('`'));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);
             Assert.IsTrue(result[0].B == 1);
-            Assert.IsTrue(result[0].A == "Bulbasaur can be seen napping");
+            Assert.IsTrue(result[0].A == "bulbasaur can be seen napping");
             Assert.IsTrue(result[1].B == 2);
-            Assert.IsTrue(result[1].A == "There is a bud on this");
+            Assert.IsTrue(result[1].A == "there is a bud on this");
         }
 
         /// <summary>

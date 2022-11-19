@@ -1,4 +1,5 @@
 ﻿using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine;
 using FluentCsvMachine.Machine.Values;
 
 namespace FluentCsvMachine.Property
@@ -9,11 +10,25 @@ namespace FluentCsvMachine.Property
     /// </summary>
     public abstract class CsvPropertyBase
     {
+        protected CsvPropertyBase(Type propertyType, bool isCustom)
+        {
+            Guard.IsNotNull(propertyType);
+
+            IsCustom = isCustom;
+
+            PropertyType = propertyType;
+            if (propertyType != typeof(DateTime))
+            {
+                // DateTime requires InputFormat
+                ValueParser = ValueParserProvider.GetParser(propertyType);
+            }
+        }
+
         /// <summary>
-        /// Type of the property
-        /// Is null on actions
+        /// False: CsvProperty, True: CsvPropertyCustom
         /// </summary>
-        public Type? PropertyType { get; protected set; }
+        public bool IsCustom { get; }
+
 
         /// <summary>
         /// Name of the CSV column
@@ -21,14 +36,34 @@ namespace FluentCsvMachine.Property
         public string? ColumnName { get; set; }
 
         /// <summary>
-        /// InputFormat for DateTime, ...
-        /// </summary>
-        public virtual string? InputFormat { get; set; }
-
-        /// <summary>
         /// Column Index in CSV
         /// </summary>
         public int? Index { get; private set; }
+
+        /// <summary>
+        /// Type of the property
+        /// </summary>
+        public Type? PropertyType { get; protected set; }
+
+
+        private string? _inputFormat;
+
+        /// <summary>
+        /// InputFormat for DateTime, ...
+        /// </summary>
+        public string? InputFormat
+        {
+            get => _inputFormat;
+            set
+            {
+                _inputFormat = value;
+
+                if (PropertyType == typeof(DateTime))
+                {
+                    ValueParser = ValueParserProvider.GetParser(PropertyType, value);
+                }
+            }
+        }
 
         internal ValueParser? ValueParser { get; set; }
 

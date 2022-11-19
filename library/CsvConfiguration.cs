@@ -53,8 +53,9 @@ namespace FluentCsvMachine
 
         /// <summary>
         /// File read buffer size
+        /// https://referencesource.microsoft.com/#mscorlib/system/io/stream.cs,2a0f078c2e0c0aa8,references
         /// </summary>
-        public int BufferSize { get; set; } = 4096;
+        public int BufferSize { get; set; } = 81920;
 
         /// <summary>
         /// Header needs to be defined in the first x lines

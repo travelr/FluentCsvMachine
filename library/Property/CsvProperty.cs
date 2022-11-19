@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using FluentCsvMachine.Machine;
+﻿using FluentCsvMachine.Helpers;
+using System.Linq.Expressions;
 
 namespace FluentCsvMachine.Property
 {
@@ -9,33 +9,12 @@ namespace FluentCsvMachine.Property
     /// <typeparam name="T">This property belongs to T type</typeparam>
     public class CsvProperty<T> : CsvPropertyBase
     {
-        public CsvProperty(Type propertyType, Expression<Func<T, object?>> accessor)
+        public CsvProperty(Type propertyType, Expression<Func<T, object?>> accessor) : base(propertyType, false)
         {
-            PropertyType = propertyType;
-            Accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
-
-            if (propertyType != typeof(DateTime))
-            {
-                // DateTime requires InputFormat
-                ValueParser = ValueParserProvider.GetParser(propertyType);
-            }
+            Guard.IsNotNull(accessor);
+            Accessor = accessor;
         }
 
-        private string? _inputFormat;
-
-        public override string? InputFormat
-        {
-            get => _inputFormat;
-            set
-            {
-                _inputFormat = value;
-
-                if (PropertyType == typeof(DateTime))
-                {
-                    ValueParser = ValueParserProvider.GetParser(PropertyType, value);
-                }
-            }
-        }
 
         /// <summary>
         /// Accessor of the property

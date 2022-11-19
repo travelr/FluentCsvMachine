@@ -12,26 +12,19 @@ namespace FluentCsvMachine
     /// <typeparam name="T">Type of </typeparam>
     public class CsvParser<T> where T : new()
     {
-        private readonly List<CsvPropertyCustom> customMappingsColumn = new();
-        private readonly List<Action<object, List<string>>> customMappingsLine = new();
         private readonly List<CsvPropertyBase> properties = new();
 
         /// <summary>
         /// Defines a Column / Property
         /// </summary>
-        /// <typeparam name="TV">value type</typeparam>
+        /// <typeparam name="V">value type</typeparam>
         /// <param name="accessor"></param>
         /// <returns></returns>
-
-        public CsvProperty<T> Property<TV>(Expression<Func<T, object?>> accessor)
+        public CsvProperty<T> Property<V>(Expression<Func<T, object?>> accessor)
         {
             Guard.IsNotNull(accessor);
 
-            var prop = new CsvProperty<T>(typeof(TV), accessor);
-            if (properties.Any(x => x.ColumnName == prop.ColumnName))
-            {
-                ThrowHelper.ThrowCsvConfigurationException("Duplicate column names");
-            }
+            var prop = new CsvProperty<T>(typeof(V), accessor);
 
             properties.Add(prop);
 
@@ -41,22 +34,18 @@ namespace FluentCsvMachine
         /// <summary>
         /// Defines a custom mapping based on a CSV column
         /// </summary>
-        /// <param name="customAction">Action(Entity for value assignment, csv value)</param>
+        /// <param name="accessor"></param>
+        /// <param name="customAction">Action(Entity for value assignment, csv value) </param>
         /// <returns></returns>
-        //public CsvPropertyCustom CustomMappingColumn(Action<object, string> customAction)
-        //{
-        //    var prop = new CsvPropertyCustom(customAction);
-        //    customMappingsColumn.Add(prop);
-        //    return prop;
-        //}
-
-        /// <summary>
-        /// Defines a custom mapping based on a full CSV line
-        /// </summary>
-        /// <param name="customAction">Action(Entity for value assignment, CSV line as List<string>)</param>
-        public void CustomMappingLine(Action<object, List<string>> customAction)
+        public CsvPropertyCustom<T, V> PropertyCustom<V>(Expression<Func<T, object?>> accessor, Action<T, V> customAction)
         {
-            customMappingsLine.Add(customAction);
+            Guard.IsNotNull(accessor);
+
+            var prop = new CsvPropertyCustom<T, V>(typeof(V), customAction);
+
+            properties.Add(prop);
+
+            return prop;
         }
 
         /// <summary>
@@ -64,8 +53,7 @@ namespace FluentCsvMachine
         /// Assumes first line are headers
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="separator"></param>
-        /// <param name="encoding"></param>
+        /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
         /// <returns>list of parsed objects</returns>
         public List<T> Parse(string path, CsvConfiguration? config = null)
         {
@@ -76,7 +64,11 @@ namespace FluentCsvMachine
             }
             else if (properties.Any(x => string.IsNullOrEmpty(x.ColumnName)))
             {
-                ThrowHelper.ThrowCsvConfigurationException("Please make sure that all properties have a valid ColumnName set.");
+                ThrowHelper.ThrowCsvConfigurationException("Please make sure that all properties have a valid ColumnName.");
+            }
+            else if (properties.Select(x => x.ColumnName).Distinct().Count() != properties.Count)
+            {
+                ThrowHelper.ThrowCsvConfigurationException("Please make sure that all properties have an unique ColumnName.");
             }
             else if (!File.Exists(path))
             {
@@ -100,32 +92,5 @@ namespace FluentCsvMachine
 
             return csv.EndOfFile();
         }
-
-        /// <summary>
-        /// Runs customMappingsColumn or customMappingsLine
-        /// </summary>
-        /// <param name="line">Current CSV line</param>
-        /// <param name="resultObj">Entity for value assignment</param>
-        /// <exception cref="ArgumentNullException">Entity is null</exception>
-        //private void RunCustomMappings(List<string> line, T resultObj)
-        //{
-        //    if (resultObj == null)
-        //        throw new ArgumentNullException(nameof(resultObj));
-
-        //    // Column mappings
-        //    foreach (var cm in customMappingsColumn)
-        //    {
-        //        // Raw value form CSV
-        //        var valueRaw = line[cm.Index];
-
-        //        cm.CustomAction(resultObj, valueRaw);
-        //    }
-
-        //    // Line mappings
-        //    foreach (var cm in customMappingsLine)
-        //    {
-        //        cm(resultObj, line);
-        //    }
-        //}
     }
 }
