@@ -2,8 +2,6 @@
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Values;
 using FluentCsvMachine.Property;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace FluentCsvMachine.Machine
 {
@@ -27,12 +25,12 @@ namespace FluentCsvMachine.Machine
 
         public CsvConfiguration Config { get; }
 
-        /// <summary>
-        /// Caches accessors expression to a lambda compiled setter
-        /// </summary>
-        private static readonly Dictionary<Expression<Func<T, object>>, Action<T, object>> SetterCache = new();
 
-        private readonly EntityFactory<T> _factory;
+        /// <summary>
+        /// Factory for entities
+        /// Assign only after headers are found because the Index value is required
+        /// </summary>
+        private EntityFactory<T>? _factory;
 
         internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties)
         {
@@ -46,8 +44,6 @@ namespace FluentCsvMachine.Machine
 
             _properties = properties;
             result = new List<T>();
-
-            _factory = new EntityFactory<T>(properties);
         }
 
         internal void Process(char[] buffer, int count)
@@ -78,11 +74,11 @@ namespace FluentCsvMachine.Machine
                     break;
 
                 case States.Content:
-                    var entity = _factory.Create(line);
+                    var entity = _factory!.Create(line);
                     result.Add(entity);
                     break;
 
-                default: throw new CsvMachineException();
+                default: throw new CsvMachineException("Unknown CsvMachine state");
             }
         }
 
@@ -137,6 +133,9 @@ namespace FluentCsvMachine.Machine
 
             // Set CSV row index for all properties
             _properties.ForEach(x => x.SetIndex(headersDic));
+
+            // Generate Factory
+            _factory = new EntityFactory<T>(_properties);
 
             // Focus on content now
             State = States.Content;

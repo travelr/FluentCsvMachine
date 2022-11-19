@@ -63,7 +63,7 @@ namespace FluentCsvMachine.Machine
                     break;
 
                 default:
-                    throw new CsvMachineException();
+                    throw new CsvMachineException($"Unknown Quotation state c == '{c}'");
             }
         }
     }

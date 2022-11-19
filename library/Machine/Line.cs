@@ -108,7 +108,7 @@ namespace FluentCsvMachine.Machine
                     if (c != NewLine)
                     {
                         // Only line breaks should remain
-                        throw new CsvMachineException();
+                        throw new CsvMachineException($"Unknown Line state c == '{c}'");
                     }
 
                     break;

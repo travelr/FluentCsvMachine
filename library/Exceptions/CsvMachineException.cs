@@ -5,7 +5,8 @@
     /// </summary>
     public class CsvMachineException : Exception
     {
-        public CsvMachineException() : base("State machines cannot handle CSV file, please support a bug ticket => Unknown state transition")
+        public CsvMachineException(string message) : base(
+            $"State machines cannot handle CSV file, please support a bug ticket! Reason: {message}")
         {
         }
     }

@@ -78,7 +78,7 @@ namespace FluentCsvMachine.Machine.Values
         /// <param name="names">strings at the group position</param>
         /// <param name="i">index of the string</param>
         /// <exception cref="CsvMachineException">Algorithm error</exception>
-        private void CreateTree(TreeNode parent, IEnumerable<StringIndex> names, int i = 0)
+        private static void CreateTree(TreeNode parent, IEnumerable<StringIndex> names, int i = 0)
         {
             // Group by current position int the car
             var group = names.Where(x => x.Value.Length > i).GroupBy(x => x.Value[i]);
@@ -94,26 +94,28 @@ namespace FluentCsvMachine.Machine.Values
 
                 // Check if we found a leave, StartsWith is needed (example RED, RED2)
                 var final = names.Where(x => x.Value.StartsWith(currentString)).ToList();
-                if (final.Count == 1)
+                switch (final.Count)
                 {
-                    // Array Index of the initial names array
-                    node.Index = final[0].Index;
-                }
-                else if (final.Count > 0)
-                {
-                    // Check if we have a full match (currentString = RED, names[RED, RED2])
-                    var fullMatch = final.SingleOrDefault(x => names.Any(y => y.Value == currentString) && x.Value == currentString);
-                    if (fullMatch != null)
+                    case 1:
+                        // Array Index of the initial names array
+                        node.Index = final[0].Index;
+                        break;
+                    case > 0:
                     {
-                        node.Index = fullMatch.Index;
-                    }
+                        // Check if we have a full match (currentString = RED, names[RED, RED2])
+                        var fullMatch = final.SingleOrDefault(x =>
+                            names.Any(y => y.Value == currentString) && x.Value == currentString);
+                        if (fullMatch != null)
+                        {
+                            node.Index = fullMatch.Index;
+                        }
 
-                    // Recursively check next char
-                    CreateTree(node, g, i + 1);
-                }
-                else
-                {
-                    throw new CsvMachineException();
+                        // Recursively check next char
+                        CreateTree(node, g, i + 1);
+                        break;
+                    }
+                    default:
+                        throw new CsvMachineException($"CreateTree algorithm failed, final equals 0");
                 }
             }
         }
