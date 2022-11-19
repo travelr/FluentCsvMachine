@@ -32,7 +32,9 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         private EntityFactory<T>? _factory;
 
-        internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties)
+        private readonly List<Action<T, IReadOnlyList<object?>>> _lineActions;
+
+        internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties, List<Action<T, IReadOnlyList<object?>>> lineActions)
         {
             Guard.IsNotNull(config);
             Guard.IsNotNull(properties);
@@ -43,6 +45,8 @@ namespace FluentCsvMachine.Machine
             _line = new Line<T>(this);
 
             _properties = properties;
+            _lineActions = lineActions;
+
             result = new List<T>();
         }
 
@@ -135,7 +139,7 @@ namespace FluentCsvMachine.Machine
             _properties.ForEach(x => x.SetIndex(headersDic));
 
             // Generate Factory
-            _factory = new EntityFactory<T>(_properties);
+            _factory = new EntityFactory<T>(_properties, _lineActions);
 
             // Focus on content now
             State = States.Content;

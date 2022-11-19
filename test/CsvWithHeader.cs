@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
 using System.Text;
@@ -69,6 +70,8 @@ namespace FluentCsvMachine.Test
         /// pokemon_id`p_desc
         /// 1`Bulbasaur can be seen napping
         /// 2`There is a bud on this
+        /// --
+        /// Try a few advanced features of this library
         /// </summary>
         [TestMethod]
         public void BackTick()
@@ -76,20 +79,37 @@ namespace FluentCsvMachine.Test
             var path = "../../../fixtures/backtick.csv";
             Assert.IsTrue(File.Exists(path));
 
-            // Lets use a custom property
             var parser = new CsvParser<Basic>();
-            parser.PropertyCustom<string>(c => c.A, (entity, value) => { entity.A = value.ToLowerInvariant(); })
-                .ColumnName("p_desc");
+            // Different order between CSV columns and properties are no problem
             parser.Property<int>(c => c.B).ColumnName("pokemon_id");
+
+            // Lets use a PropertyCustom and an inefficient LineAction 
+            parser.PropertyCustom<string>((entity, value) =>
+                {
+                    // Make string lower case
+                    entity.A = value.ToLowerInvariant();
+                })
+                .ColumnName("p_desc");
+
+            // Executed after entity creation
+            parser.LineAction((x, l) =>
+            {
+                // Make sure that the first char is lowercase -> PropertyCustom
+                Assert.IsTrue(char.IsLower(x.A![0]));
+
+                // Revert the PropertyCustom just to explain the order
+                var csvFieldBeforeCustomAction = l[1]!.ToString(); // Not SAFE!
+                x.A = csvFieldBeforeCustomAction;
+            });
 
             List<Basic> result = parser.Parse(path, new CsvConfiguration('`'));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);
             Assert.IsTrue(result[0].B == 1);
-            Assert.IsTrue(result[0].A == "bulbasaur can be seen napping");
+            Assert.IsTrue(result[0].A == "Bulbasaur can be seen napping");
             Assert.IsTrue(result[1].B == 2);
-            Assert.IsTrue(result[1].A == "there is a bud on this");
+            Assert.IsTrue(result[1].A == "There is a bud on this");
         }
 
         /// <summary>

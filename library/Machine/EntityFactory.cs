@@ -1,9 +1,8 @@
 ﻿using FluentCsvMachine.Exceptions;
-using FluentCsvMachine.Machine.Values;
 using FluentCsvMachine.Property;
-using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
+using FluentCsvMachine.Machine.Values;
 
 namespace FluentCsvMachine.Machine
 {
@@ -12,15 +11,14 @@ namespace FluentCsvMachine.Machine
         private readonly IReadOnlyList<CsvProperty<T>> _properties;
         private readonly IReadOnlyList<CsvPropertyBase> _custom;
 
-        /// <summary>
-        /// Caches accessors expression to a lambda compiled setter
-        /// </summary>
-        private readonly Action<T, object>?[] setterCache;
 
+        private readonly Action<T, object>?[] setterCache;
         private readonly Expression<Func<T, object>>?[] accessorCache;
 
+        private readonly List<Action<T, IReadOnlyList<object?>>> _lineActions;
 
-        public EntityFactory(IEnumerable<CsvPropertyBase> properties)
+
+        public EntityFactory(IEnumerable<CsvPropertyBase> properties, List<Action<T, IReadOnlyList<object?>>> lineActions)
         {
             var validProperties = properties.Where(x => x.Index.HasValue).ToList();
 
@@ -35,6 +33,9 @@ namespace FluentCsvMachine.Machine
 
             _properties = validProperties.Where(x => !x.IsCustom).Cast<CsvProperty<T>>().ToList();
             _custom = validProperties.Where(x => x.IsCustom).ToList();
+
+
+            _lineActions = lineActions;
         }
 
 
@@ -45,9 +46,20 @@ namespace FluentCsvMachine.Machine
             // Set the properties of the object based on the CSV line
             SetProperties(line, resultObj);
 
+            // Execute custom columns after the normal ones 
             if (_custom.Count > 0)
             {
                 CustomColumns(line, resultObj);
+            }
+
+            // Execute line actions always last
+            if (_lineActions.Count > 0)
+            {
+                var arg = line.Select(x => x.Value).ToList();
+                foreach (var action in _lineActions)
+                {
+                    action(resultObj, arg);
+                }
             }
 
             return resultObj;
@@ -58,7 +70,6 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="line">CSV line</param>
         /// <param name="resultObj">corresponding object</param>
-        /// <exception cref="Exception">CsvProperty has no property Accessor</exception>
         private void SetProperties(IReadOnlyList<ResultValue> line, T resultObj)
         {
             foreach (var p in _properties)
@@ -106,7 +117,6 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="line">Current CSV line</param>
         /// <param name="resultObj">Entity for value assignment</param>
-        /// <exception cref="ArgumentNullException">Entity is null</exception>
         private void CustomColumns(IReadOnlyList<ResultValue> line, T resultObj)
         {
             foreach (var custom in _custom)
