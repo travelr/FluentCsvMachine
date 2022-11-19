@@ -6,8 +6,7 @@ using System.Linq.Expressions;
 namespace FluentCsvMachine
 {
     /// <summary>
-    /// CSV parsing and automated mapping
-    /// Fluent property definitions
+    /// Fluent CSV Machine - an expressions based CSV parser
     /// </summary>
     /// <typeparam name="T">Type of the entity which represents a CSV line</typeparam>
     public class CsvParser<T> where T : new()

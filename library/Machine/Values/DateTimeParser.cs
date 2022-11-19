@@ -1,5 +1,6 @@
 ﻿using FluentCsvMachine.Helpers;
 using System.Runtime.CompilerServices;
+using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -128,11 +129,13 @@ namespace FluentCsvMachine.Machine.Values
                 {
                     _year = _year > 35 ? _year + 1900 : _year + 2000;
                 }
+
                 resultValue = new DateTime(_year, _month, _day, _hour + _hourOffset, _minute, _second, _ms);
             }
             catch (Exception)
             {
-                ThrowHelper.ThrowCsvMalformedException($"Cannot parse DateTime. Error In Date: {_year}/{_month}/{_day} {_hour + _hourOffset}:{_minute}:{_second}.{_ms}");
+                ThrowHelper.ThrowCsvMalformedException(
+                    $"Cannot parse DateTime. Error In Date: {_year}/{_month}/{_day} {_hour + _hourOffset}:{_minute}:{_second}.{_ms}");
             }
 
             // Reset values

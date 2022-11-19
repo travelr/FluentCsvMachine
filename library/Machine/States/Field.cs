@@ -1,11 +1,11 @@
 ﻿using ParserStates = FluentCsvMachine.Machine.Values.ValueParser.States;
 
-namespace FluentCsvMachine.Machine
+namespace FluentCsvMachine.Machine.States
 {
     /// <summary>
     /// Machine reading unquoted CSV fields
     /// </summary>
-    internal class Field<T> : CsvBaseElement where T : new()
+    internal class Field<T> : BaseElement where T : new()
     {
         private readonly Line<T> _line;
 

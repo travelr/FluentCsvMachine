@@ -2,7 +2,7 @@
 using FluentCsvMachine.Property;
 using System.Linq.Expressions;
 using System.Reflection;
-using FluentCsvMachine.Machine.Values;
+using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine
 {

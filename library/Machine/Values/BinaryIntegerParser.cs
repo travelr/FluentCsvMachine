@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -14,17 +15,17 @@ namespace FluentCsvMachine.Machine.Values
         // Look up table, X == 10
         private readonly Dictionary<char, T> _convert = new()
         {
-            {'0',  T.CreateChecked(0)},
-            {'1',  T.CreateChecked(1)},
-            {'2',  T.CreateChecked(2)},
-            {'3',  T.CreateChecked(3)},
-            {'4',  T.CreateChecked(4)},
-            {'5',  T.CreateChecked(5)},
-            {'6',  T.CreateChecked(6)},
-            {'7',  T.CreateChecked(7)},
-            {'8',  T.CreateChecked(8)},
-            {'9',  T.CreateChecked(9)},
-            {'X',  T.CreateChecked(10)},
+            { '0', T.CreateChecked(0) },
+            { '1', T.CreateChecked(1) },
+            { '2', T.CreateChecked(2) },
+            { '3', T.CreateChecked(3) },
+            { '4', T.CreateChecked(4) },
+            { '5', T.CreateChecked(5) },
+            { '6', T.CreateChecked(6) },
+            { '7', T.CreateChecked(7) },
+            { '8', T.CreateChecked(8) },
+            { '9', T.CreateChecked(9) },
+            { 'X', T.CreateChecked(10) },
         };
 
         internal override void Process(char c)

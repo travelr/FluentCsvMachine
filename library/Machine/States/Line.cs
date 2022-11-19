@@ -1,9 +1,10 @@
 ﻿using FluentCsvMachine.Exceptions;
+using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.Values;
 
-namespace FluentCsvMachine.Machine
+namespace FluentCsvMachine.Machine.States
 {
-    internal class Line<T> : CsvBaseElement where T : new()
+    internal class Line<T> : BaseElement where T : new()
     {
         internal enum States
         {
@@ -57,7 +58,7 @@ namespace FluentCsvMachine.Machine
             // Always process the sub state machine before continuing with this one
             switch (c, State)
             {
-                case { State: States.Initial } t when (t.c != Quote && c != NewLine && c != Comment):
+                case { State: States.Initial } t when t.c != Quote && c != NewLine && c != Comment:
                     // New field without a quote
                     State = States.Field;
 
@@ -117,7 +118,7 @@ namespace FluentCsvMachine.Machine
             // Nothing left to do if it is not a line break
             // Also allow line breaks in quoted fields
             // Line breaks also need to be processed by the sub state machine
-            if (c != NewLine || (State == States.FieldQuoted && quote.State != QuotationField<T>.States.Initial))
+            if (c != NewLine || State == States.FieldQuoted && quote.State != QuotationField<T>.States.Initial)
             {
                 return;
             }

@@ -1,5 +1,7 @@
 ﻿using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine.Result;
+using FluentCsvMachine.Machine.States;
 using FluentCsvMachine.Machine.Values;
 using FluentCsvMachine.Property;
 

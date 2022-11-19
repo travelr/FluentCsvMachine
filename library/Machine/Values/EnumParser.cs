@@ -1,6 +1,7 @@
 ﻿using System.Net.Quic;
 using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.Tree;
 
 namespace FluentCsvMachine.Machine.Values

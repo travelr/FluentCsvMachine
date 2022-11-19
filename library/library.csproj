@@ -23,11 +23,13 @@
 
   <ItemGroup>
     <None Include="..\assets\9937143_construction_jackhammer_repair_drill_industry_icon.png">
+      <Visible>false</Visible>
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="..\README.md">
+    <None Include="..\README.md" Visible="false">
+      <Visible>false</Visible>
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

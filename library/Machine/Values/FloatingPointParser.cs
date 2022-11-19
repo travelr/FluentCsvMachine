@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Values
 {

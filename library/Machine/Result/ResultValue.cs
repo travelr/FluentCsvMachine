@@ -1,4 +1,4 @@
-﻿namespace FluentCsvMachine.Machine.Values
+﻿namespace FluentCsvMachine.Machine.Result
 {
     /// <summary>
     /// Result of a ValueParser

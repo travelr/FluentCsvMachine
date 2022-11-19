@@ -1,18 +1,18 @@
 ﻿using FluentCsvMachine.Exceptions;
 
-namespace FluentCsvMachine.Machine
+namespace FluentCsvMachine.Machine.States
 {
     /// <summary>
     /// Machine reading quoted CSV fields according RFC 4180
     /// https://en.wikipedia.org/wiki/Comma-separated_values
     /// </summary>
-    internal class QuotationField<T> : CsvBaseElement where T : new()
+    internal class QuotationField<T> : BaseElement where T : new()
     {
         internal enum States
         {
             Initial,
             Running, // Quote Open
-            Closed,  // Second Quote
+            Closed, // Second Quote
             //Initial -> Closed and Delimiter or line-break
         }
 
@@ -50,7 +50,7 @@ namespace FluentCsvMachine.Machine
                     State = States.Closed;
                     break;
 
-                case { State: States.Closed } t when (t.c == Delimiter || t.c == NewLine):
+                case { State: States.Closed } t when t.c == Delimiter || t.c == NewLine:
                     // Second quote followed by a delimiter or line break
                     line.Value();
                     State = States.Initial;
