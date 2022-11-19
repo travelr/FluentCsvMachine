@@ -5,11 +5,31 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>FluentCsvMachine</RootNamespace>
-    <AppDesignerFolder>Propertiy</AppDesignerFolder>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageId>Fluent.CSV.Machine</PackageId>
+    <Title>Fluent CSV Machine</Title>
+    <Authors>travelr</Authors>
+    <Product />
+    <PackageProjectUrl></PackageProjectUrl>
+    <Version>0.1.0-beta</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/travelr/FluentCsvMachine</RepositoryUrl>
+    <PackageTags>csv;csv-reader;comma;separated;delimited;parser;csv-parser;fluent</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>9937143_construction_jackhammer_repair_drill_industry_icon.png</PackageIcon>
+    <Description>Fluent CSV Machine - an expressions based CSV parser</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\assets\9937143_construction_jackhammer_repair_drill_industry_icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
