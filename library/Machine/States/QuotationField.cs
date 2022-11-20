@@ -12,6 +12,7 @@ namespace FluentCsvMachine.Machine.States
         {
             Initial,
             Running, // Quote Open
+            Escape, // Process next char regardless if it is a quote
             Closed, // Second Quote
             //Initial -> Closed and Delimiter or line-break
         }
@@ -40,7 +41,7 @@ namespace FluentCsvMachine.Machine.States
                     State = States.Running;
                     break;
 
-                case { State: States.Running } t when t.c != Quote:
+                case { State: States.Running } t when t.c != Quote && t.c != QuoteEscape:
                     // Quote content
                     line.Parser.Process(c);
                     break;
@@ -48,6 +49,17 @@ namespace FluentCsvMachine.Machine.States
                 case { State: States.Running } t when t.c == Quote:
                     // Second quote
                     State = States.Closed;
+                    break;
+
+                case { State: States.Running } t when t.c == QuoteEscape:
+                    // Escape next quote: needs to be after "when t.c == Quote:"
+                    State = States.Escape;
+                    break;
+
+                case { State: States.Escape }:
+                    // Process char and return back to Running
+                    line.Parser.Process(c);
+                    State = States.Running;
                     break;
 
                 case { State: States.Closed } t when t.c == Delimiter || t.c == NewLine:
@@ -58,12 +70,13 @@ namespace FluentCsvMachine.Machine.States
 
                 case { State: States.Closed } t when t.c == Quote:
                     // Quote inside a quoted field ""hi"" -> "hi"
+                    // Escape char is a quote therefore Escape state is not used - achieved by the order of statements
                     line.Parser.Process(Quote);
                     State = States.Running;
                     break;
 
                 default:
-                    throw new CsvMachineException($"Unknown Quotation state c == '{c}'");
+                    throw new CsvMachineException($"Unknown Quotation state == {State} && c == '{c}'");
             }
         }
     }

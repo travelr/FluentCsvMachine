@@ -40,6 +40,11 @@ namespace FluentCsvMachine
         public char Quote { get; set; } = '"';
 
         /// <summary>
+        /// Quote escape character
+        /// </summary>
+        public char QuoteEscape { get; set; } = '"';
+
+        /// <summary>
         /// Comment character, not defined in RFC 4180
         /// </summary>
         public char? Comment { get; set; } = null;

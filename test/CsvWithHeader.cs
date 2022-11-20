@@ -327,11 +327,8 @@ namespace FluentCsvMachine.Test
         /// 5,6,7
         /// </summary>
         [TestMethod]
-        [Ignore("Not supported yet")]
         public void OptionEscape()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/option-escape.csv"));
-
             const string path = "../../../fixtures/option-escape.csv";
             Assert.IsTrue(File.Exists(path));
 
@@ -340,7 +337,7 @@ namespace FluentCsvMachine.Test
             parser.Property<string>(c => c.B).ColumnName("b");
             parser.Property<int>(c => c.C).ColumnName("c");
 
-            var result = parser.Parse(path);
+            var result = parser.Parse(path, new CsvConfiguration() { QuoteEscape = '\\' });
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
@@ -422,7 +419,6 @@ namespace FluentCsvMachine.Test
         /// 3,'\'\'',4
         /// 5,6,7
         /// </summary>
-        [Ignore("Escape quote not implemented")]
         [TestMethod]
         public void OptionQuoteEscape()
         {
@@ -433,20 +429,15 @@ namespace FluentCsvMachine.Test
             parser.Property<int>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
             parser.Property<int>(c => c.C).ColumnName("c");
-            CsvConfiguration config = new()
-            {
-                Quote = '\''
-            };
-            var result = parser.Parse(path, config);
+
+            var result = parser.Parse(path, new CsvConfiguration() { Quote = '\'', QuoteEscape = '\\' });
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
+
             Assert.IsTrue(result[0].B == "some 'escaped' value");
-            Assert.IsTrue(result[0].C == 2);
             Assert.IsTrue(result[1].B == "''");
-            Assert.IsTrue(result[1].C == 4);
             Assert.IsTrue(result[2].B == "6");
-            Assert.IsTrue(result[2].C == 7);
         }
 
         /// <summary>
