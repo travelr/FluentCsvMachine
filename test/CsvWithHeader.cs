@@ -27,7 +27,7 @@ namespace FluentCsvMachine.Test
             parser.Property<string>(c => c.A).ColumnName("a");
             parser.Property<int>(c => c.B).ColumnName("b");
             parser.Property<decimal>(c => c.C).ColumnName("c");
-            List<Basic> result = parser.Parse(path);
+            var result = parser.Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 1);
@@ -52,11 +52,8 @@ namespace FluentCsvMachine.Test
             parser.Property<decimal>(c => c.C).ColumnName("c");
             parser.Property<int>(c => c.B).ColumnName("b");
             parser.Property<string>(c => c.A).ColumnName("a");
-            CsvConfiguration config = new()
-            {
-                Comment = '#'
-            };
-            List<Basic> result = parser.Parse(path, config);
+
+            var result = parser.Parse(path, new CsvConfiguration() { Comment = '#' });
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 1);
@@ -101,7 +98,7 @@ namespace FluentCsvMachine.Test
                 x.A = csvFieldBeforeCustomAction;
             });
 
-            List<Basic> result = parser.Parse(path, new CsvConfiguration('`'));
+            var result = parser.Parse(path, new CsvConfiguration('`'));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 2);

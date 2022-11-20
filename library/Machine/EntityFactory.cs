@@ -15,10 +15,10 @@ namespace FluentCsvMachine.Machine
         private readonly Action<T, object>?[] setterCache;
         private readonly Expression<Func<T, object>>?[] accessorCache;
 
-        private readonly List<Action<T, IReadOnlyList<object?>>> _lineActions;
+        private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
 
 
-        public EntityFactory(IEnumerable<CsvPropertyBase> properties, List<Action<T, IReadOnlyList<object?>>> lineActions)
+        public EntityFactory(IEnumerable<CsvPropertyBase> properties, List<Action<T, IReadOnlyList<object?>>>? lineActions)
         {
             var validProperties = properties.Where(x => x.Index.HasValue).ToList();
 
@@ -53,7 +53,7 @@ namespace FluentCsvMachine.Machine
             }
 
             // Execute line actions always last
-            if (_lineActions.Count > 0)
+            if (_lineActions is { Count: > 0 })
             {
                 var arg = line.Select(x => x.Value).ToList();
                 foreach (var action in _lineActions)

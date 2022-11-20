@@ -1,5 +1,6 @@
 ﻿using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine;
+using FluentCsvMachine.Machine.Workflow;
 using FluentCsvMachine.Property;
 using System.Linq.Expressions;
 
@@ -71,10 +72,45 @@ namespace FluentCsvMachine
         /// Parse the CSV File
         /// Assumes first line are headers
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Path to the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
         /// <returns>list of parsed objects</returns>
-        public List<T> Parse(string path, CsvConfiguration? config = null)
+        public IReadOnlyList<T> Parse(string path, CsvConfiguration? config = null)
+        {
+            CheckPreconditions();
+            if (!File.Exists(path))
+            {
+                ThrowHelper.ThrowFileNotFoundException(path);
+            }
+
+            using var fs = File.OpenRead(path);
+
+            var result = StartWorkflow(fs, config);
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Parse the CSV File
+        /// Assumes first line are headers
+        /// </summary>
+        /// <param name="stream">Stream of the CSV file</param>
+        /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
+        /// <returns>list of parsed objects</returns>
+        public IReadOnlyList<T> ParseStream(Stream stream, CsvConfiguration? config = null)
+        {
+            CheckPreconditions();
+            Guard.IsNotNull(stream);
+
+            var result = StartWorkflow(stream, config);
+
+            return result;
+        }
+
+        #region private
+
+        private void CheckPreconditions()
         {
             // Check preconditions
             if (!properties.Any())
@@ -89,27 +125,22 @@ namespace FluentCsvMachine
             {
                 ThrowHelper.ThrowCsvConfigurationException("Please make sure that all properties have an unique ColumnName.");
             }
-            else if (!File.Exists(path))
-            {
-                ThrowHelper.ThrowFileNotFoundException(path);
-                throw new FileNotFoundException(path);
-            }
-
-            config ??= new CsvConfiguration();
-            var csv = new CsvMachine<T>(config, properties, _lineActions);
-
-            using var fs = File.OpenRead(path);
-            using var sr = new StreamReader(fs, config.Encoding);
-
-            char[] buffer = new char[config.BufferSize];
-            int read = 0;
-
-            while ((read = sr.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                csv.Process(buffer, read);
-            }
-
-            return csv.EndOfFile();
         }
+
+        private IReadOnlyList<T> StartWorkflow(Stream stream, CsvConfiguration? config = null)
+        {
+            var input = new WorkflowInput<T>(stream, properties)
+            {
+                Config = config,
+                LineActions = _lineActions
+            };
+
+            var workflow = new Workflow<T>(input);
+            var result = workflow.Start();
+
+            return result;
+        }
+
+        #endregion private
     }
 }

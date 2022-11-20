@@ -7,7 +7,7 @@ namespace FluentCsvMachine.Test
         [Ignore("Test case not implemented yet")]
         public void Basic()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/bad-data.csv"));
+            Assert.IsTrue(File.Exists("../../../fixtures/no-headers.csv"));
         }
 
         [TestMethod]

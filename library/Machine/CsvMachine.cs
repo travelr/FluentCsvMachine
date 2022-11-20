@@ -3,7 +3,9 @@ using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.States;
 using FluentCsvMachine.Machine.Values;
+using FluentCsvMachine.Machine.Workflow;
 using FluentCsvMachine.Property;
+using System.Threading.Channels;
 
 namespace FluentCsvMachine.Machine
 {
@@ -15,18 +17,19 @@ namespace FluentCsvMachine.Machine
             Content
         }
 
-        private readonly Line<T> _line;
-        private readonly List<CsvPropertyBase> _properties;
-
-        private readonly List<T> result;
-
+        internal CsvConfiguration Config { get; }
         internal States State { get; private set; }
 
+        private readonly ChannelWriter<ResultLine> _writer;
+        private readonly List<CsvPropertyBase> _properties;
+        private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
+
+        private readonly Line<T> _line;
+        private readonly List<T> result;
+
+        private readonly char _skipNewLineChar;
         private Dictionary<int, ValueParser>? _parsers;
         private readonly StringParser _stringParser = new();
-
-        public CsvConfiguration Config { get; }
-
 
         /// <summary>
         /// Factory for entities
@@ -34,24 +37,23 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         private EntityFactory<T>? _factory;
 
-        private readonly List<Action<T, IReadOnlyList<object?>>> _lineActions;
-        private readonly char _skipNewLineChar;
 
-        internal CsvMachine(CsvConfiguration config, List<CsvPropertyBase> properties, List<Action<T, IReadOnlyList<object?>>> lineActions)
+        public CsvMachine(WorkflowInput<T> input, ChannelWriter<ResultLine> writer)
         {
-            Guard.IsNotNull(config);
-            Guard.IsNotNull(properties);
+            Guard.IsNotNull(input);
+            Guard.IsNotNull(writer);
 
-            Config = config;
+            Config = input.Config ?? new CsvConfiguration();
             State = States.HeaderSearch;
-            _skipNewLineChar = config.NewLine == '\n' ? '\r' : '\0';
+
+            _writer = writer;
+            _properties = input.Properties;
+            _lineActions = input.LineActions;
 
             _line = new Line<T>(this);
-
-            _properties = properties;
-            _lineActions = lineActions;
-
             result = new List<T>();
+
+            _skipNewLineChar = Config.NewLine == '\n' ? '\r' : '\0';
         }
 
         internal void Process(char[] buffer, int count)
