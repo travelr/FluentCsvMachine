@@ -2,13 +2,17 @@ using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
 using System.Text;
 
+// ReSharper disable CommentTypo
+// ReSharper disable CompareOfFloatsByEqualityOperator
+
 namespace FluentCsvMachine.Test
 {
     [TestClass]
     public class CsvWithHeader
     {
         // ToDo: Mismatch Property Def and Class
-        // ToDo: Support nullable!
+        // ToDo: Configuration tests (same col name, same setter, ...)
+        // ToDo: Support nullable! and fix test cases
         // ToDo: Support strict mode?
         // ToDo: Do not map last column
 
@@ -263,28 +267,36 @@ namespace FluentCsvMachine.Test
         }
 
         /// <summary>
-        /// a,b,c
-        /// 1,2,3
-        /// 4,5,6
-        /// 7,8,9,10
+        /// # Numbers and mean things ;;;;;;
+        /// 
+        /// # ; Empty Column at the end and in between
+        /// 
+        /// a;b;;c;d;
+        /// 100;0;;200;300;
+        /// -99;;;2,2;3,03;
+        /// -4;-0,0;;123.456.789,123;-6,6666666;
+        /// "-4";"0";"";"123.456.789,123";"-6,6666666";
         /// </summary>
         [TestMethod]
-        public void NoHeaders()
+        public void Numbers()
         {
-            const string path = "../../../fixtures/no-headers.csv";
+            const string path = "../../../fixtures/numbers.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var parser = new CsvParser<BasicInt>();
-            parser.Property<int>(c => c.A).ColumnName("a");
-            parser.Property<int>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
-            var result = parser.Parse(path);
+            var parser = new CsvParser<Numbers>();
+            parser.Property<short>(c => c.A).ColumnName("a");
+            parser.Property<float>(c => c.B).ColumnName("b");
+            parser.Property<decimal>(c => c.C).ColumnName("c");
+            parser.Property<double>(c => c.D).ColumnName("d");
+            var result = parser.Parse(path, new CsvConfiguration() { Delimiter = ';', DecimalPoint = ',' });
 
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Count == 3);
-            Assert.IsTrue(result[2].A == 7);
-            Assert.IsTrue(result[2].B == 8);
-            Assert.IsTrue(result[2].C == 9);
+            Assert.IsTrue(result.Count == 4);
+            Assert.IsTrue(result[0].A == 100 && result[0].B == 0 && result[0].C == 200m && result[0].D == 300d);
+            // ToDo: B == null!!!
+            Assert.IsTrue(result[1].A == -99 && result[1].B == 0 && result[1].C == 2.2m && result[1].D == 3.03d);
+            Assert.IsTrue(result[2].A == -4 && result[2].B == 0 && result[2].C == 123456789.123m && result[2].D == -6.123456d);
+            Assert.IsTrue(result[3].A == -4 && result[3].B == 0 && result[3].C == 123456789.123m && result[3].D == -6.123456d);
         }
 
         /// <summary>
@@ -346,7 +358,7 @@ namespace FluentCsvMachine.Test
 
         [TestMethod]
         [Ignore("Test case not implemented yet")]
-        public void OptionmaxRowBytes()
+        public void OptionMaxRowBytes()
         {
             Assert.IsTrue(File.Exists("../../../fixtures/option-maxRowBytes.csv"));
         }

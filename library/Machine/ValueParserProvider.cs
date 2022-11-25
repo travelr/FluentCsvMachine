@@ -13,7 +13,7 @@ namespace FluentCsvMachine.Machine
         {
             { typeof(string), new StringParser() },
             { typeof(char), new CharParser() },
-            { typeof(byte), new BinaryIntegerParser<byte>() },
+            //{ typeof(byte), new BinaryIntegerParser<byte>() }, // Signed unsigned
             { typeof(short), new BinaryIntegerParser<short>() },
             { typeof(int), new BinaryIntegerParser<int>() },
             { typeof(long), new BinaryIntegerParser<long>() },
@@ -48,11 +48,13 @@ namespace FluentCsvMachine.Machine
                     ThrowHelper.ThrowCsvConfigurationException("Each DateTime column requires InputFormat()");
                 }
 
-                if (!DateParsers.TryGetValue(inputFormat, out var dateParser))
+                if (DateParsers.TryGetValue(inputFormat, out var dateParser))
                 {
-                    dateParser = new DateTimeParser(inputFormat);
-                    DateParsers.Add(inputFormat, dateParser);
+                    return dateParser;
                 }
+
+                dateParser = new DateTimeParser(inputFormat);
+                DateParsers.Add(inputFormat, dateParser);
 
                 return dateParser;
             }

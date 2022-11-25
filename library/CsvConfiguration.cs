@@ -5,6 +5,9 @@ namespace FluentCsvMachine
 {
     public class CsvConfiguration
     {
+        private char _decimalPoint = '.';
+        private char _thousandsChar = '.';
+
         public CsvConfiguration()
         { }
 
@@ -52,7 +55,29 @@ namespace FluentCsvMachine
         /// <summary>
         /// Char to separate number and fraction e.g. 3.33
         /// </summary>
-        public char FloatingPoint { get; set; } = '.';
+        public char DecimalPoint
+        {
+            get => _decimalPoint;
+            set
+            {
+                if (value is not ('.' or ','))
+                {
+                    ThrowHelper.ThrowCsvConfigurationException("Decimal point only allows dot or comma as a value");
+                }
+
+                _decimalPoint = value;
+                _thousandsChar = value == '.' ? ',' : '.';
+            }
+        }
+
+        /// <summary>
+        /// Char to separate thousands
+        /// Set by DecimalPoint;
+        /// </summary>
+        public char ThousandsChar
+        {
+            get => _thousandsChar;
+        }
 
         #region Library parameters
 
@@ -65,7 +90,7 @@ namespace FluentCsvMachine
         /// <summary>
         /// Header needs to be defined in the first x lines
         /// </summary>
-        public int HeaderSearchLimit { get; set; } = 10;
+        public int HeaderSearchLimit { get; set; } = 15;
 
         #endregion Library parameters
     }

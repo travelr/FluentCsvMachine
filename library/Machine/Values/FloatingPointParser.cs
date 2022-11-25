@@ -10,6 +10,7 @@ namespace FluentCsvMachine.Machine.Values
     internal class FloatingPointParser<T> : ValueParser where T : IFloatingPoint<T>
     {
         private bool _isNull;
+        private bool _isNegative;
         private long _n;
         private int? _s; // index of the floating point char
         private int _charCount; // length of the field
@@ -17,8 +18,15 @@ namespace FluentCsvMachine.Machine.Values
         internal override void Process(char c)
         {
             // Input check
-            var isFloatingPointChar = c == Config!.FloatingPoint;
-            if (c is < '0' or > '9' && !isFloatingPointChar)
+            if (_charCount == 0 && c == '-')
+            {
+                _isNegative = true;
+                _charCount++;
+                return;
+            }
+
+            var validChar = (c == Config!.DecimalPoint || c == Config!.ThousandsChar);
+            if (c is < '0' or > '9' && !validChar)
             {
                 _isNull = true;
                 State = States.FastForward;
@@ -26,7 +34,7 @@ namespace FluentCsvMachine.Machine.Values
             }
 
             // Update internal variables
-            if (isFloatingPointChar)
+            if (validChar)
             {
                 _s = _charCount + 1;
             }
@@ -46,8 +54,7 @@ namespace FluentCsvMachine.Machine.Values
             if (!_isNull)
             {
                 // Based on https://stackoverflow.com/a/8458496
-                var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, false,
-                    (byte)(_charCount - (_s ?? _charCount)));
+                var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, _isNegative, (byte)(_charCount - (_s ?? _charCount)));
                 // Cast will happen later
                 result = new ResultValue(typeof(T), resultValue);
             }
@@ -58,6 +65,7 @@ namespace FluentCsvMachine.Machine.Values
 
             // Reset variables
             _isNull = false;
+            _isNegative = false;
             _n = 0;
             _s = null;
             _charCount = 0;

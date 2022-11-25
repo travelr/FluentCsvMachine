@@ -3,6 +3,8 @@ using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Values
 {
+    //ToDo: Support unsigned numbers
+
     /// <summary>
     /// Parser for short, int, long, ...
     /// </summary>
@@ -25,11 +27,19 @@ namespace FluentCsvMachine.Machine.Values
             { '7', T.CreateChecked(7) },
             { '8', T.CreateChecked(8) },
             { '9', T.CreateChecked(9) },
-            { 'X', T.CreateChecked(10) },
+            { 'X', T.CreateChecked(10) }
         };
+
+        private bool _isNegative;
 
         internal override void Process(char c)
         {
+            if (_result == _convert['0'] && c == '-')
+            {
+                _isNegative = true;
+                return;
+            }
+
             // Input check
             if (c is not (>= '0' and <= '9'))
             {
@@ -44,11 +54,17 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override ResultValue GetResult()
         {
+            if (_isNegative)
+            {
+                _result *= T.CreateChecked(-1);
+            }
+
             var result = !_isNull ? new ResultValue(typeof(T), _result) : new ResultValue();
 
             // Reset variables
             _result = T.CreateChecked(0);
             _isNull = false;
+            _isNegative = false;
             State = States.Parsing;
 
             return result;

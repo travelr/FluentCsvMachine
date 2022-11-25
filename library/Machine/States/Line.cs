@@ -78,9 +78,15 @@ namespace FluentCsvMachine.Machine.States
                     return;
 
                 case { State: States.Initial } t when t.c == NewLine:
-                    // Empty Line, nothing to do
-                    LineCounter++;
-                    return;
+                    if (columnNumber == 0)
+                    {
+                        // Empty Line, nothing to do
+                        LineCounter++;
+                        return;
+                    }
+
+                    // else Delimiter Line Break 
+                    break;
 
                 case { State: States.Field }:
                     // Reading unquoted field
@@ -115,10 +121,11 @@ namespace FluentCsvMachine.Machine.States
                     break;
             }
 
+
             // Nothing left to do if it is not a line break
             // Also allow line breaks in quoted fields
             // Line breaks also need to be processed by the sub state machine
-            if (c != NewLine || State == States.FieldQuoted && quote.State != QuotationField<T>.States.Initial)
+            if (c != NewLine || (State == States.FieldQuoted && quote.State != QuotationField<T>.States.Initial))
             {
                 return;
             }
