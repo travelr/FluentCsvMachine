@@ -12,7 +12,7 @@ namespace FluentCsvMachine.Machine.Values
         private int _i;
         private char[] _work;
 
-        public StringParser()
+        public StringParser() : base(true)
         {
             _work = ArrayPool<char>.Shared.Rent(256);
             _i = 0;

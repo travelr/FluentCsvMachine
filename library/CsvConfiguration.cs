@@ -6,7 +6,6 @@ namespace FluentCsvMachine
     public class CsvConfiguration
     {
         private char _decimalPoint = '.';
-        private char _thousandsChar = '.';
 
         public CsvConfiguration()
         { }
@@ -66,7 +65,7 @@ namespace FluentCsvMachine
                 }
 
                 _decimalPoint = value;
-                _thousandsChar = value == '.' ? ',' : '.';
+                ThousandsChar = value == '.' ? ',' : '.';
             }
         }
 
@@ -74,10 +73,7 @@ namespace FluentCsvMachine
         /// Char to separate thousands
         /// Set by DecimalPoint;
         /// </summary>
-        public char ThousandsChar
-        {
-            get => _thousandsChar;
-        }
+        public char ThousandsChar { get; private set; } = '.';
 
         #region Library parameters
 

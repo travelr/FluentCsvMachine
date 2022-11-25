@@ -9,15 +9,15 @@
         public string? Email { get; set; }
         public string? First { get; set; }
         public string? Last { get; set; }
-        public int? Age { get; set; }
+        public int Age { get; set; }
         public string? Street { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
-        public int? Zip { get; set; }
-        public DateTime? Date { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
-        public BigDataSetPick? Pick { get; set; }
+        public int Zip { get; set; }
+        public DateTime Date { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public BigDataSetPick Pick { get; set; }
         public string? @String { get; set; }
     }
 

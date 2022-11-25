@@ -6,8 +6,8 @@
 
         public float? B { get; set; }
 
-        public decimal? C { get; set; }
+        public decimal C { get; set; }
 
-        public double? D { get; set; }
+        public double D { get; set; }
     }
 }

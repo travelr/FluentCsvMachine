@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Values
@@ -9,11 +10,14 @@ namespace FluentCsvMachine.Machine.Values
     /// <typeparam name="T">Type e.g. decimal</typeparam>
     internal class FloatingPointParser<T> : ValueParser where T : IFloatingPoint<T>
     {
-        private bool _isNull;
         private bool _isNegative;
-        private long _n;
+        private long? _n;
         private int? _s; // index of the floating point char
         private int _charCount; // length of the field
+
+        public FloatingPointParser(bool nullable) : base(nullable)
+        {
+        }
 
         internal override void Process(char c)
         {
@@ -28,8 +32,7 @@ namespace FluentCsvMachine.Machine.Values
             var validChar = (c == Config!.DecimalPoint || c == Config!.ThousandsChar);
             if (c is < '0' or > '9' && !validChar)
             {
-                _isNull = true;
-                State = States.FastForward;
+                SetNull();
                 return;
             }
 
@@ -40,7 +43,7 @@ namespace FluentCsvMachine.Machine.Values
             }
             else
             {
-                _n = (_n * 10) + (c - '0');
+                _n = ((_n ?? 0) * 10) + (c - '0');
             }
 
             _charCount++;
@@ -51,12 +54,13 @@ namespace FluentCsvMachine.Machine.Values
             ResultValue result;
 
             // Create result if it is a valid field
-            if (!_isNull)
+            if (!IsNull && _n.HasValue)
             {
                 // Based on https://stackoverflow.com/a/8458496
                 var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, _isNegative, (byte)(_charCount - (_s ?? _charCount)));
+                var resultType = Nullable ? typeof(Nullable<>).MakeGenericType(typeof(T)) : typeof(T);
                 // Cast will happen later
-                result = new ResultValue(typeof(T), resultValue);
+                result = new ResultValue(resultType, resultValue);
             }
             else
             {
@@ -64,11 +68,11 @@ namespace FluentCsvMachine.Machine.Values
             }
 
             // Reset variables
-            _isNull = false;
             _isNegative = false;
-            _n = 0;
+            _n = null;
             _s = null;
             _charCount = 0;
+            IsNull = false;
             State = States.Parsing;
 
             return result;

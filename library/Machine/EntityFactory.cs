@@ -1,8 +1,9 @@
 ﻿using FluentCsvMachine.Exceptions;
+using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Property;
 using System.Linq.Expressions;
 using System.Reflection;
-using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine
 {
@@ -12,7 +13,7 @@ namespace FluentCsvMachine.Machine
         private readonly IReadOnlyList<CsvPropertyBase> _custom;
 
 
-        private readonly Action<T, object>?[] setterCache;
+        private readonly Action<T, object?>?[] setterCache;
         private readonly Expression<Func<T, object>>?[] accessorCache;
 
         private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
@@ -28,7 +29,7 @@ namespace FluentCsvMachine.Machine
                 throw new CsvMachineException("EntityFactory algorithm failed, set Index on properties first");
             }
 
-            setterCache = new Action<T, object>[maxColNumber];
+            setterCache = new Action<T, object?>?[maxColNumber];
             accessorCache = new Expression<Func<T, object>>[maxColNumber];
 
             _properties = validProperties.Where(x => !x.IsCustom).Cast<CsvProperty<T>>().ToList();
@@ -74,10 +75,16 @@ namespace FluentCsvMachine.Machine
         {
             foreach (var p in _properties)
             {
-                // Try to get a cached accessor
                 var index = p.Index!.Value;
-                var accessor = accessorCache[index];
 
+                // Check if CSV field has a value
+                if (!GetValue(line, index, out ResultValue value))
+                {
+                    continue;
+                }
+
+                // Try to get a cached accessor
+                var accessor = accessorCache[index];
                 if (accessor == null)
                 {
                     // get Accessor property
@@ -101,14 +108,9 @@ namespace FluentCsvMachine.Machine
                 }
 
 
-                if (!GetValue(line, index, out object? value))
-                {
-                    continue;
-                }
-
                 // Assign to value to the object
-                var setter = GetSetter(accessor, index);
-                setter(resultObj, value!);
+                var setter = GetSetter(accessor, index, value.Type!);
+                setter(resultObj, ToTypedValue(value));
             }
         }
 
@@ -121,7 +123,7 @@ namespace FluentCsvMachine.Machine
         {
             foreach (var custom in _custom)
             {
-                if (!GetValue(line, custom.Index!.Value, out object? value))
+                if (!GetValue(line, custom.Index!.Value, out ResultValue value))
                 {
                     continue;
                 }
@@ -133,30 +135,39 @@ namespace FluentCsvMachine.Machine
                     throw new CsvMachineException("EntityFactory algorithm failed, CustomAction method has been renamed!");
                 }
 
-                customAction.Invoke(custom, new[] { resultObj, value });
+                customAction.Invoke(custom, new[] { resultObj, ToTypedValue(value) });
             }
         }
 
         /// <summary>
-        /// From CSV line to typed field value
+        /// Get a value form the CSV line
         /// </summary>
         /// <param name="line">CSV line</param>
         /// <param name="index">Index of the field</param>
-        /// <param name="value">typed value, may be null if the CSV field was empty or was not valid</param>
-        /// <returns></returns>
-        private static bool GetValue(IReadOnlyList<ResultValue> line, int index, out object? value)
+        /// <param name="value">ResultValue output</param>
+        /// <returns>True if the value is not null</returns>
+        private static bool GetValue(IReadOnlyList<ResultValue> line, int index, out ResultValue value)
         {
             // Raw value form CSV
-            var resultValue = line[index];
-            if (resultValue.IsNull)
+            value = line[index];
+            return !value.IsNull;
+        }
+
+
+        private static object? ToTypedValue(ResultValue value)
+        {
+            Type t = value.Type!;
+
+            // ToDo: Cache it
+            // Convert.ChangeType on Nullable does not work, get the GetUnderlyingType
+            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                value = null;
-                return false;
+                t = Nullable.GetUnderlyingType(t)!;
             }
 
-            // Convert raw value based on defined methods
-            value = Convert.ChangeType(resultValue.Value, resultValue.Type!);
-            return true;
+            var result = Convert.ChangeType(value.Value, t);
+
+            return result;
         }
 
         /// <summary>
@@ -164,9 +175,10 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="accessor">Accessor expression to the property</param>
         /// <param name="index">Column index for fast caching</param>
+        /// <param name="targetPropertyType">Type defined in the column</param>
         /// <returns>The setter</returns>
         /// <exception cref="Exception">Should not happen, broken code?</exception>
-        private Action<T, object> GetSetter(Expression<Func<T, object>> accessor, int index)
+        private Action<T, object?> GetSetter(Expression<Func<T, object>> accessor, int index, Type targetPropertyType)
         {
             var result = setterCache[index];
 
@@ -187,8 +199,13 @@ namespace FluentCsvMachine.Machine
             // Double check if everything could be resolved
             if (selectorExpr is not { Member: PropertyInfo property } || property.DeclaringType == null)
             {
-                throw new CsvMachineException(
-                    "EntityFactory algorithm failed, unknown expression type!");
+                throw new CsvMachineException("EntityFactory algorithm failed, unknown expression type!");
+            }
+
+            if (property.PropertyType != targetPropertyType)
+            {
+                ThrowHelper.CsvColumnMismatchException(
+                    $"The column {property.Name} has the type ({targetPropertyType}) which does not match the class definition ({property.PropertyType})");
             }
 
             // Based on https://stackoverflow.com/a/17669142
@@ -197,7 +214,7 @@ namespace FluentCsvMachine.Machine
             var exValue = Expression.Parameter(typeof(object), "p");
             var exConvertedValue = Expression.Convert(exValue, property.PropertyType);
             var exBody = Expression.Assign(exMemberAccess, exConvertedValue);
-            var lambda = Expression.Lambda<Action<T, object>>(exBody, exInstance, exValue);
+            var lambda = Expression.Lambda<Action<T, object?>>(exBody, exInstance, exValue);
             var action = lambda.Compile();
 
             // Add it to the cache

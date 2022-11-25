@@ -12,14 +12,30 @@ namespace FluentCsvMachine.Machine
         private static readonly Dictionary<Type, ValueParser> ValueParsers = new()
         {
             { typeof(string), new StringParser() },
-            { typeof(char), new CharParser() },
-            //{ typeof(byte), new BinaryIntegerParser<byte>() }, // Signed unsigned
-            { typeof(short), new BinaryIntegerParser<short>() },
-            { typeof(int), new BinaryIntegerParser<int>() },
-            { typeof(long), new BinaryIntegerParser<long>() },
-            { typeof(float), new FloatingPointParser<float>() },
-            { typeof(double), new FloatingPointParser<double>() },
-            { typeof(decimal), new FloatingPointParser<decimal>() },
+            { typeof(char), new CharParser(nullable: false) },
+            { typeof(char?), new CharParser(nullable: true) },
+            { typeof(byte), new BinaryIntegerParser<byte>(nullable: false, signed: false) },
+            { typeof(byte?), new BinaryIntegerParser<byte>(nullable: true, signed: false) },
+            { typeof(sbyte), new BinaryIntegerParser<sbyte>(nullable: false, signed: true) },
+            { typeof(sbyte?), new BinaryIntegerParser<sbyte>(nullable: true, signed: true) },
+            { typeof(short), new BinaryIntegerParser<short>(nullable: false, signed: true) },
+            { typeof(short?), new BinaryIntegerParser<short>(nullable: true, signed: true) },
+            { typeof(ushort), new BinaryIntegerParser<ushort>(nullable: false, signed: false) },
+            { typeof(ushort?), new BinaryIntegerParser<ushort>(nullable: true, signed: false) },
+            { typeof(int), new BinaryIntegerParser<int>(nullable: false, signed: true) },
+            { typeof(int?), new BinaryIntegerParser<int>(nullable: true, signed: true) },
+            { typeof(uint), new BinaryIntegerParser<uint>(nullable: false, signed: false) },
+            { typeof(uint?), new BinaryIntegerParser<uint>(nullable: true, signed: false) },
+            { typeof(long), new BinaryIntegerParser<long>(nullable: false, signed: true) },
+            { typeof(long?), new BinaryIntegerParser<long>(nullable: true, signed: true) },
+            { typeof(ulong), new BinaryIntegerParser<ulong>(nullable: false, signed: false) },
+            { typeof(ulong?), new BinaryIntegerParser<ulong>(nullable: true, signed: false) },
+            { typeof(float), new FloatingPointParser<float>(nullable: false) },
+            { typeof(float?), new FloatingPointParser<float>(nullable: true) },
+            { typeof(double), new FloatingPointParser<double>(nullable: false) },
+            { typeof(double?), new FloatingPointParser<double>(nullable: true) },
+            { typeof(decimal), new FloatingPointParser<decimal>(nullable: false) },
+            { typeof(decimal?), new FloatingPointParser<decimal>(nullable: true) },
         };
 
         private static readonly Dictionary<string, ValueParser> DateParsers = new();

@@ -6,6 +6,10 @@ namespace FluentCsvMachine.Machine.Values
     {
         private char? r;
 
+        public CharParser(bool nullable) : base(nullable)
+        {
+        }
+
         internal override void Process(char c)
         {
             r = c;
@@ -13,9 +17,17 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override ResultValue GetResult()
         {
-            var returnValue = r != null ? new ResultValue(typeof(char), r) : new ResultValue();
-            r = null;
-            return returnValue;
+            if (r == null)
+            {
+                SetNull(); // Throw an Exception if Nullable is not allowed
+                return new ResultValue();
+            }
+            else
+            {
+                var returnValue = new ResultValue(typeof(char), r);
+                r = null;
+                return returnValue;
+            }
         }
     }
 }

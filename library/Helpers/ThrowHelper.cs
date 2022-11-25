@@ -63,6 +63,16 @@ namespace FluentCsvMachine.Helpers
         }
 
         /// <summary>
+        /// Column definition type check failed
+        /// </summary>
+        /// <param name="message">Concrete issue</param>
+        [DoesNotReturn]
+        public static void CsvColumnMismatchException(string message)
+        {
+            throw new CsvColumnMismatchException(message);
+        }
+
+        /// <summary>
         /// CSV cannot be parsed
         /// </summary>
         /// <param name="message">Concrete issue</param>

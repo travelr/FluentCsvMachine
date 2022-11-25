@@ -11,6 +11,9 @@ namespace FluentCsvMachine.Machine.Values
     /// </summary>
     internal class DateTimeParser : ValueParser
     {
+        // ToDo: Nullable DateTime?
+
+
         private readonly string _inputFormat;
 
         private int _charCount;
@@ -26,7 +29,7 @@ namespace FluentCsvMachine.Machine.Values
         private int _inputCount;
         private char? _lastInputChar;
 
-        public DateTimeParser(string inputFormat)
+        public DateTimeParser(string inputFormat) : base(false)
         {
             Guard.IsNotNullOrEmpty(inputFormat);
 

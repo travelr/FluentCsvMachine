@@ -10,11 +10,8 @@ namespace FluentCsvMachine.Test
     [TestClass]
     public class CsvWithHeader
     {
-        // ToDo: Mismatch Property Def and Class
         // ToDo: Configuration tests (same col name, same setter, ...)
-        // ToDo: Support nullable! and fix test cases
-        // ToDo: Support strict mode?
-        // ToDo: Do not map last column
+
 
         /// <summary>
         /// a,b,c
@@ -30,7 +27,7 @@ namespace FluentCsvMachine.Test
             var parser = new CsvParser<Basic>();
             parser.Property<string>(c => c.A).ColumnName("a");
             parser.Property<int>(c => c.B).ColumnName("b");
-            parser.Property<decimal>(c => c.C).ColumnName("c");
+            parser.Property<decimal?>(c => c.C).ColumnName("c");
             var result = parser.Parse(path);
 
             Assert.IsNotNull(result);
@@ -53,7 +50,7 @@ namespace FluentCsvMachine.Test
 
             // Try a different column order
             var parser = new CsvParser<Basic>();
-            parser.Property<decimal>(c => c.C).ColumnName("c");
+            parser.Property<decimal?>(c => c.C).ColumnName("c");
             parser.Property<int>(c => c.B).ColumnName("b");
             parser.Property<string>(c => c.A).ColumnName("a");
 
@@ -285,7 +282,7 @@ namespace FluentCsvMachine.Test
 
             var parser = new CsvParser<Numbers>();
             parser.Property<short>(c => c.A).ColumnName("a");
-            parser.Property<float>(c => c.B).ColumnName("b");
+            parser.Property<float?>(c => c.B).ColumnName("b");
             parser.Property<decimal>(c => c.C).ColumnName("c");
             parser.Property<double>(c => c.D).ColumnName("d");
             var result = parser.Parse(path, new CsvConfiguration() { Delimiter = ';', DecimalPoint = ',' });
@@ -293,8 +290,7 @@ namespace FluentCsvMachine.Test
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 4);
             Assert.IsTrue(result[0].A == 100 && result[0].B == 0 && result[0].C == 200m && result[0].D == 300d);
-            // ToDo: B == null!!!
-            Assert.IsTrue(result[1].A == -99 && result[1].B == 0 && result[1].C == 2.2m && result[1].D == 3.03d);
+            Assert.IsTrue(result[1].A == -99 && !result[1].B.HasValue && result[1].C == 2.2m && result[1].D == 3.03d);
             Assert.IsTrue(result[2].A == -4 && result[2].B == 0 && result[2].C == 123456789.123m && result[2].D == -6.123456d);
             Assert.IsTrue(result[3].A == -4 && result[3].B == 0 && result[3].C == 123456789.123m && result[3].D == -6.123456d);
         }
@@ -312,15 +308,8 @@ namespace FluentCsvMachine.Test
             const string path = "../../../fixtures/option-comment.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var parser = new CsvParser<BasicInt>();
-            parser.Property<int>(c => c.A).ColumnName("a");
-            parser.Property<int>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
-            CsvConfiguration config = new()
-            {
-                Comment = '~'
-            };
-            var result = parser.Parse(path, config);
+            var parser = BasicIntParser();
+            var result = parser.Parse(path, new CsvConfiguration() { Comment = '~' });
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 1);
@@ -342,9 +331,9 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
-            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int?>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
+            parser.Property<int?>(c => c.C).ColumnName("c");
 
             var result = parser.Parse(path, new CsvConfiguration() { QuoteEscape = '\\' });
 
@@ -376,12 +365,9 @@ namespace FluentCsvMachine.Test
             var parser = new CsvParser<Basic>();
             parser.Property<string>(c => c.A).ColumnName("a");
             parser.Property<int>(c => c.B).ColumnName("b");
-            parser.Property<decimal>(c => c.C).ColumnName("c");
-            CsvConfiguration config = new()
-            {
-                NewLine = 'X'
-            };
-            var result = parser.Parse(path, config);
+            parser.Property<decimal?>(c => c.C).ColumnName("c");
+
+            var result = parser.Parse(path, new CsvConfiguration() { NewLine = 'X' });
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
@@ -404,9 +390,9 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
-            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int?>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
+            parser.Property<int?>(c => c.C).ColumnName("c");
             CsvConfiguration config = new()
             {
                 Quote = '\''
@@ -435,9 +421,9 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
-            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int?>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
+            parser.Property<int?>(c => c.C).ColumnName("c");
 
             var result = parser.Parse(path, new CsvConfiguration() { Quote = '\'', QuoteEscape = '\\' });
 
@@ -463,9 +449,9 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
-            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int?>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
+            parser.Property<int?>(c => c.C).ColumnName("c");
 
             var result = parser.Parse(path, new CsvConfiguration() { Quote = '\'' });
 
@@ -496,7 +482,7 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic2>();
-            parser.Property<int>(c => c.A).ColumnName("a");
+            parser.Property<int?>(c => c.A).ColumnName("a");
             parser.Property<string>(c => c.B).ColumnName("b");
 
             var result = parser.Parse(path);
@@ -566,9 +552,9 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<BasicInt>();
-            parser.Property<int>(c => c.A).ColumnName("h1");
-            parser.Property<int>(c => c.B).ColumnName("h2");
-            parser.Property<int>(c => c.C).ColumnName("h3");
+            parser.Property<int?>(c => c.A).ColumnName("h1");
+            parser.Property<int?>(c => c.B).ColumnName("h2");
+            parser.Property<int?>(c => c.C).ColumnName("h3");
 
             var result = parser.Parse(path);
 
@@ -660,18 +646,18 @@ namespace FluentCsvMachine.Test
         private static CsvParser<BasicString> BasicStringParser()
         {
             var parser = new CsvParser<BasicString>();
-            parser.Property<string>(c => c.A).ColumnName("a");
-            parser.Property<string>(c => c.B).ColumnName("b");
-            parser.Property<string>(c => c.C).ColumnName("c");
+            parser.Property<string?>(c => c.A).ColumnName("a");
+            parser.Property<string?>(c => c.B).ColumnName("b");
+            parser.Property<string?>(c => c.C).ColumnName("c");
             return parser;
         }
 
         private static CsvParser<BasicInt> BasicIntParser()
         {
             var parser = new CsvParser<BasicInt>();
-            parser.Property<int>(c => c.A).ColumnName("a");
-            parser.Property<int>(c => c.B).ColumnName("b");
-            parser.Property<int>(c => c.C).ColumnName("c");
+            parser.Property<int?>(c => c.A).ColumnName("a");
+            parser.Property<int?>(c => c.B).ColumnName("b");
+            parser.Property<int?>(c => c.C).ColumnName("c");
             return parser;
         }
 

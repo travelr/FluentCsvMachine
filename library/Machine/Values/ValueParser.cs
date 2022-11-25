@@ -1,4 +1,5 @@
-﻿using FluentCsvMachine.Machine.Result;
+﻿using FluentCsvMachine.Helpers;
+using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -10,7 +11,21 @@ namespace FluentCsvMachine.Machine.Values
             FastForward
         }
 
-        public States State { get; protected internal set; } = States.Parsing;
+        protected readonly bool Nullable;
+        protected bool IsNull;
+
+        /// <summary>
+        /// Abstract parser of an certain type
+        /// </summary>
+        /// <param name="nullable">Defines if the type is nullable</param>
+        protected ValueParser(bool nullable)
+        {
+            Nullable = nullable;
+            State = States.Parsing;
+        }
+
+
+        public States State { get; protected internal set; }
 
         /// <summary>
         /// Current CSV Configuration, should be set when the header was found
@@ -26,8 +41,25 @@ namespace FluentCsvMachine.Machine.Values
 
         /// <summary>
         /// CSV field ended, get the result
+        /// Don't forget to reset variables
         /// </summary>
         /// <returns>ResultValue</returns>
         internal abstract ResultValue GetResult();
+
+        /// <summary>
+        /// Sets the current value as null
+        /// Throws an Exception if it is not allowed
+        /// </summary>
+        protected void SetNull()
+        {
+            if (!Nullable)
+            {
+                // ToDo: Catch in Line and rethrow
+                ThrowHelper.ThrowCsvMalformedException("Cannot convert null to 'type' because it is a non-nullable value type");
+            }
+
+            IsNull = true;
+            State = States.FastForward;
+        }
     }
 }

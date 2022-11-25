@@ -14,13 +14,16 @@ namespace FluentCsvMachine.Machine.Values
             Finished
         }
 
+        // ToDo: Nullable Enum?
+
+
         public new States State { get; private set; } = States.Parsing;
 
         private readonly TreeNode _root;
         private TreeNode _currentNode;
         private readonly List<T> _enums;
 
-        public EnumParser(Type type)
+        public EnumParser(Type type) : base(false)
         {
             Guard.IsNotNull(type);
 
@@ -29,7 +32,7 @@ namespace FluentCsvMachine.Machine.Values
             _enums = Enum.GetValues(type).OfType<object>().Select(x => (T)Convert.ChangeType(x, type)).ToList();
 
             // Create a tree based on the enum values
-            CreateTree(_root, names.Select((x, i) => new StringIndex(i, x)));
+            CreateTree(_root, names.Select((x, i) => new StringIndex(i, x)).ToList());
             _currentNode = _root;
         }
 
@@ -79,7 +82,7 @@ namespace FluentCsvMachine.Machine.Values
         /// <param name="names">strings at the group position</param>
         /// <param name="i">index of the string</param>
         /// <exception cref="CsvMachineException">Algorithm error</exception>
-        private static void CreateTree(TreeNode parent, IEnumerable<StringIndex> names, int i = 0)
+        private static void CreateTree(TreeNode parent, IReadOnlyCollection<StringIndex> names, int i = 0)
         {
             // Group by current position int the car
             var group = names.Where(x => x.Value.Length > i).GroupBy(x => x.Value[i]);
@@ -104,15 +107,14 @@ namespace FluentCsvMachine.Machine.Values
                     case > 0:
                     {
                         // Check if we have a full match (currentString = RED, names[RED, RED2])
-                        var fullMatch = final.SingleOrDefault(x =>
-                            names.Any(y => y.Value == currentString) && x.Value == currentString);
+                        var fullMatch = final.SingleOrDefault(x => names.Any(y => y.Value == currentString) && x.Value == currentString);
                         if (fullMatch != null)
                         {
                             node.Index = fullMatch.Index;
                         }
 
                         // Recursively check next char
-                        CreateTree(node, g, i + 1);
+                        CreateTree(node, g.ToList(), i + 1);
                         break;
                     }
                     default:
