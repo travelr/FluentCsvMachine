@@ -171,6 +171,11 @@ namespace FluentCsvMachine
             {
                 ThrowHelper.ThrowCsvConfigurationException("Please make sure that all properties have an unique ColumnName.");
             }
+            else if (properties.Where(x => x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?))
+                     .Any(x => string.IsNullOrEmpty(x.InputFormat)))
+            {
+                ThrowHelper.ThrowCsvConfigurationException("Please set .InputFormat for all properties of the type DateTime.");
+            }
         }
 
         /// <summary>

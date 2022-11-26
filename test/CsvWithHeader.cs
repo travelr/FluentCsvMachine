@@ -1,3 +1,4 @@
+using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
 using System.Text;
@@ -211,11 +212,22 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
-        public void Largedataset()
+        public void LargeDataSet()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/large-dataset.csv"));
+            const string path = "../../../fixtures/large-dataset.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            CsvParser<LargeDs> parser = LargeDataSetParser();
+
+            var result = parser.Parse(path);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 7268);
+
+            //ToDo: Support Milliseconds, UTC (Z)
+            //ToDo: Last column to enum
         }
+
 
         /// <summary>
         /// a,b,c
@@ -346,10 +358,20 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
+        [ExpectedException(typeof(CsvMalformedException))]
         public void OptionMaxRowBytes()
         {
-            Assert.IsTrue(File.Exists("../../../fixtures/option-maxRowBytes.csv"));
+            const string path = "../../../fixtures/option-maxRowBytes.csv";
+            Assert.IsTrue(File.Exists(path));
+
+            CsvParser<LargeDs> parser = LargeDataSetParser();
+
+            parser.Parse(path);
+
+            // Line 4578 has an open quote: "2015-12-02T21:07:16.730Z,46.5141667,-122.59
+            // -> CsvMalformedException
+
+            // ToDo: Limit StringParser
         }
 
         /// <summary>
@@ -658,6 +680,27 @@ namespace FluentCsvMachine.Test
             parser.Property<int?>(c => c.A).ColumnName("a");
             parser.Property<int?>(c => c.B).ColumnName("b");
             parser.Property<int?>(c => c.C).ColumnName("c");
+            return parser;
+        }
+
+        private static CsvParser<LargeDs> LargeDataSetParser()
+        {
+            var parser = new CsvParser<LargeDs>();
+            parser.Property<DateTime>(c => c.Time).ColumnName("time").InputFormat("yyyy-MM-ddTHH:mm:ss.fffZ");
+            parser.Property<double>(c => c.Latitude).ColumnName("latitude");
+            parser.Property<double>(c => c.Longitude).ColumnName("longitude");
+            parser.Property<double>(c => c.Depth).ColumnName("depth");
+            parser.Property<double>(c => c.Mag).ColumnName("mag");
+            parser.Property<string>(c => c.MagType).ColumnName("magType");
+            parser.Property<int?>(c => c.Nst).ColumnName("nst");
+            parser.Property<string>(c => c.Gap).ColumnName("gap");
+            parser.Property<string>(c => c.Dmin).ColumnName("dmin");
+            parser.Property<string>(c => c.Rms).ColumnName("rms");
+            parser.Property<string>(c => c.Net).ColumnName("net");
+            parser.Property<string>(c => c.Id).ColumnName("id");
+            parser.Property<DateTime>(c => c.Updated).ColumnName("updated").InputFormat("yyyy-MM-ddTHH:mm:ss.fffZ");
+            parser.Property<string>(c => c.Place).ColumnName("place");
+            parser.Property<string>(c => c.Type).ColumnName("type");
             return parser;
         }
 

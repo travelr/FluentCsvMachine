@@ -39,7 +39,7 @@ namespace FluentCsvMachine.Machine.States
 
             field = new Field<T>(this, csv.Config);
             quote = new QuotationField<T>(this, csv.Config);
-            fields = new List<ResultValue>(20); //ToDO: FIx
+            fields = new List<ResultValue>(20); // Perfect max column number is not known here...
 
 
             columnNumber = 0;
