@@ -44,7 +44,16 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override ResultValue GetResult()
         {
-            var returnValue = _i > 0 ? new ResultValue(typeof(string), new string(_work, 0, _i)) : new ResultValue();
+            var str = string.Create(_i, _work, (buffer, value) =>
+            {
+                for (int i = 0; i < _i; i++)
+                {
+                    buffer[i] = value[i];
+                }
+            });
+
+            var returnValue = _i > 0 ? new ResultValue(typeof(string), str) : new ResultValue();
+
             _i = 0;
             return returnValue;
         }

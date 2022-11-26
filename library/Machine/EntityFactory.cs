@@ -2,6 +2,7 @@
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Property;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -77,9 +78,10 @@ namespace FluentCsvMachine.Machine
         /// <param name="resultObj">corresponding object</param>
         private void SetProperties(IReadOnlyList<ResultValue> line, T resultObj)
         {
-            foreach (var p in _properties)
+            for (int i = 0; i < _properties.Count; i++)
             {
-                var index = p.Index!.Value;
+                var p = _properties[i];
+                var index = p.Index!.Value; // in csv line
 
                 // Check if CSV field has a value
                 if (!GetValue(line, index, out ResultValue value))
@@ -125,9 +127,10 @@ namespace FluentCsvMachine.Machine
         /// <param name="resultObj">Entity for value assignment</param>
         private void CustomColumns(IReadOnlyList<ResultValue> line, T resultObj)
         {
-            foreach (var custom in _custom)
+            for (int i = 0; i < _custom.Count; i++)
             {
-                var index = custom.Index!.Value;
+                var custom = _custom[i];
+                var index = custom.Index!.Value; // in csv line
 
                 if (!GetValue(line, index, out ResultValue value))
                 {
@@ -189,7 +192,7 @@ namespace FluentCsvMachine.Machine
                 typeCache[index] = t;
             }
 
-            var result = Convert.ChangeType(value.Value, t);
+            var result = Convert.ChangeType(value.Value, t, CultureInfo.InvariantCulture);
 
             return result;
         }

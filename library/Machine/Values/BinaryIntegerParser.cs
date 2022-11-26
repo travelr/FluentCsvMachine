@@ -19,29 +19,20 @@ namespace FluentCsvMachine.Machine.Values
             _signed = signed;
             _result = T.CreateChecked(0);
 
-            _convert = new Dictionary<char, T>
+            _convert = new T[12];
+            for (int i = 0; i <= 10; i++)
             {
-                { '0', T.CreateChecked(0) },
-                { '1', T.CreateChecked(1) },
-                { '2', T.CreateChecked(2) },
-                { '3', T.CreateChecked(3) },
-                { '4', T.CreateChecked(4) },
-                { '5', T.CreateChecked(5) },
-                { '6', T.CreateChecked(6) },
-                { '7', T.CreateChecked(7) },
-                { '8', T.CreateChecked(8) },
-                { '9', T.CreateChecked(9) },
-                { 'X', T.CreateChecked(10) }
-            };
+                _convert[i] = T.CreateChecked(i);
+            }
 
             if (signed)
             {
-                _convert.Add('N', T.CreateChecked(-1));
+                _convert[11] = T.CreateChecked(-1);
             }
         }
 
         private readonly bool _signed;
-        private readonly Dictionary<char, T> _convert;
+        private readonly T[] _convert;
 
         private bool _isNegative;
         private T _result;
@@ -49,7 +40,7 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override void Process(char c)
         {
-            if (_signed && _result == _convert['0'] && c == '-')
+            if (_signed && _result == _convert[0] && c == '-')
             {
                 _isNegative = true;
                 return;
@@ -63,7 +54,7 @@ namespace FluentCsvMachine.Machine.Values
             }
 
             // Calculate new result
-            _result = _convert['X'] * _result + _convert[c];
+            _result = _convert[10] * _result + _convert[c - '0'];
             _resultAssigned = true;
         }
 
@@ -75,7 +66,8 @@ namespace FluentCsvMachine.Machine.Values
             {
                 if (_signed && _isNegative)
                 {
-                    _result *= _convert['N'];
+                    // 11 == -1
+                    _result *= _convert[11];
                 }
 
                 var resultType = Nullable ? typeof(Nullable<>).MakeGenericType(typeof(T)) : typeof(T);
