@@ -502,8 +502,8 @@ namespace FluentCsvMachine.Test
         /// 4,5
         /// 6,7,8
         /// </summary>
-        [Ignore("Nullable not implemented")]
         [TestMethod]
+        [Ignore("add nullable to entity factory")]
         public void FalseLessColumns()
         {
             const string path = "../../../fixtures/strict-false-less-columns.csv";
@@ -513,6 +513,7 @@ namespace FluentCsvMachine.Test
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 3);
+            Assert.IsTrue(!result[1].C.HasValue);
         }
 
         /// <summary>

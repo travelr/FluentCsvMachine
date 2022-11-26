@@ -31,6 +31,12 @@ namespace FluentCsvMachine.Machine
 
         internal IReadOnlyList<T> Start()
         {
+            if (!_input.SearchForHeaders)
+            {
+                // No headers do exist, directly start with the content
+                _csv.SetStateContent();
+            }
+
             return ParseStream();
         }
 

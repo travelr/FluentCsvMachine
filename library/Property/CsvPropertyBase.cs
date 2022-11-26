@@ -35,10 +35,20 @@ namespace FluentCsvMachine.Property
         /// </summary>
         public string? ColumnName { get; set; }
 
+        private int? _index;
+
         /// <summary>
         /// Column Index in CSV
         /// </summary>
-        public int? Index { get; private set; }
+        public int? Index
+        {
+            get => _index;
+            internal set
+            {
+                if (value is < 0) throw new ArgumentOutOfRangeException(nameof(value));
+                _index = value;
+            }
+        }
 
         /// <summary>
         /// Type of the property
@@ -66,16 +76,5 @@ namespace FluentCsvMachine.Property
         }
 
         internal ValueParser? ValueParser { get; set; }
-
-        /// <summary>
-        /// Reference Column Index in CSV
-        /// </summary>
-        /// <param name="headersDic">Column Name, Index</param>
-        public void SetIndex(Dictionary<string, int> headersDic)
-        {
-            Guard.IsNotNull(headersDic);
-
-            Index = headersDic[ColumnName!];
-        }
     }
 }

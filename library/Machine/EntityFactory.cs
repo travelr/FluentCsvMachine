@@ -175,10 +175,10 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="accessor">Accessor expression to the property</param>
         /// <param name="index">Column index for fast caching</param>
-        /// <param name="targetPropertyType">Type defined in the column</param>
+        /// <param name="columnPropertyType">Type defined in the column</param>
         /// <returns>The setter</returns>
         /// <exception cref="Exception">Should not happen, broken code?</exception>
-        private Action<T, object?> GetSetter(Expression<Func<T, object>> accessor, int index, Type targetPropertyType)
+        private Action<T, object?> GetSetter(Expression<Func<T, object>> accessor, int index, Type columnPropertyType)
         {
             var result = setterCache[index];
 
@@ -202,10 +202,10 @@ namespace FluentCsvMachine.Machine
                 throw new CsvMachineException("EntityFactory algorithm failed, unknown expression type!");
             }
 
-            if (property.PropertyType != targetPropertyType)
+            if (property.PropertyType != columnPropertyType)
             {
                 ThrowHelper.CsvColumnMismatchException(
-                    $"The column {property.Name} has the type ({targetPropertyType}) which does not match the class definition ({property.PropertyType})");
+                    $"The column {property.Name} has the type ({columnPropertyType}) which does not match the class definition ({property.PropertyType})");
             }
 
             // Based on https://stackoverflow.com/a/17669142

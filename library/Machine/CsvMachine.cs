@@ -105,6 +105,44 @@ namespace FluentCsvMachine.Machine
             return result;
         }
 
+        /// <summary>
+        /// Sets the state machine to Content
+        /// Precondition: Set the CSV index for the Properties
+        /// </summary>
+        internal void SetStateContent()
+        {
+            if (!_properties.Any(x => x.Index.HasValue))
+            {
+                throw new CsvMachineException("Property Index needs to be set first, before calling this method");
+            }
+
+            // Generate Factory
+            _factory = new EntityFactory<T>(_properties, _lineActions);
+
+            // Focus on content now
+            State = States.Content;
+
+            // Generate parser dictionary
+            _parsers = _properties.Where(x => x.Index.HasValue).ToDictionary(x => x.Index!.Value, x => x.ValueParser!);
+            foreach (var p in _parsers)
+            {
+                p.Value.Config = Config;
+            }
+        }
+
+        internal ValueParser GetParser(int columnNumber)
+        {
+            if (_parsers!.TryGetValue(columnNumber, out var result))
+            {
+                return result;
+            }
+            else
+            {
+                // ToDo: Is skip working?
+                return _stringParser;
+            }
+        }
+
         #region Private
 
         /// <summary>
@@ -142,34 +180,12 @@ namespace FluentCsvMachine.Machine
             }
 
             // Set CSV row index for all properties
-            _properties.ForEach(x => x.SetIndex(headersDic));
-
-            // Generate Factory
-            _factory = new EntityFactory<T>(_properties, _lineActions);
-
-            // Focus on content now
-            State = States.Content;
-
-            // Generate parser dictionary
-            _parsers = _properties.Where(x => x.Index.HasValue).ToDictionary(x => x.Index!.Value, x => x.ValueParser!);
-            foreach (var p in _parsers.Where(x => x.Value != null))
+            foreach (var p in _properties)
             {
-                p.Value.Config = Config;
+                p.Index = headersDic[p.ColumnName!];
             }
-        }
 
-
-        internal ValueParser GetParser(int columnNumber)
-        {
-            if (_parsers!.TryGetValue(columnNumber, out var result))
-            {
-                return result;
-            }
-            else
-            {
-                // ToDo: Is skip working?
-                return _stringParser;
-            }
+            SetStateContent();
         }
 
         #endregion Private

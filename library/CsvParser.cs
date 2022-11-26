@@ -3,6 +3,7 @@ using FluentCsvMachine.Machine;
 using FluentCsvMachine.Machine.Workflow;
 using FluentCsvMachine.Property;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace FluentCsvMachine
 {
@@ -14,6 +15,7 @@ namespace FluentCsvMachine
     {
         private readonly List<CsvPropertyBase> properties = new();
         private readonly List<Action<T, IReadOnlyList<object?>>> _lineActions = new();
+        private bool _setupNoHeadersComplete;
 
         /// <summary>
         /// Defines a Column / Property
@@ -68,52 +70,96 @@ namespace FluentCsvMachine
             _lineActions.Add(lineAction);
         }
 
+        #region Parse
+
         /// <summary>
-        /// Parse the CSV File
-        /// Assumes first line are headers
+        /// Parses the passed CSV File
+        /// A header does need to exist in the CSV file
+        /// Please setup your configuration with <see cref="Property"/> and <seealso cref="PropertyCustom{V}"/>,
         /// </summary>
         /// <param name="path">Path to the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
-        /// <returns>list of parsed objects</returns>
+        /// <returns>List of parsed objects of type T</returns>
         public IReadOnlyList<T> Parse(string path, CsvConfiguration? config = null)
         {
-            CheckPreconditions();
-            if (!File.Exists(path))
-            {
-                ThrowHelper.ThrowFileNotFoundException(path);
-            }
+            CheckPreconditionsWithHeader();
 
-            using var fs = File.OpenRead(path);
+            using var fs = OpenFile(path);
 
-            var result = StartWorkflow(fs, config);
+            var result = StartWorkflow(fs, true, config);
 
             return result;
         }
 
-
         /// <summary>
-        /// Parse the CSV File
-        /// Assumes first line are headers
+        /// Parses the passed CSV stream object
+        /// A header does need to exist in the CSV file
+        /// Please setup your configuration with <see cref="Property"/> and <seealso cref="PropertyCustom{V}"/>,
         /// </summary>
         /// <param name="stream">Stream of the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
-        /// <returns>list of parsed objects</returns>
+        /// <returns>List of parsed objects of type T</returns>
         public IReadOnlyList<T> ParseStream(Stream stream, CsvConfiguration? config = null)
         {
-            CheckPreconditions();
             Guard.IsNotNull(stream);
+            CheckPreconditionsWithHeader();
 
-            var result = StartWorkflow(stream, config);
+            var result = StartWorkflow(stream, true, config);
 
             return result;
         }
 
+        /// <summary>
+        /// Parses the passed CSV file which does not contain a header
+        /// Therefore you need setup your configuration with <see cref="CsvNoHeaderAttribute"/> and set the Index of the column directly
+        /// Not allowed is the use of <see cref="Property"/> and <seealso cref="PropertyCustom{V}"/> because you cannot set the Property.ColumnName
+        /// </summary>
+        /// <param name="path">Path to the CSV file</param>
+        /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
+        /// <returns>List of parsed objects of type T</returns>
+        public IReadOnlyList<T> ParseWithoutHeader(string path, CsvConfiguration? config = null)
+        {
+            SetupAndCheckNoHeaders();
+
+            using var fs = OpenFile(path);
+
+            var result = StartWorkflow(fs, false, config);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Parses the passed CSV stream which does not contain a header.
+        /// Therefore you need setup your configuration with the <see cref="CsvNoHeaderAttribute"/> on the properties of <typeparamref name="T"/> and set the index of the column directly.
+        /// Not allowed is the use of <see cref="Property"/> and <seealso cref="PropertyCustom{V}"/> because you cannot set the Property.ColumnName
+        /// </summary>
+        /// <param name="stream">Stream of the CSV file</param>
+        /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
+        /// <returns>List of parsed objects of type T</returns>
+        public IReadOnlyList<T> ParseWithoutHeader(Stream stream, CsvConfiguration? config = null)
+        {
+            Guard.IsNotNull(stream);
+
+            SetupAndCheckNoHeaders();
+
+            var result = StartWorkflow(stream, false, config);
+
+            return result;
+        }
+
+        #endregion Parse
+
+
         #region private
 
-        private void CheckPreconditions()
+        private void CheckPreconditionsWithHeader()
         {
             // Check preconditions
-            if (!properties.Any())
+            if (_setupNoHeadersComplete)
+            {
+                ThrowHelper.ThrowCsvConfigurationException("Please create a new parser, mixed used for CSV files with and without headers is not supported.");
+            }
+            else if (!properties.Any())
             {
                 ThrowHelper.ThrowCsvConfigurationException("Please define your properties first.");
             }
@@ -127,9 +173,75 @@ namespace FluentCsvMachine
             }
         }
 
-        private IReadOnlyList<T> StartWorkflow(Stream stream, CsvConfiguration? config = null)
+        /// <summary>
+        /// Used by ParseWithoutHeader
+        /// </summary>
+        private void SetupAndCheckNoHeaders()
         {
-            var input = new WorkflowInput<T>(stream, properties)
+            if (_setupNoHeadersComplete)
+            {
+                return;
+            }
+            else if (properties.Any())
+            {
+                ThrowHelper.ThrowCsvConfigurationException("Please just use CsvNoHeaderAttributes and define no columns, because no csv header does exist.");
+            }
+
+            // Find Properties with CsvNoHeaderAttribute defined in T
+            var propsWithAttributes = typeof(T)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(p => new
+                {
+                    Property = p,
+                    Attribute = (CsvNoHeaderAttribute?)p.GetCustomAttributes(typeof(CsvNoHeaderAttribute)).SingleOrDefault()
+                }).Where(p => p.Attribute != null).ToList();
+
+            // Validate CsvNoHeaderAttributes
+            if (!propsWithAttributes.Any())
+            {
+                ThrowHelper.ThrowCsvConfigurationException($"Please set CsvNoHeaderAttributes in the class {nameof(T)}");
+            }
+            else if (propsWithAttributes.Select(x => x.Attribute!.ColumnIndex).Distinct().Count() != propsWithAttributes.Count)
+            {
+                ThrowHelper.ThrowCsvConfigurationException(
+                    $"Please make sure that all column indexes are unique in the class {nameof(T)}");
+            }
+
+            var exInstance = Expression.Parameter(propsWithAttributes[0].Property.DeclaringType!, "t");
+
+            // Create CsvProperty by reflection
+            foreach (var x in propsWithAttributes)
+            {
+                // Create the expression for the property
+                var body = Expression.Property(exInstance, x.Property);
+                var convert = Expression.Convert(body, typeof(object));
+                var lambda = Expression.Lambda<Func<T, object?>>(convert, exInstance);
+
+                // Create an CsvProperty
+                var csvProperty = new CsvProperty<T>(x.Property.PropertyType, lambda)
+                {
+                    // Set the values from the attribute
+                    Index = x.Attribute!.ColumnIndex
+                };
+                properties.Add(csvProperty);
+            }
+
+            _setupNoHeadersComplete = true;
+        }
+
+        private static FileStream OpenFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                ThrowHelper.ThrowFileNotFoundException(path);
+            }
+
+            return File.OpenRead(path);
+        }
+
+        private IReadOnlyList<T> StartWorkflow(Stream stream, bool searchForHeaders, CsvConfiguration? config = null)
+        {
+            var input = new WorkflowInput<T>(stream, properties, searchForHeaders)
             {
                 Config = config,
                 LineActions = _lineActions
