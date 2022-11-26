@@ -31,20 +31,40 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(result[3].A == "7" && result[3].B == "8" && result[3].D == "9");
         }
 
+        /// <summary>
+        /// ,somejunk,<! />
+        /// ,nope,
+        /// yes,yup,yeah
+        /// ok, ok, ok!
+        /// </summary>
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
         public void BadData()
         {
             const string path = "../../../fixtures/bad-data.csv";
             Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<BasicString>();
+            var result = parser.ParseWithoutHeader(path);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count == 4);
+            Assert.IsTrue(result[0].A == null && result[0].B == "somejunk" && result[0].D == "<! />");
+            Assert.IsTrue(result[1].A == null && result[1].B == "nope" && result[1].D == null);
+            Assert.IsTrue(result[2].A == "yes" && result[2].B == "yup" && result[2].D == "yeah");
+            Assert.IsTrue(result[3].A == "ok" && result[3].B == "ok" && result[3].D == "ok!");
         }
 
         [TestMethod]
-        [Ignore("Test case not implemented yet")]
         public void EmptyColumns()
         {
             const string path = "../../../fixtures/empty-columns.csv";
             Assert.IsTrue(File.Exists(path));
+
+            var parser = new CsvParser<EmptyColumn>();
+            var result = parser.ParseWithoutHeader(path, new CsvConfiguration(';'));
+
+            Assert.IsTrue(result[0].A == new DateTime(2007, 01, 01) && result[0].B == null && result[0].C == null);
+            Assert.IsTrue(result[1].A == new DateTime(2007, 01, 02) && result[1].B == null && result[1].C == null);
         }
     }
 }

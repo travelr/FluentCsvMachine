@@ -17,9 +17,10 @@ namespace FluentCsvMachine.Property
             IsCustom = isCustom;
 
             PropertyType = propertyType;
-            if (propertyType != typeof(DateTime))
+            if (propertyType != typeof(DateTime) && propertyType != typeof(DateTime?))
             {
                 // DateTime requires InputFormat
+                // Therefore it is set by InputFormat.Set
                 ValueParser = ValueParserProvider.GetParser(propertyType);
             }
         }
@@ -68,7 +69,7 @@ namespace FluentCsvMachine.Property
             {
                 _inputFormat = value;
 
-                if (PropertyType == typeof(DateTime))
+                if (PropertyType == typeof(DateTime) || PropertyType == typeof(DateTime?))
                 {
                     ValueParser = ValueParserProvider.GetParser(PropertyType, value);
                 }

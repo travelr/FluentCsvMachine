@@ -11,9 +11,6 @@ namespace FluentCsvMachine.Machine.Values
     /// </summary>
     internal class DateTimeParser : ValueParser
     {
-        // ToDo: Nullable DateTime?
-
-
         private readonly string _inputFormat;
 
         private int _charCount;
@@ -28,12 +25,14 @@ namespace FluentCsvMachine.Machine.Values
 
         private int _inputCount;
         private char? _lastInputChar;
+        private readonly Type _resultType;
 
-        public DateTimeParser(string inputFormat) : base(false)
+        public DateTimeParser(string inputFormat, bool nullable) : base(nullable)
         {
             Guard.IsNotNullOrEmpty(inputFormat);
 
             _inputFormat = inputFormat;
+            _resultType = !nullable ? typeof(DateTime) : typeof(DateTime?);
         }
 
         internal override void Process(char c)
@@ -125,20 +124,23 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override ResultValue GetResult()
         {
-            DateTime? resultValue = null;
-            try
-            {
-                if (_year < 99)
-                {
-                    _year = _year > 35 ? _year + 1900 : _year + 2000;
-                }
+            var resultValue = new ResultValue();
 
-                resultValue = new DateTime(_year, _month, _day, _hour + _hourOffset, _minute, _second, _ms);
-            }
-            catch (Exception)
+            if (_year > 0)
             {
-                ThrowHelper.ThrowCsvMalformedException(
-                    $"Cannot parse DateTime. Error In Date: {_year}/{_month}/{_day} {_hour + _hourOffset}:{_minute}:{_second}.{_ms}");
+                try
+                {
+                    var dt = new DateTime(_year, _month, _day, _hour + _hourOffset, _minute, _second, _ms);
+                    resultValue = new ResultValue(_resultType, dt);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    if (!Nullable)
+                    {
+                        ThrowHelper.ThrowCsvMalformedException(
+                            $"Cannot parse DateTime. Error In Date: {_year}/{_month}/{_day} {_hour + _hourOffset}:{_minute}:{_second}.{_ms}");
+                    }
+                }
             }
 
             // Reset values
@@ -154,7 +156,7 @@ namespace FluentCsvMachine.Machine.Values
             _inputCount = 0;
             _lastInputChar = null;
 
-            return new ResultValue(typeof(DateTime), resultValue);
+            return resultValue;
         }
 
 

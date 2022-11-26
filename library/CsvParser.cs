@@ -199,12 +199,12 @@ namespace FluentCsvMachine
             // Validate CsvNoHeaderAttributes
             if (!propsWithAttributes.Any())
             {
-                ThrowHelper.ThrowCsvConfigurationException($"Please set CsvNoHeaderAttributes in the class {nameof(T)}");
+                ThrowHelper.ThrowCsvConfigurationException($"Please set CsvNoHeaderAttributes in the class {typeof(T).Name}");
             }
             else if (propsWithAttributes.Select(x => x.Attribute!.ColumnIndex).Distinct().Count() != propsWithAttributes.Count)
             {
                 ThrowHelper.ThrowCsvConfigurationException(
-                    $"Please make sure that all column indexes are unique in the class {nameof(T)}");
+                    $"Please make sure that all column indexes are unique in the class {typeof(T).Name}");
             }
 
             var exInstance = Expression.Parameter(propsWithAttributes[0].Property.DeclaringType!, "t");
@@ -221,7 +221,8 @@ namespace FluentCsvMachine
                 var csvProperty = new CsvProperty<T>(x.Property.PropertyType, lambda)
                 {
                     // Set the values from the attribute
-                    Index = x.Attribute!.ColumnIndex
+                    Index = x.Attribute!.ColumnIndex,
+                    InputFormat = x.Attribute!.InputFormat
                 };
                 properties.Add(csvProperty);
             }

@@ -128,6 +128,9 @@ namespace FluentCsvMachine.Machine
             {
                 p.Value.Config = Config;
             }
+
+            // Change the parser
+            _line.SetParserAndResetState();
         }
 
         /// <summary>

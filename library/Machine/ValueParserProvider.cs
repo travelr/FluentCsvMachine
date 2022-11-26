@@ -38,7 +38,8 @@ namespace FluentCsvMachine.Machine
             { typeof(decimal?), new FloatingPointParser<decimal>(nullable: true) },
         };
 
-        private static readonly Dictionary<string, ValueParser> DateParsers = new();
+        private static readonly Dictionary<(string, bool), ValueParser> DateParsers = new();
+
 
         /// <summary>
         /// Gets the correct parser based on the passed type
@@ -59,20 +60,11 @@ namespace FluentCsvMachine.Machine
             }
             else if (type == typeof(DateTime))
             {
-                if (string.IsNullOrEmpty(inputFormat))
-                {
-                    ThrowHelper.ThrowCsvConfigurationException("Each DateTime column requires InputFormat()");
-                }
-
-                if (DateParsers.TryGetValue(inputFormat, out var dateParser))
-                {
-                    return dateParser;
-                }
-
-                dateParser = new DateTimeParser(inputFormat);
-                DateParsers.Add(inputFormat, dateParser);
-
-                return dateParser;
+                return GetDateParser(inputFormat, false);
+            }
+            else if (type == typeof(DateTime?))
+            {
+                return GetDateParser(inputFormat, true);
             }
 
             if (!ValueParsers.TryGetValue(type, out ValueParser? returnValue))
@@ -81,6 +73,24 @@ namespace FluentCsvMachine.Machine
             }
 
             return returnValue;
+        }
+
+        private static ValueParser GetDateParser(string? inputFormat, bool nullable)
+        {
+            if (string.IsNullOrEmpty(inputFormat))
+            {
+                ThrowHelper.ThrowCsvConfigurationException("Each DateTime column requires InputFormat()");
+            }
+
+            if (DateParsers.TryGetValue((inputFormat, nullable), out var dateParser))
+            {
+                return dateParser;
+            }
+
+            dateParser = new DateTimeParser(inputFormat, nullable);
+            DateParsers.Add((inputFormat, nullable), dateParser);
+
+            return dateParser;
         }
     }
 }

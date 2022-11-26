@@ -503,7 +503,6 @@ namespace FluentCsvMachine.Test
         /// 6,7,8
         /// </summary>
         [TestMethod]
-        [Ignore("add nullable to entity factory")]
         public void FalseLessColumns()
         {
             const string path = "../../../fixtures/strict-false-less-columns.csv";

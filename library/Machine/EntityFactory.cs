@@ -15,6 +15,8 @@ namespace FluentCsvMachine.Machine
 
         private readonly Action<T, object?>?[] setterCache;
         private readonly Expression<Func<T, object>>?[] accessorCache;
+        private readonly Type?[] typeCache;
+        private readonly MethodInfo?[] customActionCache;
 
         private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
 
@@ -29,13 +31,15 @@ namespace FluentCsvMachine.Machine
                 throw new CsvMachineException("EntityFactory algorithm failed, set Index on properties first");
             }
 
+            // Create caches
             setterCache = new Action<T, object?>?[maxColNumber];
             accessorCache = new Expression<Func<T, object>>[maxColNumber];
+            typeCache = new Type?[maxColNumber];
+            customActionCache = new MethodInfo?[maxColNumber];
 
+            // Set work items
             _properties = validProperties.Where(x => !x.IsCustom).Cast<CsvProperty<T>>().ToList();
             _custom = validProperties.Where(x => x.IsCustom).ToList();
-
-
             _lineActions = lineActions;
         }
 
@@ -110,7 +114,7 @@ namespace FluentCsvMachine.Machine
 
                 // Assign to value to the object
                 var setter = GetSetter(accessor, index, value.Type!);
-                setter(resultObj, ToTypedValue(value));
+                setter(resultObj, ToTypedValue(value, index));
             }
         }
 
@@ -123,19 +127,28 @@ namespace FluentCsvMachine.Machine
         {
             foreach (var custom in _custom)
             {
-                if (!GetValue(line, custom.Index!.Value, out ResultValue value))
+                var index = custom.Index!.Value;
+
+                if (!GetValue(line, index, out ResultValue value))
                 {
                     continue;
                 }
 
-                // ToDo: Cache the method
-                var customAction = custom.GetType().GetMethod("CustomAction");
+                // Get custom action
+                var customAction = customActionCache[index];
                 if (customAction == null)
                 {
-                    throw new CsvMachineException("EntityFactory algorithm failed, CustomAction method has been renamed!");
+                    customAction = custom.GetType().GetMethod("CustomAction");
+                    if (customAction == null)
+                    {
+                        throw new CsvMachineException("EntityFactory algorithm failed, CustomAction method has been renamed!");
+                    }
+
+                    customActionCache[index] = customAction;
                 }
 
-                customAction.Invoke(custom, new[] { resultObj, ToTypedValue(value) });
+                // Invoke custom action
+                customAction.Invoke(custom, new[] { resultObj, ToTypedValue(value, index) });
             }
         }
 
@@ -148,21 +161,32 @@ namespace FluentCsvMachine.Machine
         /// <returns>True if the value is not null</returns>
         private static bool GetValue(IReadOnlyList<ResultValue> line, int index, out ResultValue value)
         {
+            if (index < 0 || index >= line.Count)
+            {
+                value = new ResultValue();
+                return false;
+            }
+
             // Raw value form CSV
             value = line[index];
             return !value.IsNull;
         }
 
 
-        private static object? ToTypedValue(ResultValue value)
+        private object? ToTypedValue(ResultValue value, int index)
         {
-            Type t = value.Type!;
-
-            // ToDo: Cache it
-            // Convert.ChangeType on Nullable does not work, get the GetUnderlyingType
-            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
+            var t = typeCache[index];
+            if (t == null)
             {
-                t = Nullable.GetUnderlyingType(t)!;
+                t = value.Type!;
+
+                // Convert.ChangeType on Nullable does not work, get the GetUnderlyingType
+                if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    t = Nullable.GetUnderlyingType(t)!;
+                }
+
+                typeCache[index] = t;
             }
 
             var result = Convert.ChangeType(value.Value, t);

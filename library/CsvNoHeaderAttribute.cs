@@ -14,14 +14,18 @@
         /// CSV Column Index
         /// !Zero Based! Shall not be greater than the minimum number of columns defined on any line
         /// </param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public CsvNoHeaderAttribute(int columnIndex)
+        /// <param name="inputFormat">InputFormat for DateTime, ...</param>
+        /// <exception cref="ArgumentOutOfRangeException">columnIndex is negative</exception>
+        public CsvNoHeaderAttribute(int columnIndex, string? inputFormat = null)
         {
             if (columnIndex < 0) throw new ArgumentOutOfRangeException(nameof(columnIndex));
 
             ColumnIndex = columnIndex;
+            InputFormat = inputFormat;
         }
 
         public int ColumnIndex { get; }
+
+        public string? InputFormat { get; }
     }
 }

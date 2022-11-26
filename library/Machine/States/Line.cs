@@ -130,7 +130,7 @@ namespace FluentCsvMachine.Machine.States
 
             // Reset machine
             LineCounter++;
-            SetParserAndState();
+            SetParserAndResetState();
         }
 
         /// <summary>
@@ -142,10 +142,10 @@ namespace FluentCsvMachine.Machine.States
             var value = Parser.GetResult();
             fields.Add(value);
             columnNumber++;
-            SetParserAndState();
+            SetParserAndResetState();
         }
 
-        private void SetParserAndState()
+        internal void SetParserAndResetState()
         {
             State = States.Initial;
             if (csv.State == CsvMachine<T>.States.Content)
