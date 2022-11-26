@@ -1,4 +1,6 @@
-﻿namespace FluentCsvMachine.Test.Models
+﻿// ReSharper disable InconsistentNaming
+
+namespace FluentCsvMachine.Test.Models
 {
     /// <summary>
     /// https://github.com/snowindy/csv-test-data-generator
@@ -18,7 +20,7 @@
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public BigDataSetPick Pick { get; set; }
-        public string? @String { get; set; }
+        public string? String { get; set; }
     }
 
     internal enum BigDataSetPick

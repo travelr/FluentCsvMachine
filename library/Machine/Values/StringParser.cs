@@ -1,5 +1,4 @@
 ﻿using System.Buffers;
-using System.Text;
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 

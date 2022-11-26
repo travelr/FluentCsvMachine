@@ -1,6 +1,5 @@
 using FluentCsvMachine.Property;
 using FluentCsvMachine.Test.Models;
-using System.Runtime.CompilerServices;
 
 namespace FluentCsvMachine.Test
 {

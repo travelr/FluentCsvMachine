@@ -130,17 +130,14 @@ namespace FluentCsvMachine.Machine
             }
         }
 
+        /// <summary>
+        /// Get the appropriate parser or default to the string parser
+        /// </summary>
+        /// <param name="columnNumber">Current column number in the CSV line</param>
+        /// <returns>The correct parser</returns>
         internal ValueParser GetParser(int columnNumber)
         {
-            if (_parsers!.TryGetValue(columnNumber, out var result))
-            {
-                return result;
-            }
-            else
-            {
-                // ToDo: Is skip working?
-                return _stringParser;
-            }
+            return _parsers!.TryGetValue(columnNumber, out var valueParser) ? valueParser : _stringParser;
         }
 
         #region Private
@@ -159,11 +156,11 @@ namespace FluentCsvMachine.Machine
 
             var headers = _properties.Select(x => x.ColumnName!);
 
+            // Are all headers present in this line?
             if (!headers.All(x => fields.Any(y => y != null && x == y)))
             {
                 return;
             }
-
 
             // All header Strings are included in the CSV line
             // Create structure so the CSV index to the properties

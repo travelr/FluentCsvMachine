@@ -10,11 +10,9 @@ namespace FluentCsvMachine.Machine.States
         {
             // New field
             Initial,
-
             Field,
             FieldQuoted,
-            Comment,
-            Skip // Column, because it is not mapped
+            Comment
         }
 
         private readonly CsvMachine<T> csv;
@@ -102,14 +100,6 @@ namespace FluentCsvMachine.Machine.States
                     // Reading comment field
                     return;
 
-                case { State: States.Skip } t when t.c != Delimiter:
-                    // Char of skip column
-                    return;
-
-                case { State: States.Skip } t when t.c == Delimiter:
-                    columnNumber++;
-                    SetParserAndState();
-                    return;
 
                 default:
                     if (c != NewLine)
@@ -157,16 +147,10 @@ namespace FluentCsvMachine.Machine.States
 
         private void SetParserAndState()
         {
+            State = States.Initial;
             if (csv.State == CsvMachine<T>.States.Content)
             {
                 Parser = csv.GetParser(columnNumber);
-                //ToDo: Always true
-                State = Parser != null ? States.Initial : States.Skip;
-            }
-            else
-            {
-                // Header Search
-                State = States.Initial;
             }
         }
     }

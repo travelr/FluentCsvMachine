@@ -46,7 +46,7 @@ namespace FluentCsvMachine.Machine
             using var sr = new StreamReader(_stream, _csv.Config.Encoding);
 
             char[] buffer = new char[_csv.Config.BufferSize];
-            int read = 0;
+            int read;
 
             while ((read = sr.Read(buffer, 0, buffer.Length)) > 0)
             {
