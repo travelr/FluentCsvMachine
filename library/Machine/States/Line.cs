@@ -11,7 +11,7 @@ namespace FluentCsvMachine.Machine.States
         internal enum States
         {
             // New field
-            Initial,
+            Initial = 0,
             Field,
             FieldQuoted,
             Comment

@@ -94,6 +94,13 @@ namespace FluentCsvMachine
         /// </summary>
         public int MaxNumberOfColumns { get; set; } = 15;
 
+        /// <summary>
+        /// Queue between FileParser and Entity factory
+        /// Probably no change is necessary
+        /// Though reduce it if you have poor IO performance, increase it if your CPU is slow 
+        /// </summary>
+        public int EntityQueueSize { get; set; } = 500;
+
         #endregion Library parameters
     }
 }

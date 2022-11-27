@@ -80,11 +80,11 @@ namespace FluentCsvMachine
         /// <param name="path">Path to the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
         /// <returns>List of parsed objects of type T</returns>
-        public IReadOnlyList<T> Parse(string path, CsvConfiguration? config = null)
+        public Task<IReadOnlyList<T>> Parse(string path, CsvConfiguration? config = null)
         {
             CheckPreconditionsWithHeader();
 
-            using var fs = OpenFile(path);
+            var fs = OpenFile(path);
 
             var result = StartWorkflow(fs, true, config);
 
@@ -99,7 +99,7 @@ namespace FluentCsvMachine
         /// <param name="stream">Stream of the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
         /// <returns>List of parsed objects of type T</returns>
-        public IReadOnlyList<T> ParseStream(Stream stream, CsvConfiguration? config = null)
+        public Task<IReadOnlyList<T>> ParseStream(Stream stream, CsvConfiguration? config = null)
         {
             Guard.IsNotNull(stream);
             CheckPreconditionsWithHeader();
@@ -117,11 +117,11 @@ namespace FluentCsvMachine
         /// <param name="path">Path to the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
         /// <returns>List of parsed objects of type T</returns>
-        public IReadOnlyList<T> ParseWithoutHeader(string path, CsvConfiguration? config = null)
+        public Task<IReadOnlyList<T>> ParseWithoutHeader(string path, CsvConfiguration? config = null)
         {
             SetupAndCheckNoHeaders();
 
-            using var fs = OpenFile(path);
+            var fs = OpenFile(path);
 
             var result = StartWorkflow(fs, false, config);
 
@@ -136,7 +136,7 @@ namespace FluentCsvMachine
         /// <param name="stream">Stream of the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
         /// <returns>List of parsed objects of type T</returns>
-        public IReadOnlyList<T> ParseWithoutHeader(Stream stream, CsvConfiguration? config = null)
+        public Task<IReadOnlyList<T>> ParseWithoutHeader(Stream stream, CsvConfiguration? config = null)
         {
             Guard.IsNotNull(stream);
 
@@ -245,11 +245,10 @@ namespace FluentCsvMachine
             return File.OpenRead(path);
         }
 
-        private IReadOnlyList<T> StartWorkflow(Stream stream, bool searchForHeaders, CsvConfiguration? config = null)
+        private Task<IReadOnlyList<T>> StartWorkflow(Stream stream, bool searchForHeaders, CsvConfiguration? config = null)
         {
-            var input = new WorkflowInput<T>(stream, properties, searchForHeaders)
+            var input = new WorkflowInput<T>(stream, properties, searchForHeaders, config)
             {
-                Config = config,
                 LineActions = _lineActions
             };
 
