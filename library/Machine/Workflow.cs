@@ -12,20 +12,16 @@ namespace FluentCsvMachine.Machine
     internal class Workflow<T> where T : new()
     {
         private readonly WorkflowInput<T> _input;
-        private readonly Channel<ResultLine> _channel;
-
-        private CsvMachine<T> _csv;
+        private readonly CsvMachine<T> _csv;
         private readonly Stream _stream;
-        private readonly EntityFactory<T> _factory;
 
         internal Workflow(WorkflowInput<T> input)
         {
             Guard.IsNotNull(input);
 
             _input = input;
-            _channel = Channel.CreateUnbounded<ResultLine>();
 
-            _csv = new CsvMachine<T>(input, _channel.Writer);
+            _csv = new CsvMachine<T>(input);
             _stream = input.Stream;
         }
 

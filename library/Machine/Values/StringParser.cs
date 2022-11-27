@@ -1,6 +1,6 @@
-﻿using System.Buffers;
-using FluentCsvMachine.Helpers;
+﻿using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
+using System.Buffers;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -10,11 +10,13 @@ namespace FluentCsvMachine.Machine.Values
 
         private int _i;
         private char[] _work;
+        private readonly Type _resultType;
 
         public StringParser() : base(true)
         {
             _work = ArrayPool<char>.Shared.Rent(256);
             _i = 0;
+            _resultType = typeof(string);
         }
 
         ~StringParser()
@@ -44,15 +46,9 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override ResultValue GetResult()
         {
-            var str = string.Create(_i, _work, (buffer, value) =>
-            {
-                for (int i = 0; i < _i; i++)
-                {
-                    buffer[i] = value[i];
-                }
-            });
+            var str = new string(_work, 0, _i);
 
-            var returnValue = _i > 0 ? new ResultValue(typeof(string), str) : new ResultValue();
+            var returnValue = _i > 0 ? new ResultValue(_resultType, str) : new ResultValue();
 
             _i = 0;
             return returnValue;

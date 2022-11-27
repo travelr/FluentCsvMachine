@@ -5,9 +5,11 @@ namespace FluentCsvMachine.Machine.Values
     internal class CharParser : ValueParser
     {
         private char? r;
+        private readonly Type _resultType;
 
         public CharParser(bool nullable) : base(nullable)
         {
+            _resultType = GetResultType<char>();
         }
 
         internal override void Process(char c)
@@ -24,7 +26,7 @@ namespace FluentCsvMachine.Machine.Values
             }
             else
             {
-                var returnValue = new ResultValue(typeof(char), r);
+                var returnValue = new ResultValue(_resultType, r);
                 r = null;
                 return returnValue;
             }

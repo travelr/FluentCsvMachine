@@ -45,23 +45,24 @@ namespace FluentCsvMachine.Machine
         }
 
 
-        internal T Create(IReadOnlyList<ResultValue> line)
+        internal T Create(ref ResultLine line)
         {
             var resultObj = new T();
+            var fields = line.Fields;
 
             // Set the properties of the object based on the CSV line
-            SetProperties(line, resultObj);
+            SetProperties(fields, resultObj);
 
             // Execute custom columns after the normal ones 
             if (_custom.Count > 0)
             {
-                CustomColumns(line, resultObj);
+                CustomColumns(fields, resultObj);
             }
 
             // Execute line actions always last
             if (_lineActions is { Count: > 0 })
             {
-                var arg = line.Select(x => x.Value).ToList();
+                var arg = fields.Select(x => x.Value).ToList();
                 foreach (var action in _lineActions)
                 {
                     action(resultObj, arg);

@@ -13,9 +13,11 @@ namespace FluentCsvMachine.Machine.Values
         private long? _n;
         private int? _s; // index of the floating point char
         private int _charCount; // length of the field
+        private readonly Type _resultType;
 
         public FloatingPointParser(bool nullable) : base(nullable)
         {
+            _resultType = GetResultType<T>();
         }
 
         internal override void Process(char c)
@@ -57,9 +59,9 @@ namespace FluentCsvMachine.Machine.Values
             {
                 // Based on https://stackoverflow.com/a/8458496
                 var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, _isNegative, (byte)(_charCount - (_s ?? _charCount)));
-                var resultType = Nullable ? typeof(Nullable<>).MakeGenericType(typeof(T)) : typeof(T);
+
                 // Cast will happen later
-                result = new ResultValue(resultType, resultValue);
+                result = new ResultValue(_resultType, resultValue);
             }
             else
             {

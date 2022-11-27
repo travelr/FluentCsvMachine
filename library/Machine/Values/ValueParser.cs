@@ -1,5 +1,6 @@
 ﻿using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
+using System.Runtime.CompilerServices;
 
 namespace FluentCsvMachine.Machine.Values
 {
@@ -47,9 +48,21 @@ namespace FluentCsvMachine.Machine.Values
         internal abstract ResultValue GetResult();
 
         /// <summary>
+        /// Calculates the return type of ResultLine
+        /// </summary>
+        /// <typeparam name="T">Type of field</typeparam>
+        /// <returns>Nullable or not nullable typeof(T)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal Type GetResultType<T>()
+        {
+            return Nullable ? typeof(Nullable<>).MakeGenericType(typeof(T)) : typeof(T);
+        }
+
+        /// <summary>
         /// Sets the current value as null
         /// Throws an Exception if it is not allowed
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void SetNull()
         {
             if (!Nullable)

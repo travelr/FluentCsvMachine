@@ -1,4 +1,5 @@
-﻿using FluentCsvMachine.Exceptions;
+﻿using System.Runtime.CompilerServices;
+using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.States;
@@ -18,9 +19,10 @@ namespace FluentCsvMachine.Machine
         }
 
         internal CsvConfiguration Config { get; }
+
         internal States State { get; private set; }
 
-        private readonly ChannelWriter<ResultLine> _writer;
+
         private readonly List<CsvPropertyBase> _properties;
         private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
 
@@ -38,15 +40,15 @@ namespace FluentCsvMachine.Machine
         private EntityFactory<T>? _factory;
 
 
-        public CsvMachine(WorkflowInput<T> input, ChannelWriter<ResultLine> writer)
+        public CsvMachine(WorkflowInput<T> input)
         {
             Guard.IsNotNull(input);
-            Guard.IsNotNull(writer);
+
 
             Config = input.Config ?? new CsvConfiguration();
             State = States.HeaderSearch;
 
-            _writer = writer;
+
             _properties = input.Properties;
             _lineActions = input.LineActions;
 
@@ -73,18 +75,18 @@ namespace FluentCsvMachine.Machine
         /// A full line was parsed, here is the result
         /// </summary>
         /// <param name="line">The line, empty strings are null</param>
-        internal void ResultLine(List<ResultValue> line)
+        internal void ResultLine(ref ResultLine line)
         {
             switch (State)
             {
                 case States.HeaderSearch:
                     // Header Search is only using string
-                    var strLine = line.Select(x => !x.IsNull ? (string)x.Value! : null);
+                    var strLine = line.Fields.Select(x => !x.IsNull ? (string)x.Value! : null);
                     FindAndSetHeaders(strLine);
                     break;
 
                 case States.Content:
-                    var entity = _factory!.Create(line);
+                    var entity = _factory!.Create(ref line);
                     result.Add(entity);
                     break;
 
@@ -138,6 +140,7 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="columnNumber">Current column number in the CSV line</param>
         /// <returns>The correct parser</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ValueParser GetParser(int columnNumber)
         {
             return _parsers!.TryGetValue(columnNumber, out var valueParser) ? valueParser : _stringParser;

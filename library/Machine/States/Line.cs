@@ -1,6 +1,8 @@
 ﻿using FluentCsvMachine.Exceptions;
+using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.Values;
+using System.Runtime.CompilerServices;
 
 namespace FluentCsvMachine.Machine.States
 {
@@ -20,10 +22,11 @@ namespace FluentCsvMachine.Machine.States
         private readonly QuotationField<T> quote;
 
         // Fields of the current line
-        private readonly List<ResultValue> fields;
+        private readonly ResultValue[] fields;
 
         // Column number in this line
-        private int columnNumber;
+        private int _fieldsIndex;
+        private readonly int maxNumberOfColumns;
 
 
         internal States State { get; private set; }
@@ -39,10 +42,11 @@ namespace FluentCsvMachine.Machine.States
 
             field = new Field<T>(this, csv.Config);
             quote = new QuotationField<T>(this, csv.Config);
-            fields = new List<ResultValue>(20); // Perfect max column number is not known here...
 
 
-            columnNumber = 0;
+            maxNumberOfColumns = csv.Config.MaxNumberOfColumns;
+            fields = new ResultValue[maxNumberOfColumns];
+            _fieldsIndex = 0;
         }
 
         public int LineCounter { get; private set; }
@@ -76,7 +80,7 @@ namespace FluentCsvMachine.Machine.States
                     return;
 
                 case { State: States.Initial } t when t.c == NewLine:
-                    if (columnNumber == 0)
+                    if (_fieldsIndex == 0)
                     {
                         // Empty Line, nothing to do
                         LineCounter++;
@@ -123,9 +127,9 @@ namespace FluentCsvMachine.Machine.States
             // Report line on CSV machine
             if (State != States.Comment)
             {
-                csv.ResultLine(fields);
-                fields.Clear();
-                columnNumber = 0;
+                var line = new ResultLine(fields, _fieldsIndex);
+                csv.ResultLine(ref line);
+                _fieldsIndex = 0;
             }
 
             // Reset machine
@@ -139,18 +143,24 @@ namespace FluentCsvMachine.Machine.States
         /// <exception cref="Exception"></exception>
         internal void Value()
         {
+            if (_fieldsIndex >= maxNumberOfColumns)
+            {
+                ThrowHelper.ThrowCsvConfigurationException(
+                    $"Please check the MaxNumberOfColumns option in the Configuration. We are exceeding {maxNumberOfColumns} columns");
+            }
+
             var value = Parser.GetResult();
-            fields.Add(value);
-            columnNumber++;
+            fields[_fieldsIndex++] = value;
             SetParserAndResetState();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void SetParserAndResetState()
         {
             State = States.Initial;
             if (csv.State == CsvMachine<T>.States.Content)
             {
-                Parser = csv.GetParser(columnNumber);
+                Parser = csv.GetParser(_fieldsIndex);
             }
         }
     }

@@ -21,6 +21,7 @@ namespace FluentCsvMachine.Machine.Values
         private readonly TreeNode _root;
         private TreeNode _currentNode;
         private readonly List<T> _enums;
+        private readonly Type _resultType;
 
         public EnumParser(Type type) : base(false)
         {
@@ -33,6 +34,8 @@ namespace FluentCsvMachine.Machine.Values
             // Create a tree based on the enum values
             CreateTree(_root, names.Select((x, i) => new StringIndex(i, x)).ToList());
             _currentNode = _root;
+
+            _resultType = GetResultType<T>();
         }
 
         internal override void Process(char c)
@@ -64,7 +67,7 @@ namespace FluentCsvMachine.Machine.Values
             }
 
             var resultValue = _enums[_currentNode.Index.Value];
-            var result = new ResultValue(typeof(T), resultValue!);
+            var result = new ResultValue(_resultType, resultValue!);
 
             // Reset variables
             State = States.Parsing;

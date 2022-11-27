@@ -18,6 +18,7 @@ namespace FluentCsvMachine.Machine.Values
         {
             _signed = signed;
             _result = T.CreateChecked(0);
+            _resultType = GetResultType<T>();
 
             _convert = new T[12];
             for (int i = 0; i <= 10; i++)
@@ -37,6 +38,7 @@ namespace FluentCsvMachine.Machine.Values
         private bool _isNegative;
         private T _result;
         private bool _resultAssigned;
+        private readonly Type _resultType;
 
         internal override void Process(char c)
         {
@@ -70,8 +72,8 @@ namespace FluentCsvMachine.Machine.Values
                     _result *= _convert[11];
                 }
 
-                var resultType = Nullable ? typeof(Nullable<>).MakeGenericType(typeof(T)) : typeof(T);
-                result = new ResultValue(resultType, _result);
+
+                result = new ResultValue(_resultType, _result);
             }
             else
             {

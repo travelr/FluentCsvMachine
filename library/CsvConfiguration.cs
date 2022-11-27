@@ -88,6 +88,12 @@ namespace FluentCsvMachine
         /// </summary>
         public int HeaderSearchLimit { get; set; } = 15;
 
+        /// <summary>
+        /// Maximum number of columns
+        /// Value is used for performance optimizations
+        /// </summary>
+        public int MaxNumberOfColumns { get; set; } = 15;
+
         #endregion Library parameters
     }
 }
