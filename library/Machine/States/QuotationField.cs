@@ -43,7 +43,7 @@ namespace FluentCsvMachine.Machine.States
 
                 case { State: States.Running } t when t.c != Quote && t.c != QuoteEscape:
                     // Quote content
-                    line.Parser.Process(c);
+                    line.Parser!.Process(c);
                     break;
 
                 case { State: States.Running } t when t.c == Quote:
@@ -58,7 +58,7 @@ namespace FluentCsvMachine.Machine.States
 
                 case { State: States.Escape }:
                     // Process char and return back to Running
-                    line.Parser.Process(c);
+                    line.Parser!.Process(c);
                     State = States.Running;
                     break;
 
@@ -71,7 +71,7 @@ namespace FluentCsvMachine.Machine.States
                 case { State: States.Closed } t when t.c == Quote:
                     // Quote inside a quoted field ""hi"" -> "hi"
                     // Escape char is a quote therefore Escape state is not used - achieved by the order of statements
-                    line.Parser.Process(Quote);
+                    line.Parser!.Process(Quote);
                     State = States.Running;
                     break;
 

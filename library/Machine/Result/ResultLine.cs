@@ -2,17 +2,21 @@
 {
     readonly struct ResultLine
     {
-        public ResultLine(ResultValue[] fields, int count)
+        public ResultLine(ref ResultValue[] fields, int count)
         {
-            Fields = new ResultValue[count];
-            Array.Copy(fields, Fields, count);
+            _array = new ResultValue[count];
+            Array.Copy(fields, _array, count);
         }
 
-        public ResultValue[] Fields { get; }
+        private readonly ResultValue[] _array;
 
-        public static implicit operator ResultValue[](ResultLine line)
+        public ReadOnlySpan<ResultValue> AsSpan()
         {
-            return line.Fields;
+            return _array;
         }
+
+        public int Length => _array.Length;
+
+        public ref readonly ResultValue this[int index] => ref _array[index];
     }
 }

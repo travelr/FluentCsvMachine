@@ -22,16 +22,21 @@ namespace FluentCsvMachine.Machine.States
         private readonly QuotationField<T> quote;
 
         // Fields of the current line
-        private readonly ResultValue[] fields;
+        private ResultValue[] fields;
 
         // Column number in this line
         private int _fieldsIndex;
         private readonly int maxNumberOfColumns;
 
 
-        internal States State { get; private set; }
+        internal States State
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get;
+            private set;
+        }
 
-        internal ValueParser Parser { get; private set; }
+        internal ValueParser? Parser { get; private set; }
 
         public Line(CsvMachine<T> csv) : base(csv.Config)
         {
@@ -127,7 +132,7 @@ namespace FluentCsvMachine.Machine.States
             // Report line on CSV machine
             if (State != States.Comment)
             {
-                var line = new ResultLine(fields, _fieldsIndex);
+                var line = new ResultLine(ref fields, _fieldsIndex);
                 csv.ResultLine(ref line);
                 _fieldsIndex = 0;
             }
@@ -149,7 +154,7 @@ namespace FluentCsvMachine.Machine.States
                     $"Please check the MaxNumberOfColumns option in the Configuration. We are exceeding {maxNumberOfColumns} columns");
             }
 
-            var value = Parser.GetResult();
+            var value = Parser?.GetResult() ?? new ResultValue();
             fields[_fieldsIndex++] = value;
             SetParserAndResetState();
         }

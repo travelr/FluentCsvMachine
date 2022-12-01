@@ -30,7 +30,7 @@ namespace FluentCsvMachine.Machine
         private readonly List<T> result;
 
         private readonly char _skipNewLineChar;
-        private Dictionary<int, ValueParser>? _parsers;
+        private ValueParser?[]? _parsers;
         private readonly StringParser _stringParser = new();
 
         /// <summary>
@@ -81,8 +81,7 @@ namespace FluentCsvMachine.Machine
             {
                 case States.HeaderSearch:
                     // Header Search is only using string
-                    var strLine = line.Fields.Select(x => !x.IsNull ? (string)x.Value! : null);
-                    FindAndSetHeaders(strLine);
+                    FindAndSetHeaders(ref line);
                     break;
 
                 case States.Content:
@@ -124,11 +123,14 @@ namespace FluentCsvMachine.Machine
             // Focus on content now
             State = States.Content;
 
-            // Generate parser dictionary
-            _parsers = _properties.Where(x => x.Index.HasValue).ToDictionary(x => x.Index!.Value, x => x.ValueParser!);
-            foreach (var p in _parsers)
+            // Generate parser array
+            var validProps = _properties.Where(x => x.Index.HasValue).ToArray();
+            var maxCols = validProps.Max(x => x.Index)!.Value + 1;
+            _parsers = new ValueParser[maxCols];
+            foreach (var prop in validProps)
             {
-                p.Value.Config = Config;
+                prop.ValueParser!.Config = Config;
+                _parsers[prop.Index!.Value] = prop.ValueParser;
             }
 
             // Change the parser
@@ -141,9 +143,14 @@ namespace FluentCsvMachine.Machine
         /// <param name="columnNumber">Current column number in the CSV line</param>
         /// <returns>The correct parser</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ValueParser GetParser(int columnNumber)
+        internal ValueParser? GetParser(int columnNumber)
         {
-            return _parsers!.TryGetValue(columnNumber, out var valueParser) ? valueParser : _stringParser;
+            return State switch
+            {
+                States.HeaderSearch => _stringParser,
+                States.Content => columnNumber < _parsers!.Length ? _parsers![columnNumber]! : null,
+                _ => throw new NotImplementedException()
+            };
         }
 
         #region Private
@@ -151,8 +158,7 @@ namespace FluentCsvMachine.Machine
         /// <summary>
         /// Find Header Line
         /// </summary>
-        /// <param name="fields">Parsed fields of the line</param>
-        private void FindAndSetHeaders(IEnumerable<string?> fields)
+        private void FindAndSetHeaders(ref ResultLine line)
         {
             if (_line.LineCounter >= Config.HeaderSearchLimit)
             {
@@ -161,6 +167,12 @@ namespace FluentCsvMachine.Machine
             }
 
             var headers = _properties.Select(x => x.ColumnName!);
+            var fields = new List<string?>();
+            foreach (ref readonly var x in line.AsSpan())
+            {
+                fields.Add(x.IsNull ? null : x.Value as string);
+            }
+
 
             // Are all headers present in this line?
             if (!headers.All(x => fields.Any(y => y != null && x == y)))

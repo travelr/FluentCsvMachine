@@ -38,7 +38,7 @@ namespace FluentCsvMachine.Machine.Values
         private bool _isNegative;
         private T _result;
         private bool _resultAssigned;
-        private readonly Type _resultType;
+        private Type _resultType;
 
         internal override void Process(char c)
         {
@@ -72,8 +72,8 @@ namespace FluentCsvMachine.Machine.Values
                     _result *= _convert[11];
                 }
 
-
-                result = new ResultValue(_resultType, _result);
+                var resultObj = _result as object;
+                result = new ResultValue(ref _resultType, ref resultObj);
             }
             else
             {

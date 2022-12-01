@@ -13,7 +13,7 @@ namespace FluentCsvMachine.Machine.Values
         private long? _n;
         private int? _s; // index of the floating point char
         private int _charCount; // length of the field
-        private readonly Type _resultType;
+        private Type _resultType;
 
         public FloatingPointParser(bool nullable) : base(nullable)
         {
@@ -58,10 +58,10 @@ namespace FluentCsvMachine.Machine.Values
             if (!IsNull && _n.HasValue)
             {
                 // Based on https://stackoverflow.com/a/8458496
-                var resultValue = new decimal((int)_n, (int)(_n >> 32), 0, _isNegative, (byte)(_charCount - (_s ?? _charCount)));
+                object resultValue = new decimal((int)_n, (int)(_n >> 32), 0, _isNegative, (byte)(_charCount - (_s ?? _charCount)));
 
                 // Cast will happen later
-                result = new ResultValue(_resultType, resultValue);
+                result = new ResultValue(ref _resultType, ref resultValue);
             }
             else
             {

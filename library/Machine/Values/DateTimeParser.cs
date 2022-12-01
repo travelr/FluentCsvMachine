@@ -25,7 +25,7 @@ namespace FluentCsvMachine.Machine.Values
 
         private int _inputCount;
         private char? _lastInputChar;
-        private readonly Type _resultType;
+        private Type _resultType;
 
         public DateTimeParser(string inputFormat, bool nullable) : base(nullable)
         {
@@ -130,8 +130,8 @@ namespace FluentCsvMachine.Machine.Values
             {
                 try
                 {
-                    var dt = new DateTime(_year, _month, _day, _hour + _hourOffset, _minute, _second, _ms);
-                    resultValue = new ResultValue(_resultType, dt);
+                    object dt = new DateTime(_year, _month, _day, _hour + _hourOffset, _minute, _second, _ms);
+                    resultValue = new ResultValue(ref _resultType, ref dt);
                 }
                 catch (ArgumentOutOfRangeException)
                 {
