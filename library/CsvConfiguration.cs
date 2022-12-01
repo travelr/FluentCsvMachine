@@ -97,9 +97,15 @@ namespace FluentCsvMachine
         /// <summary>
         /// Queue between FileParser and Entity factory
         /// Probably no change is necessary
-        /// Though reduce it if you have poor IO performance, increase it if your CPU is slow 
+        /// Shared between the number of threads, a small queue causes too many thread context changes 
         /// </summary>
-        public int EntityQueueSize { get; set; } = 500;
+        public int EntityQueueSize { get; set; } = 1500;
+
+        /// <summary>
+        /// Number of entity factory threads
+        /// Each one is using 1/x of the queue size
+        /// </summary>
+        public int FactoryThreads { get; set; } = 2;
 
         #endregion Library parameters
     }

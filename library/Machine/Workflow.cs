@@ -11,7 +11,7 @@ namespace FluentCsvMachine.Machine
     /// <param name="lines">Dequeued CSV lines</param>
     /// <param name="entities">Converted CSV lines</param>
     /// <returns>The last value of lines was null ? break -> CSV file fully read : false</returns>
-    internal delegate bool ProcessResultDelegate<T>(ResultLine?[] lines, out IReadOnlyList<T> entities);
+    internal delegate bool ProcessResultDelegate<T>(ResultLine?[] lines, out (int, IReadOnlyList<T>?) entities);
 
     /// <summary>
     /// Workflow for CSV parsing and entity creation
@@ -30,7 +30,7 @@ namespace FluentCsvMachine.Machine
             Guard.IsNotNull(input);
 
             this.input = input;
-            queue = new FastQueue(input.Config.EntityQueueSize);
+            queue = new FastQueue(input.Config.EntityQueueSize, input.Config.FactoryThreads);
             csv = new CsvMachine<T>(input, queue.Insert);
             stream = input.Stream;
 
@@ -50,14 +50,25 @@ namespace FluentCsvMachine.Machine
                 csv.SetStateContent();
             }
 
-            // Start the producer an consumer
-            var csvReader = Task.Run(ParseStream);
-            var entityCreator = Task.Run(CreateResult);
+            var producer = Task.Run(ParseStream);
 
-            await csvReader;
-            await entityCreator;
+            // Start the consumers
+            var numThreads = input.Config.FactoryThreads;
+            var consumers = new Task<IReadOnlyList<(int, IReadOnlyList<T>)>>[numThreads];
+            for (int i = 0; i < numThreads; i++)
+            {
+                consumers[i] = Task.Run(CreateResult);
+            }
 
-            return entityCreator.Result;
+            await producer;
+            await Task.WhenAll(consumers);
+
+            //var checkload = consumers.SelectMany(x => x.Result).OrderBy(x => x.Item1).ToList();
+            //Console.WriteLine(checkload);
+
+            var result = consumers.SelectMany(x => x.Result).OrderBy(x => x.Item1).SelectMany(x => x.Item2).ToList();
+
+            return result;
         }
 
         /// <summary>
@@ -87,9 +98,9 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <returns></returns>
         /// <remarks>Do not use this method in the main thread!</remarks>
-        private List<T> CreateResult()
+        private IReadOnlyList<(int, IReadOnlyList<T>)> CreateResult()
         {
-            return queue.Process<T>(processDelegate);
+            return queue.Process(processDelegate);
         }
 
 
@@ -98,9 +109,9 @@ namespace FluentCsvMachine.Machine
         /// Invoked by queue.Process in order to create entities
         /// </summary>
         /// <param name="lines">Work load parsed CSV lines</param>
-        /// <param name="entities">out: created entities</param>
+        /// <param name="entities">out: (line number of the first entity, created entities)</param>
         /// <returns>Null was seen, return true -> complete task</returns>
-        private bool ProcessLine(ResultLine?[] lines, out IReadOnlyList<T> entities)
+        private bool ProcessLine(ResultLine?[] lines, out (int, IReadOnlyList<T>?) entities)
         {
             var result = new List<T>(lines.Length);
             var taskFinished = false;
@@ -119,7 +130,8 @@ namespace FluentCsvMachine.Machine
                 result.Add(entity);
             }
 
-            entities = result;
+
+            entities = lines[0].HasValue ? (lines[0]!.Value.LineNumber, result) : (-1, null);
             return taskFinished;
         }
     }

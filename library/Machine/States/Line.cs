@@ -127,7 +127,7 @@ namespace FluentCsvMachine.Machine.States
             // Report line on CSV machine
             if (State != States.Comment)
             {
-                var line = new ResultLine(fields, _fieldsIndex);
+                var line = new ResultLine(fields, _fieldsIndex, LineCounter);
                 csv.ResultLine(ref line);
                 _fieldsIndex = 0;
             }

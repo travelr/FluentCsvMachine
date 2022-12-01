@@ -15,19 +15,23 @@ namespace FluentCsvMachine.Machine.Workflow
         private int _tail;
         private int _count;
 
+        private int _pulseCounter;
+        private readonly int _monitorThreshold;
+
+
         /// <summary>
         /// FastQueue
         /// </summary>
         /// <param name="size">CsvConfiguration.EntityQueueSize</param>
-        public FastQueue(int size)
+        /// <param name="numThreads"></param>
+        public FastQueue(int size, int numThreads)
         {
             queue = new ResultLine?[size];
             max = size;
             sync = new object();
-
-            _head = 0;
             _tail = -1;
-            _count = 0;
+
+            _monitorThreshold = size / numThreads;
         }
 
         /// <summary>
@@ -49,7 +53,6 @@ namespace FluentCsvMachine.Machine.Workflow
                     if (_count == max)
                     {
                         // Queue is full
-                        Console.WriteLine("Full");
                         Monitor.Wait(sync);
                     }
                     else
@@ -57,7 +60,14 @@ namespace FluentCsvMachine.Machine.Workflow
                         _tail = (_tail + 1) % max;
                         queue[_tail] = item;
                         _count++;
-                        Monitor.Pulse(sync);
+                        _pulseCounter++;
+
+                        if (_pulseCounter >= _monitorThreshold || item == null)
+                        {
+                            Monitor.Pulse(sync);
+                            _pulseCounter = 0;
+                        }
+
                         break;
                     }
                 }
@@ -85,9 +95,9 @@ namespace FluentCsvMachine.Machine.Workflow
         /// </param>
         /// <returns>Created entities by this thread</returns>
         /// <remarks>May block this thread until all CSV lines have been converted to entities of type T</remarks>
-        public List<T> Process<T>(ProcessResultDelegate<T> @delegate)
+        public IReadOnlyList<(int, IReadOnlyList<T>)> Process<T>(ProcessResultDelegate<T> @delegate)
         {
-            var result = new List<T>(500);
+            var result = new List<(int, IReadOnlyList<T>)>(50);
 
             // Iterate while until you find a null value
             while (true)
@@ -98,7 +108,7 @@ namespace FluentCsvMachine.Machine.Workflow
                 {
                     if (_count == 0)
                     {
-                        //Queue is Empty
+                        //Queue is Empty 
                         Monitor.Wait(sync);
                     }
                     else
@@ -106,7 +116,7 @@ namespace FluentCsvMachine.Machine.Workflow
                         if (_head + _count <= max)
                         {
                             work = queue.Skip(_head).Take(_count).ToArray();
-                            _head = (_head + _count) % max; // modulo due to if equals max
+                            _head = (_head + _count) % max; // modulo -> if equals max
                         }
                         else
                         {
@@ -122,8 +132,12 @@ namespace FluentCsvMachine.Machine.Workflow
                             _head = take2;
                         }
 
+                        if (_count >= _monitorThreshold)
+                        {
+                            Monitor.Pulse(sync);
+                        }
+
                         _count = 0;
-                        Monitor.Pulse(sync);
                     }
                 }
 
@@ -134,19 +148,23 @@ namespace FluentCsvMachine.Machine.Workflow
                 }
 
                 // Create entities by calling the delegate
-                var breakWhile = @delegate.Invoke(work!, out IReadOnlyList<T> entities);
+                var breakWhile = @delegate.Invoke(work!, out (int, IReadOnlyList<T>?) entities);
 
-                if (entities.Count > 0)
+
+                if (entities.Item2 != null)
                 {
                     // Save entities to result, but not the finish marker
-                    result.AddRange(entities);
+                    result.Add(entities!);
                 }
 
-                if (breakWhile)
+                if (!breakWhile)
                 {
-                    // Null as a finish marker was seen, CSV file is done, complete this task
-                    break;
+                    continue;
                 }
+
+                // Null as a finish marker was seen, CSV file is done, complete this task
+                InsertInternal(null);
+                break;
             }
 
             return result;

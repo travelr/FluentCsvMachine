@@ -22,6 +22,17 @@ namespace FluentCsvMachine.Machine.Workflow
             Properties = properties;
             SearchForHeaders = searchForHeaders;
             Config = config ?? new CsvConfiguration();
+
+
+            if (Config.EntityQueueSize < 20 || Config.EntityQueueSize <= Config.FactoryThreads)
+            {
+                ThrowHelper.ThrowCsvConfigurationException("Please choose a larger queue size. Values larger 20 are valid");
+            }
+            else if (Config.FactoryThreads > 10)
+            {
+                ThrowHelper.ThrowCsvConfigurationException(
+                    "Consider please a lower number of threads. Too many context changes will slow you down. Max. value is 10.");
+            }
         }
 
 
