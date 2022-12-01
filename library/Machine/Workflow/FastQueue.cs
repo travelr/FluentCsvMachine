@@ -134,7 +134,8 @@ namespace FluentCsvMachine.Machine.Workflow
 
                         if (_count >= _monitorThreshold)
                         {
-                            Monitor.Pulse(sync);
+                            // All, otherwise we might run into a race condition with multiple consumers
+                            Monitor.PulseAll(sync);
                         }
 
                         _count = 0;
