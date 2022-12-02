@@ -10,7 +10,7 @@
             IsNull = true;
         }
 
-        public ResultValue(Type t, object value)
+        public ResultValue(ref Type t, ref object value)
         {
             Type = t;
             Value = value;

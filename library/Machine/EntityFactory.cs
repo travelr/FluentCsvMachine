@@ -48,7 +48,7 @@ namespace FluentCsvMachine.Machine
         internal T Create(ref ResultLine line)
         {
             var resultObj = new T();
-            var fields = line.Fields;
+            var fields = line.AsSpan();
 
             // Set the properties of the object based on the CSV line
             SetProperties(fields, resultObj);
@@ -62,7 +62,12 @@ namespace FluentCsvMachine.Machine
             // Execute line actions always last
             if (_lineActions is { Count: > 0 })
             {
-                var arg = fields.Select(x => x.Value).ToList();
+                var arg = new List<object?>(fields.Length);
+                foreach (ref readonly var field in fields)
+                {
+                    arg.Add(field.Value);
+                }
+
                 foreach (var action in _lineActions)
                 {
                     action(resultObj, arg);
@@ -77,7 +82,8 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="line">CSV line</param>
         /// <param name="resultObj">corresponding object</param>
-        private void SetProperties(ResultValue[] line, T resultObj)
+
+        private void SetProperties(ReadOnlySpan<ResultValue> line, T resultObj)
         {
             for (int i = 0; i < _properties.Count; i++)
             {
@@ -126,7 +132,8 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="line">Current CSV line</param>
         /// <param name="resultObj">Entity for value assignment</param>
-        private void CustomColumns(ResultValue[] line, T resultObj)
+
+        private void CustomColumns(ReadOnlySpan<ResultValue> line, T resultObj)
         {
             for (int i = 0; i < _custom.Count; i++)
             {
@@ -163,7 +170,8 @@ namespace FluentCsvMachine.Machine
         /// <param name="index">Index of the field</param>
         /// <param name="value">ResultValue output</param>
         /// <returns>True if the value is not null</returns>
-        private static bool GetValue(ResultValue[] line, int index, out ResultValue value)
+
+        private static bool GetValue(ReadOnlySpan<ResultValue> line, int index, out ResultValue value)
         {
             if (index < 0 || index >= line.Length)
             {

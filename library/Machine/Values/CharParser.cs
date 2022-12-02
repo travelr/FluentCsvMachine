@@ -4,8 +4,8 @@ namespace FluentCsvMachine.Machine.Values
 {
     internal class CharParser : ValueParser
     {
-        private char? r;
-        private readonly Type _resultType;
+        private object? r;
+        private Type _resultType;
 
         public CharParser(bool nullable) : base(nullable)
         {
@@ -26,7 +26,7 @@ namespace FluentCsvMachine.Machine.Values
             }
             else
             {
-                var returnValue = new ResultValue(_resultType, r);
+                var returnValue = new ResultValue(ref _resultType, ref r);
                 r = null;
                 return returnValue;
             }

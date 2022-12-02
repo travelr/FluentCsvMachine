@@ -10,7 +10,7 @@ namespace FluentCsvMachine.Machine.Values
 
         private int _i;
         private char[] _work;
-        private readonly Type _resultType;
+        private Type _resultType;
 
         public StringParser() : base(true)
         {
@@ -46,9 +46,9 @@ namespace FluentCsvMachine.Machine.Values
 
         internal override ResultValue GetResult()
         {
-            var str = new string(_work, 0, _i);
+            var str = new string(_work, 0, _i) as object;
 
-            var returnValue = _i > 0 ? new ResultValue(_resultType, str) : new ResultValue();
+            var returnValue = _i > 0 ? new ResultValue(ref _resultType, ref str) : new ResultValue();
 
             _i = 0;
             return returnValue;

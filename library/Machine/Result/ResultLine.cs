@@ -2,17 +2,20 @@
 {
     readonly struct ResultLine
     {
-        public ResultLine(ResultValue[] fields, int count, int lineNumber)
+    
+        public ResultLine(ref ResultValue[] fields, int count, int lineNumber)
         {
-            Fields = new ResultValue[count];
-            Array.Copy(fields, Fields, count);
+            _array = new ResultValue[count];
+            Array.Copy(fields, _array, count);
             LineNumber = lineNumber;
         }
 
-        /// <summary>
-        /// Parsed CSV fields
-        /// </summary>
-        public ResultValue[] Fields { get; }
+        private readonly ResultValue[] _array;
+
+        public ReadOnlySpan<ResultValue> AsSpan()
+        {
+            return _array;
+        }
 
         /// <summary>
         /// Line number in CSV file
@@ -20,9 +23,8 @@
         /// </summary>
         public int LineNumber { get; }
 
-        public static implicit operator ResultValue[](ResultLine line)
-        {
-            return line.Fields;
-        }
+        public int Length => _array.Length;
+
+        public ref readonly ResultValue this[int index] => ref _array[index];
     }
 }

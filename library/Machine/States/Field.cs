@@ -21,7 +21,7 @@ namespace FluentCsvMachine.Machine.States
                 // End field on the delimiter or line break
                 _line.Value();
             }
-            else if (_line.Parser.State != ParserStates.FastForward)
+            else if (_line.Parser != null && _line.Parser.State != ParserStates.FastForward)
             {
                 // Allowed char
                 _line.Parser.Process(c);

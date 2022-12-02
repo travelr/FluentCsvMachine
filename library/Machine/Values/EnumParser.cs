@@ -21,7 +21,7 @@ namespace FluentCsvMachine.Machine.Values
         private readonly TreeNode _root;
         private TreeNode _currentNode;
         private readonly List<T> _enums;
-        private readonly Type _resultType;
+        private Type _resultType;
 
         public EnumParser(Type type) : base(false)
         {
@@ -66,8 +66,8 @@ namespace FluentCsvMachine.Machine.Values
                 ThrowHelper.ThrowCsvMalformedException($"Cannot parse enum. Current string ({_currentNode.GetCurrentString()} does not match {typeof(T)}");
             }
 
-            var resultValue = _enums[_currentNode.Index.Value];
-            var result = new ResultValue(_resultType, resultValue!);
+            object? resultValue = _enums[_currentNode.Index.Value];
+            var result = new ResultValue(ref _resultType, ref resultValue!);
 
             // Reset variables
             State = States.Parsing;
