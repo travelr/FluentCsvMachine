@@ -25,20 +25,11 @@ namespace FluentCsvMachine.Machine
         private readonly List<Action<T, IReadOnlyList<object?>>>? lineActions;
         private readonly char skipNewLineChar;
         private readonly Line<T> lineMachine;
-        private readonly StringParser stringParser = new();
+
         private readonly Action<ResultLine> insertQueue;
 
-
-        private readonly List<CsvPropertyBase> _properties;
-        private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
-
-        private readonly Line<T> _line;
-        private readonly List<T> result;
-
-        private readonly char _skipNewLineChar;
         private ValueParser?[]? _parsers;
         private readonly StringParser _stringParser = new();
-
 
         /// <summary>
         /// Factory for entities
@@ -125,7 +116,7 @@ namespace FluentCsvMachine.Machine
 
 
             // Generate parser array
-            var validProps = _properties.Where(x => x.Index.HasValue).ToArray();
+            var validProps = properties.Where(x => x.Index.HasValue).ToArray();
             var maxCols = validProps.Max(x => x.Index)!.Value + 1;
             _parsers = new ValueParser[maxCols];
             foreach (var prop in validProps)
@@ -169,7 +160,7 @@ namespace FluentCsvMachine.Machine
             }
 
 
-            var headers = _properties.Select(x => x.ColumnName!);
+            var headers = properties.Select(x => x.ColumnName!);
             var fields = new List<string?>();
             foreach (ref readonly var x in line.AsSpan())
             {
