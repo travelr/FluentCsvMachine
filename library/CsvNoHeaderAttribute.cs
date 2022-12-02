@@ -24,8 +24,14 @@
             InputFormat = inputFormat;
         }
 
+        /// <summary>
+        /// Column Index
+        /// </summary>
         public int ColumnIndex { get; }
 
+        /// <summary>
+        /// InputFormat
+        /// </summary>
         public string? InputFormat { get; }
     }
 }

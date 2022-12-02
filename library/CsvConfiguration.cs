@@ -3,18 +3,32 @@ using System.Text;
 
 namespace FluentCsvMachine
 {
+    /// <summary>
+    /// CSV configuration
+    /// Set the delimiter or other options
+    /// All properties offer defaults, creating new() is fine
+    /// </summary>
     public class CsvConfiguration
     {
         private char _decimalPoint = '.';
 
+        /// <summary>
+        /// CSV default configuration
+        /// </summary>
         public CsvConfiguration()
         { }
 
+        /// <summary>
+        /// CSV default configuration with a custom delimiter
+        /// </summary>
         public CsvConfiguration(char delimiter)
         {
             Delimiter = delimiter;
         }
 
+        /// <summary>
+        /// CSV default configuration with a custom delimiter and file encoding
+        /// </summary>
         public CsvConfiguration(char delimiter, Encoding encoding) : this(delimiter)
         {
             Guard.IsNotNull(encoding);

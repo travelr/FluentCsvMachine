@@ -10,6 +10,11 @@ namespace FluentCsvMachine.Property
     /// </summary>
     public abstract class CsvPropertyBase
     {
+        /// <summary>
+        /// See <see cref="CsvPropertyBase"/>
+        /// </summary>
+        /// <param name="propertyType">Property of the column</param>
+        /// <param name="isCustom">Is a custom mapping column</param>
         protected CsvPropertyBase(Type propertyType, bool isCustom)
         {
             Guard.IsNotNull(propertyType);

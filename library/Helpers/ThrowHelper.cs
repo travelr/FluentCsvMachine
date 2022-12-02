@@ -14,39 +14,36 @@ namespace FluentCsvMachine.Helpers
     internal static class ThrowHelper
     {
         /// <summary>
-        /// Throws an <see cref="ArgumentNullException"/> when <see cref="IsNotNull{T}(T,string)"/> fails.
+        /// Throws an <see cref="ArgumentNullException"/> when Guard.IsNotNull{T}(T?, string) fails.
         /// </summary>
         /// <typeparam name="T">The type of the input value.</typeparam>
         [DoesNotReturn]
-        public static void ThrowArgumentNullExceptionForIsNotNull<T>(string name)
+        internal static void ThrowArgumentNullExceptionForIsNotNull<T>(string name)
         {
-            throw new ArgumentNullException(name, $"Parameter {AssertString(name)} ({typeof(T).ToString()}) must be not null).");
+            throw new ArgumentNullException(name, $"Parameter {AssertString(name)} ({typeof(T)}) must be not null).");
         }
 
         /// <summary>
-        /// Throws an <see cref="ArgumentException"/> when <see cref="IsNullOrEmpty"/> fails.
+        /// Throws an <see cref="ArgumentException"/> when <see cref="Guard.IsNullOrEmpty(string?, string)"/> fails.
         /// </summary>
         [DoesNotReturn]
-        public static void ThrowArgumentExceptionForIsNullOrEmpty(string? text, string name)
+        internal static void ThrowArgumentExceptionForIsNullOrEmpty(string? text, string name)
         {
             throw new ArgumentException($"Parameter {AssertString(name)} (string) must be null or empty, was {AssertString(text)}.", name);
         }
 
         /// <summary>
-        /// Throws an <see cref="ArgumentNullException"/> or <see cref="ArgumentException"/> when <see cref="IsNotNullOrEmpty"/> fails.
+        /// Throws an <see cref="ArgumentNullException"/> or <see cref="ArgumentException"/> when <see cref="Guard.IsNotNullOrEmpty(string?, string)"/> fails.
         /// </summary>
         [DoesNotReturn]
-        public static void ThrowArgumentExceptionForIsNotNullOrEmpty(string? text, string name)
+        internal static void ThrowArgumentExceptionForIsNotNullOrEmpty(string? text, string name)
         {
             [MethodImpl(MethodImplOptions.NoInlining)]
             static Exception GetException(string? text, string name)
             {
-                if (text is null)
-                {
-                    return new ArgumentNullException(name, $"Parameter {AssertString(name)} (string) must not be null or empty, was null.");
-                }
-
-                return new ArgumentException($"Parameter {AssertString(name)} (string) must not be null or empty, was empty.", name);
+                return text is null
+                    ? new ArgumentNullException(name, $"Parameter {AssertString(name)} (string) must not be null or empty, was null.")
+                    : new ArgumentException($"Parameter {AssertString(name)} (string) must not be null or empty, was empty.", name);
             }
 
             throw GetException(text, name);
@@ -57,7 +54,7 @@ namespace FluentCsvMachine.Helpers
         /// </summary>
         /// <param name="message">Concrete issue</param>
         [DoesNotReturn]
-        public static void ThrowCsvConfigurationException(string message)
+        internal static void ThrowCsvConfigurationException(string message)
         {
             throw new CsvConfigurationException(message);
         }
@@ -67,7 +64,7 @@ namespace FluentCsvMachine.Helpers
         /// </summary>
         /// <param name="message">Concrete issue</param>
         [DoesNotReturn]
-        public static void CsvColumnMismatchException(string message)
+        internal static void CsvColumnMismatchException(string message)
         {
             throw new CsvColumnMismatchException(message);
         }

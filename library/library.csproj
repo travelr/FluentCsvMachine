@@ -11,7 +11,7 @@
     <Authors>travelr</Authors>
     <Product />
     <PackageProjectUrl></PackageProjectUrl>
-    <Version>0.1.0-beta</Version>
+    <Version>1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/travelr/FluentCsvMachine</RepositoryUrl>
     <PackageTags>csv;csv-reader;comma;separated;delimited;parser;csv-parser;fluent</PackageTags>
@@ -19,6 +19,7 @@
     <PackageIcon>9937143_construction_jackhammer_repair_drill_industry_icon.png</PackageIcon>
     <Description>Fluent CSV Machine - an expressions based CSV parser</Description>
     <Copyright>travelr</Copyright>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +35,6 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
+
 
 </Project>
