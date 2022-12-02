@@ -12,7 +12,7 @@ namespace FluentCsvMachine.Test
         /// 7,8,9,10
         /// </summary>
         [TestMethod]
-        public void Basic()
+        public async Task Basic()
         {
             const string path = "../../../fixtures/no-headers.csv";
             Assert.IsTrue(File.Exists(path));
@@ -21,7 +21,7 @@ namespace FluentCsvMachine.Test
             // 10 cannot be accessed because the previous lines do not offer an empty field
 
             var parser = new CsvParser<BasicString>();
-            var result = parser.ParseWithoutHeader(path, new CsvConfiguration());
+            var result = await parser.ParseWithoutHeader(path, new CsvConfiguration());
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 4);
@@ -38,13 +38,13 @@ namespace FluentCsvMachine.Test
         /// ok, ok, ok!
         /// </summary>
         [TestMethod]
-        public void BadData()
+        public async Task BadData()
         {
             const string path = "../../../fixtures/bad-data.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<BasicString>();
-            var result = parser.ParseWithoutHeader(path);
+            var result = await parser.ParseWithoutHeader(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 4);
@@ -55,13 +55,13 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        public void EmptyColumns()
+        public async Task EmptyColumns()
         {
             const string path = "../../../fixtures/empty-columns.csv";
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<EmptyColumn>();
-            var result = parser.ParseWithoutHeader(path, new CsvConfiguration(';'));
+            var result = await parser.ParseWithoutHeader(path, new CsvConfiguration(';'));
 
             Assert.IsTrue(result[0].A == new DateTime(2007, 01, 01) && result[0].B == null && result[0].C == null);
             Assert.IsTrue(result[1].A == new DateTime(2007, 01, 02) && result[1].B == null && result[1].C == null);

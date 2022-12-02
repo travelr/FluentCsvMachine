@@ -1,12 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using FluentCsvMachine.Exceptions;
+﻿using FluentCsvMachine.Exceptions;
 using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.States;
 using FluentCsvMachine.Machine.Values;
 using FluentCsvMachine.Machine.Workflow;
 using FluentCsvMachine.Property;
-using System.Threading.Channels;
+using System.Runtime.CompilerServices;
 
 namespace FluentCsvMachine.Machine
 {
@@ -22,6 +21,13 @@ namespace FluentCsvMachine.Machine
 
         internal States State { get; private set; }
 
+        private readonly List<CsvPropertyBase> properties;
+        private readonly List<Action<T, IReadOnlyList<object?>>>? lineActions;
+        private readonly char skipNewLineChar;
+        private readonly Line<T> lineMachine;
+        private readonly StringParser stringParser = new();
+        private readonly Action<ResultLine> insertQueue;
+
 
         private readonly List<CsvPropertyBase> _properties;
         private readonly List<Action<T, IReadOnlyList<object?>>>? _lineActions;
@@ -33,41 +39,38 @@ namespace FluentCsvMachine.Machine
         private ValueParser?[]? _parsers;
         private readonly StringParser _stringParser = new();
 
+
         /// <summary>
         /// Factory for entities
         /// Assign only after headers are found because the Index value is required
         /// </summary>
-        private EntityFactory<T>? _factory;
+        internal EntityFactory<T>? Factory { get; private set; }
 
-
-        public CsvMachine(WorkflowInput<T> input)
+        public CsvMachine(WorkflowInput<T> input, Action<ResultLine> insertQueue)
         {
             Guard.IsNotNull(input);
+            Guard.IsNotNull(insertQueue);
 
-
-            Config = input.Config ?? new CsvConfiguration();
+            Config = input.Config;
             State = States.HeaderSearch;
 
-
-            _properties = input.Properties;
-            _lineActions = input.LineActions;
-
-            _line = new Line<T>(this);
-            result = new List<T>();
-
-            _skipNewLineChar = Config.NewLine == '\n' ? '\r' : '\0';
+            properties = input.Properties;
+            lineActions = input.LineActions;
+            skipNewLineChar = Config.NewLine == '\n' ? '\r' : '\0';
+            lineMachine = new Line<T>(this);
+            this.insertQueue = insertQueue;
         }
 
         internal void Process(char[] buffer, int count)
         {
             for (int i = 0; i < count; i++)
             {
-                if (buffer[i] == _skipNewLineChar)
+                if (buffer[i] == skipNewLineChar)
                 {
                     continue;
                 }
 
-                _line.Process(buffer[i]);
+                lineMachine.Process(buffer[i]);
             }
         }
 
@@ -85,8 +88,7 @@ namespace FluentCsvMachine.Machine
                     break;
 
                 case States.Content:
-                    var entity = _factory!.Create(ref line);
-                    result.Add(entity);
+                    insertQueue(line);
                     break;
 
                 default: throw new CsvMachineException("Unknown CsvMachine state");
@@ -96,14 +98,12 @@ namespace FluentCsvMachine.Machine
         /// <summary>
         /// Process the final line if the file does not end with a line break
         /// </summary>
-        internal List<T> EndOfFile()
+        internal void EndOfFile()
         {
-            if (_line.State != Line<T>.States.Initial)
+            if (lineMachine.State != 0)
             {
-                _line.Process(Config.NewLine);
+                lineMachine.Process(Config.NewLine);
             }
-
-            return result;
         }
 
         /// <summary>
@@ -112,29 +112,31 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         internal void SetStateContent()
         {
-            if (!_properties.Any(x => x.Index.HasValue))
+            if (!properties.Any(x => x.Index.HasValue))
             {
                 throw new CsvMachineException("Property Index needs to be set first, before calling this method");
             }
 
             // Generate Factory
-            _factory = new EntityFactory<T>(_properties, _lineActions);
+            Factory = new EntityFactory<T>(properties, lineActions);
 
             // Focus on content now
             State = States.Content;
+
 
             // Generate parser array
             var validProps = _properties.Where(x => x.Index.HasValue).ToArray();
             var maxCols = validProps.Max(x => x.Index)!.Value + 1;
             _parsers = new ValueParser[maxCols];
             foreach (var prop in validProps)
+
             {
                 prop.ValueParser!.Config = Config;
                 _parsers[prop.Index!.Value] = prop.ValueParser;
             }
 
             // Change the parser
-            _line.SetParserAndResetState();
+            lineMachine.SetParserAndResetState();
         }
 
         /// <summary>
@@ -160,11 +162,12 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         private void FindAndSetHeaders(ref ResultLine line)
         {
-            if (_line.LineCounter >= Config.HeaderSearchLimit)
+            if (lineMachine.LineCounter >= Config.HeaderSearchLimit)
             {
                 ThrowHelper.ThrowCsvMalformedException(
                     "Header not found in CSV file, please check your delimiter or the column definition!");
             }
+
 
             var headers = _properties.Select(x => x.ColumnName!);
             var fields = new List<string?>();
@@ -172,7 +175,6 @@ namespace FluentCsvMachine.Machine
             {
                 fields.Add(x.IsNull ? null : x.Value as string);
             }
-
 
             // Are all headers present in this line?
             if (!headers.All(x => fields.Any(y => y != null && x == y)))
@@ -195,7 +197,7 @@ namespace FluentCsvMachine.Machine
             }
 
             // Set CSV row index for all properties
-            foreach (var p in _properties)
+            foreach (var p in properties)
             {
                 p.Index = headersDic[p.ColumnName!];
             }

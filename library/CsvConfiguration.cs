@@ -94,6 +94,19 @@ namespace FluentCsvMachine
         /// </summary>
         public int MaxNumberOfColumns { get; set; } = 15;
 
+        /// <summary>
+        /// Queue between FileParser and Entity factory
+        /// Probably no change is necessary
+        /// Shared between the number of threads, a small queue causes too many thread context changes 
+        /// </summary>
+        public int EntityQueueSize { get; set; } = 1500;
+
+        /// <summary>
+        /// Number of entity factory threads
+        /// Each one is using 1/x of the queue size
+        /// </summary>
+        public int FactoryThreads { get; set; } = 2;
+
         #endregion Library parameters
     }
 }
