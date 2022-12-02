@@ -10,11 +10,11 @@ namespace FluentCsvMachine.Machine.States
     {
         internal enum States
         {
-            Initial,
+            Initial, //Initial -> Closed and Delimiter or line-break
             Running, // Quote Open
             Escape, // Process next char regardless if it is a quote
             Closed, // Second Quote
-            //Initial -> Closed and Delimiter or line-break
+            FastForward
         }
 
         internal States State { get; private set; }
@@ -38,7 +38,7 @@ namespace FluentCsvMachine.Machine.States
             {
                 case { State: States.Initial } t when t.c == Quote:
                     // First quote
-                    State = States.Running;
+                    State = line.Parser != null ? States.Running : States.FastForward;
                     break;
 
                 case { State: States.Running } t when t.c != Quote && t.c != QuoteEscape:
@@ -64,8 +64,7 @@ namespace FluentCsvMachine.Machine.States
 
                 case { State: States.Closed } t when t.c == Delimiter || t.c == NewLine:
                     // Second quote followed by a delimiter or line break
-                    line.Value();
-                    State = States.Initial;
+                    CloseField();
                     break;
 
                 case { State: States.Closed } t when t.c == Quote:
@@ -75,9 +74,23 @@ namespace FluentCsvMachine.Machine.States
                     State = States.Running;
                     break;
 
+                case { State: States.FastForward } t:
+                    if (t.c == Delimiter || t.c == NewLine)
+                    {
+                        CloseField();
+                    }
+
+                    break;
+
                 default:
                     throw new CsvMachineException($"Unknown Quotation state == {State} && c == '{c}'");
             }
+        }
+
+        private void CloseField()
+        {
+            line.Value();
+            State = States.Initial;
         }
     }
 }
