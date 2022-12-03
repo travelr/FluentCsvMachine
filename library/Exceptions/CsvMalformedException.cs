@@ -3,7 +3,7 @@
 namespace FluentCsvMachine.Exceptions
 {
     /// <summary>
-    /// CSV cannot be parsed
+    /// CSV file cannot be parsed
     /// </summary>
     public class CsvMalformedException : Exception
     {

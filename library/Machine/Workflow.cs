@@ -1,6 +1,8 @@
-﻿using FluentCsvMachine.Helpers;
+﻿using FluentCsvMachine.Exceptions;
+using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine.Result;
 using FluentCsvMachine.Machine.Workflow;
+using System.Collections.Concurrent;
 
 namespace FluentCsvMachine.Machine
 {
@@ -24,17 +26,20 @@ namespace FluentCsvMachine.Machine
         private readonly Stream stream;
         private readonly FastQueue queue;
         private readonly ProcessResultDelegate<T> processDelegate;
+        private readonly BlockingCollection<Exception> threadExceptions;
+
 
         internal Workflow(WorkflowInput<T> input)
         {
             Guard.IsNotNull(input);
 
             this.input = input;
-            queue = new FastQueue(input.Config.EntityQueueSize, input.Config.FactoryThreads);
+            queue = new FastQueue(input.Config.EntityQueueSize);
             csv = new CsvMachine<T>(input, queue.Insert);
             stream = input.Stream;
 
             processDelegate = ProcessLine;
+            threadExceptions = new BlockingCollection<Exception>();
         }
 
         /// <summary>
@@ -50,26 +55,25 @@ namespace FluentCsvMachine.Machine
                 csv.SetStateContent();
             }
 
-            var producer = Task.Run(ParseStream);
 
-            // Start the consumers
-            var numThreads = input.Config.FactoryThreads;
-            var consumers = new Task<IReadOnlyList<(int, IReadOnlyList<T>)>>[numThreads];
-            for (int i = 0; i < numThreads; i++)
-            {
-                consumers[i] = Task.Run(CreateResult);
-            }
+            var producer = Task.Run(ParseStream);
+            var consumer = Task.Run(CreateResult);
 
             await producer;
-            await Task.WhenAll(consumers);
+            await consumer;
 
-            //var checkload = consumers.SelectMany(x => x.Result).OrderBy(x => x.Item1).ToList();
-            //Console.WriteLine(checkload);
+            if (threadExceptions.Count > 0)
+            {
+                // Marshall exceptions from the threads, if they have failed
+                throw new AggregateException(threadExceptions);
+            }
 
-            var result = consumers.SelectMany(x => x.Result).OrderBy(x => x.Item1).SelectMany(x => x.Item2).ToList();
+            // Order sorted chunks and return the final result
+            var result = consumer.Result!.SelectMany(x => x.Item2).ToList();
 
             return result;
         }
+
 
         /// <summary>
         /// Parse CSV stream
@@ -77,19 +81,39 @@ namespace FluentCsvMachine.Machine
         /// <remarks>Do not use this method in the main thread!</remarks>
         private void ParseStream()
         {
-            using var sr = new StreamReader(stream, csv.Config.Encoding);
+            bool close = true;
 
-            char[] buffer = new char[csv.Config.BufferSize];
-            int read;
-
-            while ((read = sr.Read(buffer, 0, buffer.Length)) > 0)
+            try
             {
-                csv.Process(buffer, read);
+                using var sr = new StreamReader(stream, csv.Config.Encoding);
+
+                char[] buffer = new char[csv.Config.BufferSize];
+                int read;
+
+                while ((read = sr.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    csv.Process(buffer, read);
+                }
+
+                csv.EndOfFile();
             }
-
-            csv.EndOfFile();
-
-            queue.Close();
+            catch (CsvConsumerThreadDiedException)
+            {
+                // Do nothing everything has been handled
+                close = false;
+            }
+            catch (Exception e)
+            {
+                threadExceptions.Add(e);
+            }
+            finally
+            {
+                if (close)
+                {
+                    // Avoid a deadlock always close the queue
+                    queue.Close();
+                }
+            }
         }
 
 
@@ -98,9 +122,18 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <returns></returns>
         /// <remarks>Do not use this method in the main thread!</remarks>
-        private IReadOnlyList<(int, IReadOnlyList<T>)> CreateResult()
+        private IReadOnlyList<(int, IReadOnlyList<T>)>? CreateResult()
         {
-            return queue.Process(processDelegate);
+            try
+            {
+                return queue.Process(processDelegate);
+            }
+            catch (Exception e)
+            {
+                threadExceptions.Add(e);
+                queue.CancelProducer();
+                return default(IReadOnlyList<(int, IReadOnlyList<T>)>);
+            }
         }
 
 

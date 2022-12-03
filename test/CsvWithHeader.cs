@@ -358,7 +358,7 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CsvMalformedException))]
+        [ExpectedException(typeof(AggregateException))]
         public async Task OptionMaxRowBytes()
         {
             const string path = "../../../fixtures/option-maxRowBytes.csv";

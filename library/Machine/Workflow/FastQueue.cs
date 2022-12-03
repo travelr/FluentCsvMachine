@@ -1,4 +1,5 @@
-﻿using FluentCsvMachine.Machine.Result;
+﻿using FluentCsvMachine.Exceptions;
+using FluentCsvMachine.Machine.Result;
 
 namespace FluentCsvMachine.Machine.Workflow
 {
@@ -10,28 +11,26 @@ namespace FluentCsvMachine.Machine.Workflow
         private readonly ResultLine?[] queue;
         private readonly int max;
         private readonly object sync;
+        private readonly int threshold;
 
         private int _head;
         private int _tail;
         private int _count;
-
-        private int _pulseCounter;
-        private readonly int _monitorThreshold;
+        private bool _prodBlocked;
+        private bool _consumerDied;
 
 
         /// <summary>
         /// FastQueue
         /// </summary>
         /// <param name="size">CsvConfiguration.EntityQueueSize</param>
-        /// <param name="numThreads"></param>
-        public FastQueue(int size, int numThreads)
+        public FastQueue(int size)
         {
             queue = new ResultLine?[size];
             max = size;
             sync = new object();
             _tail = -1;
-
-            _monitorThreshold = size / numThreads;
+            threshold = (int)(max * 0.9);
         }
 
         /// <summary>
@@ -48,28 +47,26 @@ namespace FluentCsvMachine.Machine.Workflow
         {
             lock (sync)
             {
-                while (true)
+                if (_count == max)
                 {
-                    if (_count == max)
-                    {
-                        // Queue is full
-                        Monitor.Wait(sync);
-                    }
-                    else
-                    {
-                        _tail = (_tail + 1) % max;
-                        queue[_tail] = item;
-                        _count++;
-                        _pulseCounter++;
+                    // Queue is full
+                    _prodBlocked = true;
+                    Monitor.Wait(sync);
+                    _prodBlocked = false;
+                }
 
-                        if (_pulseCounter >= _monitorThreshold || item == null)
-                        {
-                            Monitor.Pulse(sync);
-                            _pulseCounter = 0;
-                        }
+                if (_consumerDied)
+                {
+                    throw new CsvConsumerThreadDiedException();
+                }
 
-                        break;
-                    }
+                _tail = (_tail + 1) % max;
+                queue[_tail] = item;
+                _count++;
+
+                if (_count >= threshold || item == null)
+                {
+                    Monitor.Pulse(sync);
                 }
             }
         }
@@ -106,47 +103,40 @@ namespace FluentCsvMachine.Machine.Workflow
 
                 lock (sync)
                 {
-                    if (_count == 0)
+                    if (_count < max)
                     {
                         //Queue is Empty 
                         Monitor.Wait(sync);
                     }
+
+
+                    if (_head + _count <= max)
+                    {
+                        work = queue.Skip(_head).Take(_count).ToArray();
+                        _head = (_head + _count) % max; // modulo -> if equals max
+                    }
                     else
                     {
-                        if (_head + _count <= max)
-                        {
-                            work = queue.Skip(_head).Take(_count).ToArray();
-                            _head = (_head + _count) % max; // modulo -> if equals max
-                        }
-                        else
-                        {
-                            // _head + _count > max
-                            // 1 + 5 > 5
-                            // -> 4 = 5 - 1
-                            // -> 1 = 5 - 4 -> _head
+                        // _head + _count > max
+                        // 1 + 5 > 5
+                        // -> 4 = 5 - 1
+                        // -> 1 = 5 - 4 -> _head
 
-                            var take1 = max - _head;
-                            var take2 = _count - take1;
+                        var take1 = max - _head;
+                        var take2 = _count - take1;
 
-                            work = queue.Skip(_head).Take(take1).Concat(queue.Take(take2)).ToArray();
-                            _head = take2;
-                        }
+                        work = queue.Skip(_head).Take(take1).Concat(queue.Take(take2)).ToArray();
+                        _head = take2;
+                    }
 
-                        if (_count >= _monitorThreshold)
-                        {
-                            // All, otherwise we might run into a race condition with multiple consumers
-                            Monitor.PulseAll(sync);
-                        }
+                    _count = 0;
 
-                        _count = 0;
+                    if (_prodBlocked)
+                    {
+                        Monitor.Pulse(sync);
                     }
                 }
 
-                if (work == null)
-                {
-                    // Queue was empty, go again
-                    continue;
-                }
 
                 // Create entities by calling the delegate
                 var breakWhile = @delegate.Invoke(work!, out (int, IReadOnlyList<T>?) entities);
@@ -169,6 +159,23 @@ namespace FluentCsvMachine.Machine.Workflow
             }
 
             return result;
+        }
+
+
+        /// <summary>
+        /// Avoid a dead lock when the queue is full (-> producer blocked) and the consumer dies
+        /// </summary>
+        public void CancelProducer()
+        {
+            lock (sync)
+            {
+                if (_prodBlocked)
+                {
+                    Monitor.Pulse(sync);
+                }
+
+                _consumerDied = true;
+            }
         }
     }
 }

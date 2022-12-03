@@ -101,12 +101,6 @@ namespace FluentCsvMachine
         /// </summary>
         public int EntityQueueSize { get; set; } = 1500;
 
-        /// <summary>
-        /// Number of entity factory threads
-        /// Each one is using 1/x of the queue size
-        /// </summary>
-        public int FactoryThreads { get; set; } = 2;
-
         #endregion Library parameters
     }
 }
