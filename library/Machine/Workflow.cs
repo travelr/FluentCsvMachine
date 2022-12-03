@@ -13,7 +13,7 @@ namespace FluentCsvMachine.Machine
     /// <param name="lines">Dequeued CSV lines</param>
     /// <param name="entities">Converted CSV lines</param>
     /// <returns>The last value of lines was null ? break -> CSV file fully read : false</returns>
-    internal delegate bool ProcessResultDelegate<T>(ResultLine?[] lines, out (int, IReadOnlyList<T>?) entities);
+    internal delegate bool ProcessResultDelegate<T>(ResultLine?[] lines, out IReadOnlyList<T>? entities);
 
     /// <summary>
     /// Workflow for CSV parsing and entity creation
@@ -69,7 +69,7 @@ namespace FluentCsvMachine.Machine
             }
 
             // Order sorted chunks and return the final result
-            var result = consumer.Result!.SelectMany(x => x.Item2).ToList();
+            var result = consumer.Result!.SelectMany(x => x).ToList();
 
             return result;
         }
@@ -122,7 +122,7 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <returns></returns>
         /// <remarks>Do not use this method in the main thread!</remarks>
-        private IReadOnlyList<(int, IReadOnlyList<T>)>? CreateResult()
+        private IReadOnlyList<IReadOnlyList<T>>? CreateResult()
         {
             try
             {
@@ -132,7 +132,7 @@ namespace FluentCsvMachine.Machine
             {
                 threadExceptions.Add(e);
                 queue.CancelProducer();
-                return default(IReadOnlyList<(int, IReadOnlyList<T>)>);
+                return default;
             }
         }
 
@@ -144,7 +144,7 @@ namespace FluentCsvMachine.Machine
         /// <param name="lines">Work load parsed CSV lines</param>
         /// <param name="entities">out: (line number of the first entity, created entities)</param>
         /// <returns>Null was seen, return true -> complete task</returns>
-        private bool ProcessLine(ResultLine?[] lines, out (int, IReadOnlyList<T>?) entities)
+        private bool ProcessLine(ResultLine?[] lines, out IReadOnlyList<T>? entities)
         {
             var result = new List<T>(lines.Length);
             var taskFinished = false;
@@ -164,7 +164,7 @@ namespace FluentCsvMachine.Machine
             }
 
 
-            entities = lines[0].HasValue ? (lines[0]!.Value.LineNumber, result) : (-1, null);
+            entities = lines[0].HasValue ? result : null;
             return taskFinished;
         }
     }

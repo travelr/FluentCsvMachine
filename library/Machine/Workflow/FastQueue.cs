@@ -92,9 +92,9 @@ namespace FluentCsvMachine.Machine.Workflow
         /// </param>
         /// <returns>Created entities by this thread</returns>
         /// <remarks>May block this thread until all CSV lines have been converted to entities of type T</remarks>
-        public IReadOnlyList<(int, IReadOnlyList<T>)> Process<T>(ProcessResultDelegate<T> @delegate)
+        public IReadOnlyList<IReadOnlyList<T>> Process<T>(ProcessResultDelegate<T> @delegate)
         {
-            var result = new List<(int, IReadOnlyList<T>)>(50);
+            var result = new List<IReadOnlyList<T>>(50);
 
             // Iterate while until you find a null value
             while (true)
@@ -138,10 +138,10 @@ namespace FluentCsvMachine.Machine.Workflow
 
 
                 // Create entities by calling the delegate
-                var breakWhile = @delegate.Invoke(work!, out (int, IReadOnlyList<T>?) entities);
+                var breakWhile = @delegate.Invoke(work!, out IReadOnlyList<T>? entities);
 
 
-                if (entities.Item2 != null)
+                if (entities != null)
                 {
                     // Save entities to result, but not the finish marker
                     result.Add(entities!);
