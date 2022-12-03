@@ -1,0 +1,670 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: FluentCsvMachine
+  name: FluentCsvMachine
+  href: api/FluentCsvMachine.html
+  commentId: N:FluentCsvMachine
+  fullName: FluentCsvMachine
+  nameWithType: FluentCsvMachine
+- uid: FluentCsvMachine.CsvConfiguration
+  name: CsvConfiguration
+  href: api/FluentCsvMachine.CsvConfiguration.html
+  commentId: T:FluentCsvMachine.CsvConfiguration
+  fullName: FluentCsvMachine.CsvConfiguration
+  nameWithType: CsvConfiguration
+- uid: FluentCsvMachine.CsvConfiguration.#ctor
+  name: CsvConfiguration()
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration__ctor
+  commentId: M:FluentCsvMachine.CsvConfiguration.#ctor
+  fullName: FluentCsvMachine.CsvConfiguration.CsvConfiguration()
+  nameWithType: CsvConfiguration.CsvConfiguration()
+- uid: FluentCsvMachine.CsvConfiguration.#ctor(System.Char)
+  name: CsvConfiguration(Char)
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration__ctor_System_Char_
+  commentId: M:FluentCsvMachine.CsvConfiguration.#ctor(System.Char)
+  fullName: FluentCsvMachine.CsvConfiguration.CsvConfiguration(System.Char)
+  nameWithType: CsvConfiguration.CsvConfiguration(Char)
+- uid: FluentCsvMachine.CsvConfiguration.#ctor(System.Char,Encoding)
+  name: CsvConfiguration(Char, Encoding)
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration__ctor_System_Char_Encoding_
+  commentId: M:FluentCsvMachine.CsvConfiguration.#ctor(System.Char,Encoding)
+  fullName: FluentCsvMachine.CsvConfiguration.CsvConfiguration(System.Char, Encoding)
+  nameWithType: CsvConfiguration.CsvConfiguration(Char, Encoding)
+- uid: FluentCsvMachine.CsvConfiguration.#ctor*
+  name: CsvConfiguration
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration__ctor_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.CsvConfiguration
+  nameWithType: CsvConfiguration.CsvConfiguration
+- uid: FluentCsvMachine.CsvConfiguration.BufferSize
+  name: BufferSize
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_BufferSize
+  commentId: P:FluentCsvMachine.CsvConfiguration.BufferSize
+  fullName: FluentCsvMachine.CsvConfiguration.BufferSize
+  nameWithType: CsvConfiguration.BufferSize
+- uid: FluentCsvMachine.CsvConfiguration.BufferSize*
+  name: BufferSize
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_BufferSize_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.BufferSize
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.BufferSize
+  nameWithType: CsvConfiguration.BufferSize
+- uid: FluentCsvMachine.CsvConfiguration.Comment
+  name: Comment
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Comment
+  commentId: P:FluentCsvMachine.CsvConfiguration.Comment
+  fullName: FluentCsvMachine.CsvConfiguration.Comment
+  nameWithType: CsvConfiguration.Comment
+- uid: FluentCsvMachine.CsvConfiguration.Comment*
+  name: Comment
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Comment_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.Comment
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.Comment
+  nameWithType: CsvConfiguration.Comment
+- uid: FluentCsvMachine.CsvConfiguration.DecimalPoint
+  name: DecimalPoint
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_DecimalPoint
+  commentId: P:FluentCsvMachine.CsvConfiguration.DecimalPoint
+  fullName: FluentCsvMachine.CsvConfiguration.DecimalPoint
+  nameWithType: CsvConfiguration.DecimalPoint
+- uid: FluentCsvMachine.CsvConfiguration.DecimalPoint*
+  name: DecimalPoint
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_DecimalPoint_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.DecimalPoint
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.DecimalPoint
+  nameWithType: CsvConfiguration.DecimalPoint
+- uid: FluentCsvMachine.CsvConfiguration.Delimiter
+  name: Delimiter
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Delimiter
+  commentId: P:FluentCsvMachine.CsvConfiguration.Delimiter
+  fullName: FluentCsvMachine.CsvConfiguration.Delimiter
+  nameWithType: CsvConfiguration.Delimiter
+- uid: FluentCsvMachine.CsvConfiguration.Delimiter*
+  name: Delimiter
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Delimiter_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.Delimiter
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.Delimiter
+  nameWithType: CsvConfiguration.Delimiter
+- uid: FluentCsvMachine.CsvConfiguration.Encoding
+  name: Encoding
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Encoding
+  commentId: P:FluentCsvMachine.CsvConfiguration.Encoding
+  fullName: FluentCsvMachine.CsvConfiguration.Encoding
+  nameWithType: CsvConfiguration.Encoding
+- uid: FluentCsvMachine.CsvConfiguration.Encoding*
+  name: Encoding
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Encoding_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.Encoding
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.Encoding
+  nameWithType: CsvConfiguration.Encoding
+- uid: FluentCsvMachine.CsvConfiguration.EntityQueueSize
+  name: EntityQueueSize
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_EntityQueueSize
+  commentId: P:FluentCsvMachine.CsvConfiguration.EntityQueueSize
+  fullName: FluentCsvMachine.CsvConfiguration.EntityQueueSize
+  nameWithType: CsvConfiguration.EntityQueueSize
+- uid: FluentCsvMachine.CsvConfiguration.EntityQueueSize*
+  name: EntityQueueSize
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_EntityQueueSize_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.EntityQueueSize
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.EntityQueueSize
+  nameWithType: CsvConfiguration.EntityQueueSize
+- uid: FluentCsvMachine.CsvConfiguration.HeaderSearchLimit
+  name: HeaderSearchLimit
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_HeaderSearchLimit
+  commentId: P:FluentCsvMachine.CsvConfiguration.HeaderSearchLimit
+  fullName: FluentCsvMachine.CsvConfiguration.HeaderSearchLimit
+  nameWithType: CsvConfiguration.HeaderSearchLimit
+- uid: FluentCsvMachine.CsvConfiguration.HeaderSearchLimit*
+  name: HeaderSearchLimit
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_HeaderSearchLimit_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.HeaderSearchLimit
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.HeaderSearchLimit
+  nameWithType: CsvConfiguration.HeaderSearchLimit
+- uid: FluentCsvMachine.CsvConfiguration.MaxNumberOfColumns
+  name: MaxNumberOfColumns
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_MaxNumberOfColumns
+  commentId: P:FluentCsvMachine.CsvConfiguration.MaxNumberOfColumns
+  fullName: FluentCsvMachine.CsvConfiguration.MaxNumberOfColumns
+  nameWithType: CsvConfiguration.MaxNumberOfColumns
+- uid: FluentCsvMachine.CsvConfiguration.MaxNumberOfColumns*
+  name: MaxNumberOfColumns
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_MaxNumberOfColumns_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.MaxNumberOfColumns
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.MaxNumberOfColumns
+  nameWithType: CsvConfiguration.MaxNumberOfColumns
+- uid: FluentCsvMachine.CsvConfiguration.NewLine
+  name: NewLine
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_NewLine
+  commentId: P:FluentCsvMachine.CsvConfiguration.NewLine
+  fullName: FluentCsvMachine.CsvConfiguration.NewLine
+  nameWithType: CsvConfiguration.NewLine
+- uid: FluentCsvMachine.CsvConfiguration.NewLine*
+  name: NewLine
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_NewLine_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.NewLine
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.NewLine
+  nameWithType: CsvConfiguration.NewLine
+- uid: FluentCsvMachine.CsvConfiguration.Quote
+  name: Quote
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Quote
+  commentId: P:FluentCsvMachine.CsvConfiguration.Quote
+  fullName: FluentCsvMachine.CsvConfiguration.Quote
+  nameWithType: CsvConfiguration.Quote
+- uid: FluentCsvMachine.CsvConfiguration.Quote*
+  name: Quote
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_Quote_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.Quote
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.Quote
+  nameWithType: CsvConfiguration.Quote
+- uid: FluentCsvMachine.CsvConfiguration.QuoteEscape
+  name: QuoteEscape
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_QuoteEscape
+  commentId: P:FluentCsvMachine.CsvConfiguration.QuoteEscape
+  fullName: FluentCsvMachine.CsvConfiguration.QuoteEscape
+  nameWithType: CsvConfiguration.QuoteEscape
+- uid: FluentCsvMachine.CsvConfiguration.QuoteEscape*
+  name: QuoteEscape
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_QuoteEscape_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.QuoteEscape
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.QuoteEscape
+  nameWithType: CsvConfiguration.QuoteEscape
+- uid: FluentCsvMachine.CsvConfiguration.ThousandsChar
+  name: ThousandsChar
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_ThousandsChar
+  commentId: P:FluentCsvMachine.CsvConfiguration.ThousandsChar
+  fullName: FluentCsvMachine.CsvConfiguration.ThousandsChar
+  nameWithType: CsvConfiguration.ThousandsChar
+- uid: FluentCsvMachine.CsvConfiguration.ThousandsChar*
+  name: ThousandsChar
+  href: api/FluentCsvMachine.CsvConfiguration.html#FluentCsvMachine_CsvConfiguration_ThousandsChar_
+  commentId: Overload:FluentCsvMachine.CsvConfiguration.ThousandsChar
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvConfiguration.ThousandsChar
+  nameWithType: CsvConfiguration.ThousandsChar
+- uid: FluentCsvMachine.CsvNoHeaderAttribute
+  name: CsvNoHeaderAttribute
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html
+  commentId: T:FluentCsvMachine.CsvNoHeaderAttribute
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute
+  nameWithType: CsvNoHeaderAttribute
+- uid: FluentCsvMachine.CsvNoHeaderAttribute.#ctor(System.Int32,System.Nullable{System.String})
+  name: CsvNoHeaderAttribute(Int32, Nullable<String>)
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html#FluentCsvMachine_CsvNoHeaderAttribute__ctor_System_Int32_System_Nullable_System_String__
+  commentId: M:FluentCsvMachine.CsvNoHeaderAttribute.#ctor(System.Int32,System.Nullable{System.String})
+  name.vb: CsvNoHeaderAttribute(Int32, Nullable(Of String))
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute.CsvNoHeaderAttribute(System.Int32, System.Nullable<System.String>)
+  fullName.vb: FluentCsvMachine.CsvNoHeaderAttribute.CsvNoHeaderAttribute(System.Int32, System.Nullable(Of System.String))
+  nameWithType: CsvNoHeaderAttribute.CsvNoHeaderAttribute(Int32, Nullable<String>)
+  nameWithType.vb: CsvNoHeaderAttribute.CsvNoHeaderAttribute(Int32, Nullable(Of String))
+- uid: FluentCsvMachine.CsvNoHeaderAttribute.#ctor*
+  name: CsvNoHeaderAttribute
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html#FluentCsvMachine_CsvNoHeaderAttribute__ctor_
+  commentId: Overload:FluentCsvMachine.CsvNoHeaderAttribute.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute.CsvNoHeaderAttribute
+  nameWithType: CsvNoHeaderAttribute.CsvNoHeaderAttribute
+- uid: FluentCsvMachine.CsvNoHeaderAttribute.ColumnIndex
+  name: ColumnIndex
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html#FluentCsvMachine_CsvNoHeaderAttribute_ColumnIndex
+  commentId: P:FluentCsvMachine.CsvNoHeaderAttribute.ColumnIndex
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute.ColumnIndex
+  nameWithType: CsvNoHeaderAttribute.ColumnIndex
+- uid: FluentCsvMachine.CsvNoHeaderAttribute.ColumnIndex*
+  name: ColumnIndex
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html#FluentCsvMachine_CsvNoHeaderAttribute_ColumnIndex_
+  commentId: Overload:FluentCsvMachine.CsvNoHeaderAttribute.ColumnIndex
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute.ColumnIndex
+  nameWithType: CsvNoHeaderAttribute.ColumnIndex
+- uid: FluentCsvMachine.CsvNoHeaderAttribute.InputFormat
+  name: InputFormat
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html#FluentCsvMachine_CsvNoHeaderAttribute_InputFormat
+  commentId: P:FluentCsvMachine.CsvNoHeaderAttribute.InputFormat
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute.InputFormat
+  nameWithType: CsvNoHeaderAttribute.InputFormat
+- uid: FluentCsvMachine.CsvNoHeaderAttribute.InputFormat*
+  name: InputFormat
+  href: api/FluentCsvMachine.CsvNoHeaderAttribute.html#FluentCsvMachine_CsvNoHeaderAttribute_InputFormat_
+  commentId: Overload:FluentCsvMachine.CsvNoHeaderAttribute.InputFormat
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvNoHeaderAttribute.InputFormat
+  nameWithType: CsvNoHeaderAttribute.InputFormat
+- uid: FluentCsvMachine.CsvParser`1
+  name: CsvParser<T>
+  href: api/FluentCsvMachine.CsvParser-1.html
+  commentId: T:FluentCsvMachine.CsvParser`1
+  name.vb: CsvParser(Of T)
+  fullName: FluentCsvMachine.CsvParser<T>
+  fullName.vb: FluentCsvMachine.CsvParser(Of T)
+  nameWithType: CsvParser<T>
+  nameWithType.vb: CsvParser(Of T)
+- uid: FluentCsvMachine.CsvParser`1.LineAction(Action{`0,IReadOnlyList{System.Nullable{System.Object}}})
+  name: LineAction(Action<T, IReadOnlyList<Nullable<Object>>>)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_LineAction_Action__0_IReadOnlyList_System_Nullable_System_Object____
+  commentId: M:FluentCsvMachine.CsvParser`1.LineAction(Action{`0,IReadOnlyList{System.Nullable{System.Object}}})
+  name.vb: LineAction(Action(Of T, IReadOnlyList(Of Nullable(Of Object))))
+  fullName: FluentCsvMachine.CsvParser<T>.LineAction(Action<T, IReadOnlyList<System.Nullable<System.Object>>>)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).LineAction(Action(Of T, IReadOnlyList(Of System.Nullable(Of System.Object))))
+  nameWithType: CsvParser<T>.LineAction(Action<T, IReadOnlyList<Nullable<Object>>>)
+  nameWithType.vb: CsvParser(Of T).LineAction(Action(Of T, IReadOnlyList(Of Nullable(Of Object))))
+- uid: FluentCsvMachine.CsvParser`1.LineAction*
+  name: LineAction
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_LineAction_
+  commentId: Overload:FluentCsvMachine.CsvParser`1.LineAction
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvParser<T>.LineAction
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).LineAction
+  nameWithType: CsvParser<T>.LineAction
+  nameWithType.vb: CsvParser(Of T).LineAction
+- uid: FluentCsvMachine.CsvParser`1.Parse(System.String,FluentCsvMachine.CsvConfiguration)
+  name: Parse(String, CsvConfiguration)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_Parse_System_String_FluentCsvMachine_CsvConfiguration_
+  commentId: M:FluentCsvMachine.CsvParser`1.Parse(System.String,FluentCsvMachine.CsvConfiguration)
+  fullName: FluentCsvMachine.CsvParser<T>.Parse(System.String, FluentCsvMachine.CsvConfiguration)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).Parse(System.String, FluentCsvMachine.CsvConfiguration)
+  nameWithType: CsvParser<T>.Parse(String, CsvConfiguration)
+  nameWithType.vb: CsvParser(Of T).Parse(String, CsvConfiguration)
+- uid: FluentCsvMachine.CsvParser`1.Parse*
+  name: Parse
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_Parse_
+  commentId: Overload:FluentCsvMachine.CsvParser`1.Parse
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvParser<T>.Parse
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).Parse
+  nameWithType: CsvParser<T>.Parse
+  nameWithType.vb: CsvParser(Of T).Parse
+- uid: FluentCsvMachine.CsvParser`1.ParseStream(Stream,FluentCsvMachine.CsvConfiguration)
+  name: ParseStream(Stream, CsvConfiguration)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_ParseStream_Stream_FluentCsvMachine_CsvConfiguration_
+  commentId: M:FluentCsvMachine.CsvParser`1.ParseStream(Stream,FluentCsvMachine.CsvConfiguration)
+  fullName: FluentCsvMachine.CsvParser<T>.ParseStream(Stream, FluentCsvMachine.CsvConfiguration)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).ParseStream(Stream, FluentCsvMachine.CsvConfiguration)
+  nameWithType: CsvParser<T>.ParseStream(Stream, CsvConfiguration)
+  nameWithType.vb: CsvParser(Of T).ParseStream(Stream, CsvConfiguration)
+- uid: FluentCsvMachine.CsvParser`1.ParseStream*
+  name: ParseStream
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_ParseStream_
+  commentId: Overload:FluentCsvMachine.CsvParser`1.ParseStream
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvParser<T>.ParseStream
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).ParseStream
+  nameWithType: CsvParser<T>.ParseStream
+  nameWithType.vb: CsvParser(Of T).ParseStream
+- uid: FluentCsvMachine.CsvParser`1.ParseWithoutHeader(Stream,FluentCsvMachine.CsvConfiguration)
+  name: ParseWithoutHeader(Stream, CsvConfiguration)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_ParseWithoutHeader_Stream_FluentCsvMachine_CsvConfiguration_
+  commentId: M:FluentCsvMachine.CsvParser`1.ParseWithoutHeader(Stream,FluentCsvMachine.CsvConfiguration)
+  fullName: FluentCsvMachine.CsvParser<T>.ParseWithoutHeader(Stream, FluentCsvMachine.CsvConfiguration)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).ParseWithoutHeader(Stream, FluentCsvMachine.CsvConfiguration)
+  nameWithType: CsvParser<T>.ParseWithoutHeader(Stream, CsvConfiguration)
+  nameWithType.vb: CsvParser(Of T).ParseWithoutHeader(Stream, CsvConfiguration)
+- uid: FluentCsvMachine.CsvParser`1.ParseWithoutHeader(System.String,FluentCsvMachine.CsvConfiguration)
+  name: ParseWithoutHeader(String, CsvConfiguration)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_ParseWithoutHeader_System_String_FluentCsvMachine_CsvConfiguration_
+  commentId: M:FluentCsvMachine.CsvParser`1.ParseWithoutHeader(System.String,FluentCsvMachine.CsvConfiguration)
+  fullName: FluentCsvMachine.CsvParser<T>.ParseWithoutHeader(System.String, FluentCsvMachine.CsvConfiguration)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).ParseWithoutHeader(System.String, FluentCsvMachine.CsvConfiguration)
+  nameWithType: CsvParser<T>.ParseWithoutHeader(String, CsvConfiguration)
+  nameWithType.vb: CsvParser(Of T).ParseWithoutHeader(String, CsvConfiguration)
+- uid: FluentCsvMachine.CsvParser`1.ParseWithoutHeader*
+  name: ParseWithoutHeader
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_ParseWithoutHeader_
+  commentId: Overload:FluentCsvMachine.CsvParser`1.ParseWithoutHeader
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvParser<T>.ParseWithoutHeader
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).ParseWithoutHeader
+  nameWithType: CsvParser<T>.ParseWithoutHeader
+  nameWithType.vb: CsvParser(Of T).ParseWithoutHeader
+- uid: FluentCsvMachine.CsvParser`1.Property*
+  name: Property
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_Property_
+  commentId: Overload:FluentCsvMachine.CsvParser`1.Property
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvParser<T>.Property
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).Property
+  nameWithType: CsvParser<T>.Property
+  nameWithType.vb: CsvParser(Of T).Property
+- uid: FluentCsvMachine.CsvParser`1.Property``1(Expression{Func{`0,System.Nullable{System.Object}}})
+  name: Property<V>(Expression<Func<T, Nullable<Object>>>)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_Property__1_Expression_Func__0_System_Nullable_System_Object____
+  commentId: M:FluentCsvMachine.CsvParser`1.Property``1(Expression{Func{`0,System.Nullable{System.Object}}})
+  name.vb: Property(Of V)(Expression(Of Func(Of T, Nullable(Of Object))))
+  fullName: FluentCsvMachine.CsvParser<T>.Property<V>(Expression<Func<T, System.Nullable<System.Object>>>)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).Property(Of V)(Expression(Of Func(Of T, System.Nullable(Of System.Object))))
+  nameWithType: CsvParser<T>.Property<V>(Expression<Func<T, Nullable<Object>>>)
+  nameWithType.vb: CsvParser(Of T).Property(Of V)(Expression(Of Func(Of T, Nullable(Of Object))))
+- uid: FluentCsvMachine.CsvParser`1.PropertyCustom*
+  name: PropertyCustom
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_PropertyCustom_
+  commentId: Overload:FluentCsvMachine.CsvParser`1.PropertyCustom
+  isSpec: "True"
+  fullName: FluentCsvMachine.CsvParser<T>.PropertyCustom
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).PropertyCustom
+  nameWithType: CsvParser<T>.PropertyCustom
+  nameWithType.vb: CsvParser(Of T).PropertyCustom
+- uid: FluentCsvMachine.CsvParser`1.PropertyCustom``1(Action{`0,``0})
+  name: PropertyCustom<V>(Action<T, V>)
+  href: api/FluentCsvMachine.CsvParser-1.html#FluentCsvMachine_CsvParser_1_PropertyCustom__1_Action__0___0__
+  commentId: M:FluentCsvMachine.CsvParser`1.PropertyCustom``1(Action{`0,``0})
+  name.vb: PropertyCustom(Of V)(Action(Of T, V))
+  fullName: FluentCsvMachine.CsvParser<T>.PropertyCustom<V>(Action<T, V>)
+  fullName.vb: FluentCsvMachine.CsvParser(Of T).PropertyCustom(Of V)(Action(Of T, V))
+  nameWithType: CsvParser<T>.PropertyCustom<V>(Action<T, V>)
+  nameWithType.vb: CsvParser(Of T).PropertyCustom(Of V)(Action(Of T, V))
+- uid: FluentCsvMachine.Exceptions
+  name: FluentCsvMachine.Exceptions
+  href: api/FluentCsvMachine.Exceptions.html
+  commentId: N:FluentCsvMachine.Exceptions
+  fullName: FluentCsvMachine.Exceptions
+  nameWithType: FluentCsvMachine.Exceptions
+- uid: FluentCsvMachine.Exceptions.CsvColumnMismatchException
+  name: CsvColumnMismatchException
+  href: api/FluentCsvMachine.Exceptions.CsvColumnMismatchException.html
+  commentId: T:FluentCsvMachine.Exceptions.CsvColumnMismatchException
+  fullName: FluentCsvMachine.Exceptions.CsvColumnMismatchException
+  nameWithType: CsvColumnMismatchException
+- uid: FluentCsvMachine.Exceptions.CsvColumnMismatchException.#ctor(System.String)
+  name: CsvColumnMismatchException(String)
+  href: api/FluentCsvMachine.Exceptions.CsvColumnMismatchException.html#FluentCsvMachine_Exceptions_CsvColumnMismatchException__ctor_System_String_
+  commentId: M:FluentCsvMachine.Exceptions.CsvColumnMismatchException.#ctor(System.String)
+  fullName: FluentCsvMachine.Exceptions.CsvColumnMismatchException.CsvColumnMismatchException(System.String)
+  nameWithType: CsvColumnMismatchException.CsvColumnMismatchException(String)
+- uid: FluentCsvMachine.Exceptions.CsvColumnMismatchException.#ctor*
+  name: CsvColumnMismatchException
+  href: api/FluentCsvMachine.Exceptions.CsvColumnMismatchException.html#FluentCsvMachine_Exceptions_CsvColumnMismatchException__ctor_
+  commentId: Overload:FluentCsvMachine.Exceptions.CsvColumnMismatchException.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Exceptions.CsvColumnMismatchException.CsvColumnMismatchException
+  nameWithType: CsvColumnMismatchException.CsvColumnMismatchException
+- uid: FluentCsvMachine.Exceptions.CsvConfigurationException
+  name: CsvConfigurationException
+  href: api/FluentCsvMachine.Exceptions.CsvConfigurationException.html
+  commentId: T:FluentCsvMachine.Exceptions.CsvConfigurationException
+  fullName: FluentCsvMachine.Exceptions.CsvConfigurationException
+  nameWithType: CsvConfigurationException
+- uid: FluentCsvMachine.Exceptions.CsvConfigurationException.#ctor(System.Nullable{System.String})
+  name: CsvConfigurationException(Nullable<String>)
+  href: api/FluentCsvMachine.Exceptions.CsvConfigurationException.html#FluentCsvMachine_Exceptions_CsvConfigurationException__ctor_System_Nullable_System_String__
+  commentId: M:FluentCsvMachine.Exceptions.CsvConfigurationException.#ctor(System.Nullable{System.String})
+  name.vb: CsvConfigurationException(Nullable(Of String))
+  fullName: FluentCsvMachine.Exceptions.CsvConfigurationException.CsvConfigurationException(System.Nullable<System.String>)
+  fullName.vb: FluentCsvMachine.Exceptions.CsvConfigurationException.CsvConfigurationException(System.Nullable(Of System.String))
+  nameWithType: CsvConfigurationException.CsvConfigurationException(Nullable<String>)
+  nameWithType.vb: CsvConfigurationException.CsvConfigurationException(Nullable(Of String))
+- uid: FluentCsvMachine.Exceptions.CsvConfigurationException.#ctor*
+  name: CsvConfigurationException
+  href: api/FluentCsvMachine.Exceptions.CsvConfigurationException.html#FluentCsvMachine_Exceptions_CsvConfigurationException__ctor_
+  commentId: Overload:FluentCsvMachine.Exceptions.CsvConfigurationException.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Exceptions.CsvConfigurationException.CsvConfigurationException
+  nameWithType: CsvConfigurationException.CsvConfigurationException
+- uid: FluentCsvMachine.Exceptions.CsvConsumerThreadDiedException
+  name: CsvConsumerThreadDiedException
+  href: api/FluentCsvMachine.Exceptions.CsvConsumerThreadDiedException.html
+  commentId: T:FluentCsvMachine.Exceptions.CsvConsumerThreadDiedException
+  fullName: FluentCsvMachine.Exceptions.CsvConsumerThreadDiedException
+  nameWithType: CsvConsumerThreadDiedException
+- uid: FluentCsvMachine.Exceptions.CsvMachineException
+  name: CsvMachineException
+  href: api/FluentCsvMachine.Exceptions.CsvMachineException.html
+  commentId: T:FluentCsvMachine.Exceptions.CsvMachineException
+  fullName: FluentCsvMachine.Exceptions.CsvMachineException
+  nameWithType: CsvMachineException
+- uid: FluentCsvMachine.Exceptions.CsvMachineException.#ctor(System.String)
+  name: CsvMachineException(String)
+  href: api/FluentCsvMachine.Exceptions.CsvMachineException.html#FluentCsvMachine_Exceptions_CsvMachineException__ctor_System_String_
+  commentId: M:FluentCsvMachine.Exceptions.CsvMachineException.#ctor(System.String)
+  fullName: FluentCsvMachine.Exceptions.CsvMachineException.CsvMachineException(System.String)
+  nameWithType: CsvMachineException.CsvMachineException(String)
+- uid: FluentCsvMachine.Exceptions.CsvMachineException.#ctor*
+  name: CsvMachineException
+  href: api/FluentCsvMachine.Exceptions.CsvMachineException.html#FluentCsvMachine_Exceptions_CsvMachineException__ctor_
+  commentId: Overload:FluentCsvMachine.Exceptions.CsvMachineException.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Exceptions.CsvMachineException.CsvMachineException
+  nameWithType: CsvMachineException.CsvMachineException
+- uid: FluentCsvMachine.Exceptions.CsvMalformedException
+  name: CsvMalformedException
+  href: api/FluentCsvMachine.Exceptions.CsvMalformedException.html
+  commentId: T:FluentCsvMachine.Exceptions.CsvMalformedException
+  fullName: FluentCsvMachine.Exceptions.CsvMalformedException
+  nameWithType: CsvMalformedException
+- uid: FluentCsvMachine.Exceptions.CsvMalformedException.#ctor(System.Nullable{System.String})
+  name: CsvMalformedException(Nullable<String>)
+  href: api/FluentCsvMachine.Exceptions.CsvMalformedException.html#FluentCsvMachine_Exceptions_CsvMalformedException__ctor_System_Nullable_System_String__
+  commentId: M:FluentCsvMachine.Exceptions.CsvMalformedException.#ctor(System.Nullable{System.String})
+  name.vb: CsvMalformedException(Nullable(Of String))
+  fullName: FluentCsvMachine.Exceptions.CsvMalformedException.CsvMalformedException(System.Nullable<System.String>)
+  fullName.vb: FluentCsvMachine.Exceptions.CsvMalformedException.CsvMalformedException(System.Nullable(Of System.String))
+  nameWithType: CsvMalformedException.CsvMalformedException(Nullable<String>)
+  nameWithType.vb: CsvMalformedException.CsvMalformedException(Nullable(Of String))
+- uid: FluentCsvMachine.Exceptions.CsvMalformedException.#ctor*
+  name: CsvMalformedException
+  href: api/FluentCsvMachine.Exceptions.CsvMalformedException.html#FluentCsvMachine_Exceptions_CsvMalformedException__ctor_
+  commentId: Overload:FluentCsvMachine.Exceptions.CsvMalformedException.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Exceptions.CsvMalformedException.CsvMalformedException
+  nameWithType: CsvMalformedException.CsvMalformedException
+- uid: FluentCsvMachine.Property
+  name: FluentCsvMachine.Property
+  href: api/FluentCsvMachine.Property.html
+  commentId: N:FluentCsvMachine.Property
+  fullName: FluentCsvMachine.Property
+  nameWithType: FluentCsvMachine.Property
+- uid: FluentCsvMachine.Property.CsvProperty`1
+  name: CsvProperty<T>
+  href: api/FluentCsvMachine.Property.CsvProperty-1.html
+  commentId: T:FluentCsvMachine.Property.CsvProperty`1
+  name.vb: CsvProperty(Of T)
+  fullName: FluentCsvMachine.Property.CsvProperty<T>
+  fullName.vb: FluentCsvMachine.Property.CsvProperty(Of T)
+  nameWithType: CsvProperty<T>
+  nameWithType.vb: CsvProperty(Of T)
+- uid: FluentCsvMachine.Property.CsvProperty`1.#ctor(Type,Expression{Func{`0,System.Nullable{System.Object}}})
+  name: CsvProperty(Type, Expression<Func<T, Nullable<Object>>>)
+  href: api/FluentCsvMachine.Property.CsvProperty-1.html#FluentCsvMachine_Property_CsvProperty_1__ctor_Type_Expression_Func__0_System_Nullable_System_Object____
+  commentId: M:FluentCsvMachine.Property.CsvProperty`1.#ctor(Type,Expression{Func{`0,System.Nullable{System.Object}}})
+  name.vb: CsvProperty(Type, Expression(Of Func(Of T, Nullable(Of Object))))
+  fullName: FluentCsvMachine.Property.CsvProperty<T>.CsvProperty(Type, Expression<Func<T, System.Nullable<System.Object>>>)
+  fullName.vb: FluentCsvMachine.Property.CsvProperty(Of T).CsvProperty(Type, Expression(Of Func(Of T, System.Nullable(Of System.Object))))
+  nameWithType: CsvProperty<T>.CsvProperty(Type, Expression<Func<T, Nullable<Object>>>)
+  nameWithType.vb: CsvProperty(Of T).CsvProperty(Type, Expression(Of Func(Of T, Nullable(Of Object))))
+- uid: FluentCsvMachine.Property.CsvProperty`1.#ctor*
+  name: CsvProperty
+  href: api/FluentCsvMachine.Property.CsvProperty-1.html#FluentCsvMachine_Property_CsvProperty_1__ctor_
+  commentId: Overload:FluentCsvMachine.Property.CsvProperty`1.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvProperty<T>.CsvProperty
+  fullName.vb: FluentCsvMachine.Property.CsvProperty(Of T).CsvProperty
+  nameWithType: CsvProperty<T>.CsvProperty
+  nameWithType.vb: CsvProperty(Of T).CsvProperty
+- uid: FluentCsvMachine.Property.CsvProperty`1.Accessor
+  name: Accessor
+  href: api/FluentCsvMachine.Property.CsvProperty-1.html#FluentCsvMachine_Property_CsvProperty_1_Accessor
+  commentId: P:FluentCsvMachine.Property.CsvProperty`1.Accessor
+  fullName: FluentCsvMachine.Property.CsvProperty<T>.Accessor
+  fullName.vb: FluentCsvMachine.Property.CsvProperty(Of T).Accessor
+  nameWithType: CsvProperty<T>.Accessor
+  nameWithType.vb: CsvProperty(Of T).Accessor
+- uid: FluentCsvMachine.Property.CsvProperty`1.Accessor*
+  name: Accessor
+  href: api/FluentCsvMachine.Property.CsvProperty-1.html#FluentCsvMachine_Property_CsvProperty_1_Accessor_
+  commentId: Overload:FluentCsvMachine.Property.CsvProperty`1.Accessor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvProperty<T>.Accessor
+  fullName.vb: FluentCsvMachine.Property.CsvProperty(Of T).Accessor
+  nameWithType: CsvProperty<T>.Accessor
+  nameWithType.vb: CsvProperty(Of T).Accessor
+- uid: FluentCsvMachine.Property.CsvPropertyBase
+  name: CsvPropertyBase
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html
+  commentId: T:FluentCsvMachine.Property.CsvPropertyBase
+  fullName: FluentCsvMachine.Property.CsvPropertyBase
+  nameWithType: CsvPropertyBase
+- uid: FluentCsvMachine.Property.CsvPropertyBase.#ctor(Type,System.Boolean)
+  name: CsvPropertyBase(Type, Boolean)
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase__ctor_Type_System_Boolean_
+  commentId: M:FluentCsvMachine.Property.CsvPropertyBase.#ctor(Type,System.Boolean)
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.CsvPropertyBase(Type, System.Boolean)
+  nameWithType: CsvPropertyBase.CsvPropertyBase(Type, Boolean)
+- uid: FluentCsvMachine.Property.CsvPropertyBase.#ctor*
+  name: CsvPropertyBase
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase__ctor_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyBase.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.CsvPropertyBase
+  nameWithType: CsvPropertyBase.CsvPropertyBase
+- uid: FluentCsvMachine.Property.CsvPropertyBase.ColumnName
+  name: ColumnName
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_ColumnName
+  commentId: P:FluentCsvMachine.Property.CsvPropertyBase.ColumnName
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.ColumnName
+  nameWithType: CsvPropertyBase.ColumnName
+- uid: FluentCsvMachine.Property.CsvPropertyBase.ColumnName*
+  name: ColumnName
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_ColumnName_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyBase.ColumnName
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.ColumnName
+  nameWithType: CsvPropertyBase.ColumnName
+- uid: FluentCsvMachine.Property.CsvPropertyBase.Index
+  name: Index
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_Index
+  commentId: P:FluentCsvMachine.Property.CsvPropertyBase.Index
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.Index
+  nameWithType: CsvPropertyBase.Index
+- uid: FluentCsvMachine.Property.CsvPropertyBase.Index*
+  name: Index
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_Index_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyBase.Index
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.Index
+  nameWithType: CsvPropertyBase.Index
+- uid: FluentCsvMachine.Property.CsvPropertyBase.InputFormat
+  name: InputFormat
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_InputFormat
+  commentId: P:FluentCsvMachine.Property.CsvPropertyBase.InputFormat
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.InputFormat
+  nameWithType: CsvPropertyBase.InputFormat
+- uid: FluentCsvMachine.Property.CsvPropertyBase.InputFormat*
+  name: InputFormat
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_InputFormat_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyBase.InputFormat
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.InputFormat
+  nameWithType: CsvPropertyBase.InputFormat
+- uid: FluentCsvMachine.Property.CsvPropertyBase.IsCustom
+  name: IsCustom
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_IsCustom
+  commentId: P:FluentCsvMachine.Property.CsvPropertyBase.IsCustom
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.IsCustom
+  nameWithType: CsvPropertyBase.IsCustom
+- uid: FluentCsvMachine.Property.CsvPropertyBase.IsCustom*
+  name: IsCustom
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_IsCustom_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyBase.IsCustom
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.IsCustom
+  nameWithType: CsvPropertyBase.IsCustom
+- uid: FluentCsvMachine.Property.CsvPropertyBase.PropertyType
+  name: PropertyType
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_PropertyType
+  commentId: P:FluentCsvMachine.Property.CsvPropertyBase.PropertyType
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.PropertyType
+  nameWithType: CsvPropertyBase.PropertyType
+- uid: FluentCsvMachine.Property.CsvPropertyBase.PropertyType*
+  name: PropertyType
+  href: api/FluentCsvMachine.Property.CsvPropertyBase.html#FluentCsvMachine_Property_CsvPropertyBase_PropertyType_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyBase.PropertyType
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyBase.PropertyType
+  nameWithType: CsvPropertyBase.PropertyType
+- uid: FluentCsvMachine.Property.CsvPropertyCustom`2
+  name: CsvPropertyCustom<T, V>
+  href: api/FluentCsvMachine.Property.CsvPropertyCustom-2.html
+  commentId: T:FluentCsvMachine.Property.CsvPropertyCustom`2
+  name.vb: CsvPropertyCustom(Of T, V)
+  fullName: FluentCsvMachine.Property.CsvPropertyCustom<T, V>
+  fullName.vb: FluentCsvMachine.Property.CsvPropertyCustom(Of T, V)
+  nameWithType: CsvPropertyCustom<T, V>
+  nameWithType.vb: CsvPropertyCustom(Of T, V)
+- uid: FluentCsvMachine.Property.CsvPropertyCustom`2.#ctor(Type,Action{`0,`1})
+  name: CsvPropertyCustom(Type, Action<T, V>)
+  href: api/FluentCsvMachine.Property.CsvPropertyCustom-2.html#FluentCsvMachine_Property_CsvPropertyCustom_2__ctor_Type_Action__0__1__
+  commentId: M:FluentCsvMachine.Property.CsvPropertyCustom`2.#ctor(Type,Action{`0,`1})
+  name.vb: CsvPropertyCustom(Type, Action(Of T, V))
+  fullName: FluentCsvMachine.Property.CsvPropertyCustom<T, V>.CsvPropertyCustom(Type, Action<T, V>)
+  fullName.vb: FluentCsvMachine.Property.CsvPropertyCustom(Of T, V).CsvPropertyCustom(Type, Action(Of T, V))
+  nameWithType: CsvPropertyCustom<T, V>.CsvPropertyCustom(Type, Action<T, V>)
+  nameWithType.vb: CsvPropertyCustom(Of T, V).CsvPropertyCustom(Type, Action(Of T, V))
+- uid: FluentCsvMachine.Property.CsvPropertyCustom`2.#ctor*
+  name: CsvPropertyCustom
+  href: api/FluentCsvMachine.Property.CsvPropertyCustom-2.html#FluentCsvMachine_Property_CsvPropertyCustom_2__ctor_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyCustom`2.#ctor
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyCustom<T, V>.CsvPropertyCustom
+  fullName.vb: FluentCsvMachine.Property.CsvPropertyCustom(Of T, V).CsvPropertyCustom
+  nameWithType: CsvPropertyCustom<T, V>.CsvPropertyCustom
+  nameWithType.vb: CsvPropertyCustom(Of T, V).CsvPropertyCustom
+- uid: FluentCsvMachine.Property.CsvPropertyCustom`2.CustomAction(`0,`1)
+  name: CustomAction(T, V)
+  href: api/FluentCsvMachine.Property.CsvPropertyCustom-2.html#FluentCsvMachine_Property_CsvPropertyCustom_2_CustomAction__0__1_
+  commentId: M:FluentCsvMachine.Property.CsvPropertyCustom`2.CustomAction(`0,`1)
+  fullName: FluentCsvMachine.Property.CsvPropertyCustom<T, V>.CustomAction(T, V)
+  fullName.vb: FluentCsvMachine.Property.CsvPropertyCustom(Of T, V).CustomAction(T, V)
+  nameWithType: CsvPropertyCustom<T, V>.CustomAction(T, V)
+  nameWithType.vb: CsvPropertyCustom(Of T, V).CustomAction(T, V)
+- uid: FluentCsvMachine.Property.CsvPropertyCustom`2.CustomAction*
+  name: CustomAction
+  href: api/FluentCsvMachine.Property.CsvPropertyCustom-2.html#FluentCsvMachine_Property_CsvPropertyCustom_2_CustomAction_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyCustom`2.CustomAction
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyCustom<T, V>.CustomAction
+  fullName.vb: FluentCsvMachine.Property.CsvPropertyCustom(Of T, V).CustomAction
+  nameWithType: CsvPropertyCustom<T, V>.CustomAction
+  nameWithType.vb: CsvPropertyCustom(Of T, V).CustomAction
+- uid: FluentCsvMachine.Property.CsvPropertyExtensions
+  name: CsvPropertyExtensions
+  href: api/FluentCsvMachine.Property.CsvPropertyExtensions.html
+  commentId: T:FluentCsvMachine.Property.CsvPropertyExtensions
+  fullName: FluentCsvMachine.Property.CsvPropertyExtensions
+  nameWithType: CsvPropertyExtensions
+- uid: FluentCsvMachine.Property.CsvPropertyExtensions.ColumnName(FluentCsvMachine.Property.CsvPropertyBase,System.String)
+  name: ColumnName(CsvPropertyBase, String)
+  href: api/FluentCsvMachine.Property.CsvPropertyExtensions.html#FluentCsvMachine_Property_CsvPropertyExtensions_ColumnName_FluentCsvMachine_Property_CsvPropertyBase_System_String_
+  commentId: M:FluentCsvMachine.Property.CsvPropertyExtensions.ColumnName(FluentCsvMachine.Property.CsvPropertyBase,System.String)
+  fullName: FluentCsvMachine.Property.CsvPropertyExtensions.ColumnName(FluentCsvMachine.Property.CsvPropertyBase, System.String)
+  nameWithType: CsvPropertyExtensions.ColumnName(CsvPropertyBase, String)
+- uid: FluentCsvMachine.Property.CsvPropertyExtensions.ColumnName*
+  name: ColumnName
+  href: api/FluentCsvMachine.Property.CsvPropertyExtensions.html#FluentCsvMachine_Property_CsvPropertyExtensions_ColumnName_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyExtensions.ColumnName
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyExtensions.ColumnName
+  nameWithType: CsvPropertyExtensions.ColumnName
+- uid: FluentCsvMachine.Property.CsvPropertyExtensions.InputFormat(FluentCsvMachine.Property.CsvPropertyBase,System.String)
+  name: InputFormat(CsvPropertyBase, String)
+  href: api/FluentCsvMachine.Property.CsvPropertyExtensions.html#FluentCsvMachine_Property_CsvPropertyExtensions_InputFormat_FluentCsvMachine_Property_CsvPropertyBase_System_String_
+  commentId: M:FluentCsvMachine.Property.CsvPropertyExtensions.InputFormat(FluentCsvMachine.Property.CsvPropertyBase,System.String)
+  fullName: FluentCsvMachine.Property.CsvPropertyExtensions.InputFormat(FluentCsvMachine.Property.CsvPropertyBase, System.String)
+  nameWithType: CsvPropertyExtensions.InputFormat(CsvPropertyBase, String)
+- uid: FluentCsvMachine.Property.CsvPropertyExtensions.InputFormat*
+  name: InputFormat
+  href: api/FluentCsvMachine.Property.CsvPropertyExtensions.html#FluentCsvMachine_Property_CsvPropertyExtensions_InputFormat_
+  commentId: Overload:FluentCsvMachine.Property.CsvPropertyExtensions.InputFormat
+  isSpec: "True"
+  fullName: FluentCsvMachine.Property.CsvPropertyExtensions.InputFormat
+  nameWithType: CsvPropertyExtensions.InputFormat
