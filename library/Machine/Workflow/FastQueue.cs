@@ -103,12 +103,11 @@ namespace FluentCsvMachine.Machine.Workflow
 
                 lock (sync)
                 {
-                    if (_count < max)
+                    // Wait for good workload, but also peak ahead if the end of file is already reached
+                    if (_count < threshold && (_tail == -1 || queue[_tail] != null))
                     {
-                        //Queue is Empty 
                         Monitor.Wait(sync);
                     }
-
 
                     if (_head + _count <= max)
                     {
