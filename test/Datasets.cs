@@ -7,7 +7,7 @@ namespace FluentCsvMachine.Test
     public class DataSets
     {
         [TestMethod]
-        public void Orders()
+        public async Task Orders()
         {
             const string path = "../../../fixtures/orders.csv";
             Assert.IsTrue(File.Exists(path));
@@ -30,7 +30,7 @@ namespace FluentCsvMachine.Test
             parser.Property<decimal>(c => c.TotalCost).ColumnName("Total Cost");
             parser.Property<decimal>(c => c.TotalProfit).ColumnName("Total Profit");
 
-            var result = parser.Parse(path, new CsvConfiguration(','));
+            var result = await parser.Parse(path, new CsvConfiguration(','));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 65535);
@@ -52,12 +52,19 @@ namespace FluentCsvMachine.Test
 
 
         [TestMethod]
-        public void Tiny()
+        public async Task Tiny()
         {
             const string path = "../../../fixtures/big-tiny.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = GetParser().Parse(path, new CsvConfiguration(','));
+            var result = await GetParser().Parse(path, new CsvConfiguration(','));
+
+            var colZero = (await File.ReadAllLinesAsync(path)).Skip(1).Select(x => x.Split(',')[0]).ToList()!;
+            for (int i = 0; i < colZero.Count; i++)
+            {
+                Assert.IsTrue(colZero[i] == result[i].Email);
+            }
+
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 25);
@@ -67,12 +74,12 @@ namespace FluentCsvMachine.Test
         }
 
         [TestMethod]
-        public void Huge750K()
+        public async Task Huge750K()
         {
             const string path = "../../../fixtures/big-750k.csv";
             Assert.IsTrue(File.Exists(path));
 
-            var result = GetParser().Parse(path);
+            var result = await GetParser().Parse(path);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 750000);

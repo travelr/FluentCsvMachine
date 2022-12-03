@@ -11,7 +11,7 @@ namespace FluentCsvMachine.Machine.States
         internal enum States
         {
             // New field
-            Initial,
+            Initial = 0,
             Field,
             FieldQuoted,
             Comment
@@ -132,7 +132,8 @@ namespace FluentCsvMachine.Machine.States
             // Report line on CSV machine
             if (State != States.Comment)
             {
-                var line = new ResultLine(ref fields, _fieldsIndex);
+                var line = new ResultLine(ref fields, _fieldsIndex, LineCounter);
+
                 csv.ResultLine(ref line);
                 _fieldsIndex = 0;
             }

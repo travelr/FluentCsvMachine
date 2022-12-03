@@ -82,6 +82,7 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="line">CSV line</param>
         /// <param name="resultObj">corresponding object</param>
+
         private void SetProperties(ReadOnlySpan<ResultValue> line, T resultObj)
         {
             for (int i = 0; i < _properties.Count; i++)
@@ -131,6 +132,7 @@ namespace FluentCsvMachine.Machine
         /// </summary>
         /// <param name="line">Current CSV line</param>
         /// <param name="resultObj">Entity for value assignment</param>
+
         private void CustomColumns(ReadOnlySpan<ResultValue> line, T resultObj)
         {
             for (int i = 0; i < _custom.Count; i++)
@@ -168,6 +170,7 @@ namespace FluentCsvMachine.Machine
         /// <param name="index">Index of the field</param>
         /// <param name="value">ResultValue output</param>
         /// <returns>True if the value is not null</returns>
+
         private static bool GetValue(ReadOnlySpan<ResultValue> line, int index, out ResultValue value)
         {
             if (index < 0 || index >= line.Length)
