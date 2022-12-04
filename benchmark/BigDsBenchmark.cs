@@ -21,7 +21,7 @@ namespace FluentCsvMachine.Benchmark
 
         public BigDataSetBenchmark()
         {
-            _parser = SetUpParser();
+            _parser = CreateParser();
         }
 
         [GlobalSetup]
@@ -73,7 +73,7 @@ namespace FluentCsvMachine.Benchmark
             return await _parser.ParseStream(_msRun!, new CsvConfiguration(','));
         }
 
-        private static CsvParser<BigDataSet> SetUpParser()
+        private static CsvParser<BigDataSet> CreateParser()
         {
             var parser = new CsvParser<BigDataSet>();
             parser.Property<string>(c => c.Email).ColumnName("email");

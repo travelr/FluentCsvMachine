@@ -1,32 +1,34 @@
 ![example workflow](https://github.com/travelr/readerFlu/actions/workflows/ci.yml/badge.svg)
 [![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Fluent.CSV.Machine)](https://www.nuget.org/packages/Fluent.CSV.Machine/)
 ![GitHub](https://img.shields.io/github/license/travelr/FluentCsvMachine)
+![.NET Version](https://img.shields.io/badge/requires%20.NET-7.0-green)
 
 **Documentation not finished yet**
 
 # Fluent CSV Machine
 
-> ### Features
+> ## Features
 
 - Reads and parses each character only once.  
-*(does not follow the usual pattern: read the line, split it, parse the fields)*  
--> results in a speedy execution while having a low memory footprint
+-> results in a blazing fast execution while having a low memory footprint  
+<sub>(does **not** follow the usual pattern: read the line, split it, parse the fields)</sub>  
 - Supports all [CSV](https://en.wikipedia.org/wiki/Comma-separated_values#Basic_rules) variants, test cases are implemented against those
-- Types are parsed directly. All types except Enum also support [nullable](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types) 
+- Types are parsed directly. All types support also [nullable](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types) except Enums
 	- Simple types (int, long, double, decimal, ...)
 	- string
 	- DateTime -> requires an specific [InputFormat](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings)
 	- Enums
 - Fluent interfaces to define the mapping between the Entity class and the CSV file
-- Parsing the CSV and enitity creation is handeled by different threads
-- The EntityFactory is using [Linq.Expressions](https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions?view=net-7.0) to do its job
+- Parsing and entity creation is handled by different threads
 
-> ### Getting started
+> ## Getting started
 
-Please take a look at the documentation as well as the [implemented test cases](https://github.com/travelr/FluentCsvMachine/blob/main/test/CsvWithHeader.cs).  
-The test cases implement a variety of different CSV fixtures, which are mainly forked from from [csv-parser](https://github.com/mafintosh/csv-parser) 
+Please take a look at the [documentation](https://travelr.github.io/FluentCsvMachine/api/index.html)
+as well at those [implemented test cases](https://github.com/travelr/FluentCsvMachine/blob/main/test/CsvWithHeader.cs).  
+The test cases implement a variety of different CSV fixtures (which are mainly forked from from [csv-parser](https://github.com/mafintosh/csv-parser))
 
-	// CSV file:
+```C#
+	// CSV file content:
 	// a,b,c
 	// 1,2,2012/11/25
 	// 3,4,2022/12/04
@@ -38,14 +40,17 @@ The test cases implement a variety of different CSV fixtures, which are mainly f
 	IReadOnlyList<EntityClass> result = await parser.Parse(path);
 
 	// Values are parsed according to their type definition in EntityClass
+```
 
-*Hint:* Have a look at this awesome [tool](https://toolslick.com/generation/code/class-from-csv) to generate Entity classes. This tool belongs to the popular library [CSVHelper](https://github.com/JoshClose/CsvHelper)
+*Hint:*  
+Have a look at this awesome [tool](https://toolslick.com/generation/code/class-from-csv) which generates Entity classes. This tool belongs to the popular library [CSVHelper](https://github.com/JoshClose/CsvHelper).
 
-> ### Benchmark
+> ## Benchmark
 
-Parsing 13 columns, CSV contains 14. Data is read from a MemoryStream and returned as List of [Entities](https://github.com/travelr/FluentCsvMachine/blob/main/test/Models/BigDataSet.cs) with the default [configuration](https://github.com/travelr/FluentCsvMachine/blob/main/library/CsvConfiguration.cs).  
+Parsing 13 columns, the CSV file contains 14.  
+Data is read from a MemoryStream and returned as List of [Entities](https://github.com/travelr/FluentCsvMachine/blob/main/test/Models/BigDataSet.cs) with the default parser [configuration](https://github.com/travelr/FluentCsvMachine/blob/main/library/CsvConfiguration.cs).  
 Each [Entity](https://github.com/travelr/FluentCsvMachine/blob/main/test/Models/BigDataSet.cs) contains 7 string, 2 int, 2 double, 1 DateTime and 1 Enum Property.  
-The benchmark ranges from 1 thousand to 1 millions CSV lines / entities.  
+The benchmark ranges from 1 thousand to 1 million CSV lines / entities.  
 
 
 	BenchmarkDotNet=v0.13.2, OS=Windows 11 (10.0.22000.1098/21H2)
@@ -62,20 +67,24 @@ The benchmark ranges from 1 thousand to 1 millions CSV lines / entities.
 	|      100,000 |   240.696 ms |  1.4216 ms |   4.1915 ms |   239.989 ms |
 	|    1,000,000 | 2,742.841 ms | 47.3035 ms | 139.4755 ms | 2,815.532 ms |
 
-> ### Background
+
+[Here](https://www.joelverhagen.com/blog/2020/12/fastest-net-csv-parsers) you can compare those values. Though different libraries have different purposes while all parse CSV.
+
+> ## Background
 
 This started as CSV library for my personal private projects. 
 My thought back then was the following: Do not test a dozen libraries, just write one of your one.
-Since then it has been rewriten a few times. Mostly to show off that I can still write effient code while my current jobs doesn't include any programming anymore.
-Finally I tried to make it as fast as posible while still returning a typed result and not just a set of strings. 
+Since then it has been rewriten a few times. Mostly to show off that I can still write effient code while my occupation doesn't include any programming anymore.
+Finally I tried to make it as fast as possible while still returning a typed result and not just a set of strings. 
 
-tl;dr: Lets see how fast a typed CSV parser can get
+tl;dr: Lets see how fast a typed dotnet CSV parser can get
 
+> ## Advanced use cases
 > ### CSV custom actions
 
 ...
 
-> ### CSV files without header
+> ### CSV files without a defined header
 
 ...
 

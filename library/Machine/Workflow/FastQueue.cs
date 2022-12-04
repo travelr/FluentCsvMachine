@@ -103,7 +103,7 @@ namespace FluentCsvMachine.Machine.Workflow
 
                 lock (sync)
                 {
-                    // Wait for good workload, but also peak ahead if the end of file is already reached
+                    // Wait for a good workload, but also peak ahead if the end of file is already reached
                     if (_count < threshold && (_tail == -1 || queue[_tail] != null))
                     {
                         Monitor.Wait(sync);
@@ -136,10 +136,8 @@ namespace FluentCsvMachine.Machine.Workflow
                     }
                 }
 
-
                 // Create entities by calling the delegate
                 var breakWhile = @delegate.Invoke(work!, out IReadOnlyList<T>? entities);
-
 
                 if (entities != null)
                 {
