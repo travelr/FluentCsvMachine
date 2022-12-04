@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FluentCsvMachine.Test.Models
 {
-    internal class LargeDs
+    public class LargeDs
     {
         public DateTime Time { get; set; }
         public double Latitude { get; set; }

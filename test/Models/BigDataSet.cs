@@ -6,7 +6,7 @@ namespace FluentCsvMachine.Test.Models
     /// https://github.com/snowindy/csv-test-data-generator
     /// email,first,last,age,street,city,state,zip,digid,date(2012/11/25),latitude,longitude,pick(RED|BLUE|YELLOW|GREEN|WHITE),string
     /// </summary>
-    internal class BigDataSet
+    public class BigDataSet
     {
         public string? Email { get; set; }
         public string? First { get; set; }
@@ -23,13 +23,12 @@ namespace FluentCsvMachine.Test.Models
         public string? String { get; set; }
     }
 
-    internal enum BigDataSetPick
+    public enum BigDataSetPick
     {
         RED,
         BLUE,
         YELLOW,
         GREEN,
-        WHITE,
-        RED2
+        WHITE
     }
 }

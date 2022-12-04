@@ -24,7 +24,6 @@ namespace FluentCsvMachine.Test
             const string path = "../../../fixtures/basic.csv";
             Assert.IsTrue(File.Exists(path));
 
-            // Try a view different property types
             var parser = new CsvParser<Basic>();
             parser.Property<string>(c => c.A).ColumnName("a");
             parser.Property<int>(c => c.B).ColumnName("b");

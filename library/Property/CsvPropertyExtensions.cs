@@ -1,4 +1,8 @@
-﻿namespace FluentCsvMachine.Property
+﻿// ReSharper disable CheckNamespace
+
+using FluentCsvMachine.Property;
+
+namespace FluentCsvMachine
 {
     /// <summary>
     /// Extensions which make the fluent definition of columns possible

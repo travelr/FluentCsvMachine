@@ -1,38 +1,38 @@
 ﻿namespace FluentCsvMachine.Test.Models
 {
-    internal class OrdersDs
+    public class OrdersDs
     {
         //Region,Country,Item Type, Sales Channel,Order Priority, Order Date,Order ID, Ship Date,Units Sold, Unit Price,UnitCost, TotalRevenue,TotalCost, TotalProfit
-        internal OrdersDsRegion Region { get; set; }
+        public OrdersDsRegion Region { get; set; }
 
-        internal OrdersDsCountry Country { get; set; }
+        public OrdersDsCountry Country { get; set; }
 
-        internal OrdersDsItemType ItemType { get; set; }
+        public OrdersDsItemType ItemType { get; set; }
 
-        internal OrdersDsSalesChannel SalesChannel { get; set; }
+        public OrdersDsSalesChannel SalesChannel { get; set; }
 
-        internal char OrderPriority { get; set; }
+        public char OrderPriority { get; set; }
 
-        internal DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; }
 
-        internal long OrderId { get; set; }
+        public long OrderId { get; set; }
 
-        internal DateTime ShipDate { get; set; }
+        public DateTime ShipDate { get; set; }
 
-        internal int UnitsSold { get; set; }
+        public int UnitsSold { get; set; }
 
-        internal decimal UnitPrice { get; set; }
+        public decimal UnitPrice { get; set; }
 
-        internal decimal UnitCost { get; set; }
+        public decimal UnitCost { get; set; }
 
-        internal decimal TotalRevenue { get; set; }
+        public decimal TotalRevenue { get; set; }
 
-        internal decimal TotalCost { get; set; }
+        public decimal TotalCost { get; set; }
 
-        internal decimal TotalProfit { get; set; }
+        public decimal TotalProfit { get; set; }
     }
 
-    internal enum OrdersDsRegion
+    public enum OrdersDsRegion
     {
         Asia,
         SubSaharanAfrica,
@@ -43,7 +43,7 @@
         NorthAmerica
     }
 
-    internal enum OrdersDsCountry
+    public enum OrdersDsCountry
     {
         Afghanistan,
         Albania,
@@ -232,7 +232,7 @@
         Zimbabwe,
     }
 
-    internal enum OrdersDsItemType
+    public enum OrdersDsItemType
     {
         Snacks,
         Meat,
@@ -248,7 +248,7 @@
         PersonalCare
     }
 
-    internal enum OrdersDsSalesChannel
+    public enum OrdersDsSalesChannel
     {
         Online,
         Offline
