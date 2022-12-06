@@ -3,8 +3,6 @@
 ![GitHub](https://img.shields.io/github/license/travelr/FluentCsvMachine)
 ![.NET Version](https://img.shields.io/badge/requires%20.NET-7.0-green)
 
-**Documentation not finished yet**
-
 # Fluent CSV Machine
 
 > ## Features
@@ -68,24 +66,68 @@ The benchmark ranges from 1 thousand to 1 million CSV lines / entities.
 	|    1,000,000 | 2,742.841 ms | 47.3035 ms | 139.4755 ms | 2,815.532 ms |
 
 
-[Here](https://www.joelverhagen.com/blog/2020/12/fastest-net-csv-parsers) you can compare those values. Though different libraries have different purposes while all parse CSV.
+[Here](https://www.joelverhagen.com/blog/2020/12/fastest-net-csv-parsers) you can compare those values roughly. Though different libraries have different purposes while all parse CSV.
 
 > ## Background
 
 This started as CSV library for my personal private projects. 
 My thought back then was the following: Do not test a dozen libraries, just write one of your one.
-Since then it has been rewriten a few times. Mostly to show off that I can still write effient code while my occupation doesn't include any programming anymore.
+Since then it has been rewritten a few times. Mostly to show off that I can still write effient code while my occupation doesn't include any programming anymore.
 Finally I tried to make it as fast as possible while still returning a typed result and not just a set of strings. 
 
 tl;dr: Lets see how fast a typed dotnet CSV parser can get
 
 > ## Advanced use cases
-> ### CSV custom actions
+> ### Custom Properties
 
-...
+If a simple mapping does not work out for you then you can try to use [PropertyCustom](https://travelr.github.io/FluentCsvMachine/api/FluentCsvMachine.Property.CsvPropertyCustom-2.html)
 
-> ### CSV files without a defined header
+```C#
+	parser.PropertyCustom<string>((x, v) =>
+    {
+        var split = v.Split(' ').Select(c => c.Trim()).ToArray();
+        x.ForeignCurrencyValue = decimal.Parse(split[0]);
+        x.Currency = EnumHelper.Parse<Currency>(split[1]);
+    }).ColumnName("Foreign Transaction");
+```
 
-...
+Beware: You are about to execute this [Action](https://learn.microsoft.com/en-us/dotnet/api/system.action?view=net-7.0) on each CSV line.
+An Action which is a lot slower than the in-built parsers.
+
+> ### Line Actions
+
+Defines one or more [Actions](https://learn.microsoft.com/en-us/dotnet/api/system.action?view=net-7.0)
+which run after all properties (normal as well as custom ones) have been mapped.
+
+```C#
+	var parser = new CsvParser<T>();
+	parser.LineAction((obj, fields) =>
+	{
+		if (fields == null || obj is not Entity e)
+		{
+			return;
+		}
+		// Create an hash value using all parsed columns of a CSV line
+		e.HashCode = HashCodeLine(fields);
+	});
+```
+
+Have a look at the test case [BackTick](https://github.com/travelr/FluentCsvMachine/blob/d2128dd90c2938f185a8179112e027ae1814f716/test/CsvWithHeader.cs#L74) for another example
+
+> ### CSV files without a header line 
+
+This CSV parser only works with a backing class which can be mapped. If you do not have a CSV line which defines the headers and thefore the corresponding properties:   
+Then you need to use [CsvNoHeaderAttribute](https://travelr.github.io/FluentCsvMachine/api/FluentCsvMachine.CsvNoHeaderAttribute.html)
+as an attribute to your properties to define the column order.
+
+```C#
+	internal class BasicString
+    {
+        [CsvNoHeader(columnIndex: 0)] public string? A { get; set; }
+        [CsvNoHeader(columnIndex: 1)] public string? B { get; set; }
+        public string? C { get; set; } // This column won't be mapped
+        [CsvNoHeader(columnIndex: 2)] public string? D { get; set; }
+    }
+```
 
 

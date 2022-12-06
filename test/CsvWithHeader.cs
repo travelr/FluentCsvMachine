@@ -77,7 +77,7 @@ namespace FluentCsvMachine.Test
             Assert.IsTrue(File.Exists(path));
 
             var parser = new CsvParser<Basic>();
-            // Different order between CSV columns and properties are no problem
+            // A different order between CSV columns and their properties is no problem
             parser.Property<int>(c => c.B).ColumnName("pokemon_id");
 
             // Lets use a PropertyCustom and an inefficient LineAction 

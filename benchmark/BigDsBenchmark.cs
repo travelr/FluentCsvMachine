@@ -24,6 +24,8 @@ namespace FluentCsvMachine.Benchmark
             _parser = CreateParser();
         }
 
+        #region Setup
+
         [GlobalSetup]
         public void GlobalSetup()
         {
@@ -44,7 +46,6 @@ namespace FluentCsvMachine.Benchmark
             }
         }
 
-        #region Setup
 
         [GlobalCleanup]
         public void GlobalCleanup()
