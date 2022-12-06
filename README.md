@@ -26,18 +26,18 @@ as well at those [implemented test cases](https://github.com/travelr/FluentCsvMa
 The test cases implement a variety of different CSV fixtures (which are mainly forked from from [csv-parser](https://github.com/mafintosh/csv-parser))
 
 ```C#
-	// CSV file content:
-	// a,b,c
-	// 1,2,2012/11/25
-	// 3,4,2022/12/04
+// CSV file content:
+// a,b,c
+// 1,2,2012/11/25
+// 3,4,2022/12/04
 
-	var parser = new CsvParser<EntityClass>();
-	parser.Property<string?>(c => c.A).ColumnName("a");
-	parser.Property<int>(c => c.B).ColumnName("b");
-	parser.Property<DateTime>(c => c.C).ColumnName("c").InputFormat("yyyy/MM/dd");
-	IReadOnlyList<EntityClass> result = await parser.Parse(path);
+var parser = new CsvParser<EntityClass>();
+parser.Property<string?>(c => c.A).ColumnName("a");
+parser.Property<int>(c => c.B).ColumnName("b");
+parser.Property<DateTime>(c => c.C).ColumnName("c").InputFormat("yyyy/MM/dd");
+IReadOnlyList<EntityClass> result = await parser.Parse(path);
 
-	// Values are parsed according to their type definition in EntityClass
+// Values are parsed according to their type definition in EntityClass
 ```
 
 *Hint:*  
@@ -83,12 +83,12 @@ tl;dr: Lets see how fast a typed dotnet CSV parser can get
 If a simple mapping does not work out for you then you can try to use [PropertyCustom](https://travelr.github.io/FluentCsvMachine/api/FluentCsvMachine.Property.CsvPropertyCustom-2.html)
 
 ```C#
-	parser.PropertyCustom<string>((x, v) =>
-    {
-        var split = v.Split(' ').Select(c => c.Trim()).ToArray();
-        x.ForeignCurrencyValue = decimal.Parse(split[0]);
-        x.Currency = EnumHelper.Parse<Currency>(split[1]);
-    }).ColumnName("Foreign Transaction");
+parser.PropertyCustom<string>((x, v) =>
+{
+    var split = v.Split(' ').Select(c => c.Trim()).ToArray();
+    x.ForeignCurrencyValue = decimal.Parse(split[0]);
+    x.Currency = EnumHelper.Parse<Currency>(split[1]);
+}).ColumnName("Foreign Transaction");
 ```
 
 Beware: You are about to execute this [Action](https://learn.microsoft.com/en-us/dotnet/api/system.action?view=net-7.0) on each CSV line.
@@ -100,16 +100,16 @@ Defines one or more [Actions](https://learn.microsoft.com/en-us/dotnet/api/syste
 which run after all properties (normal as well as custom ones) have been mapped.
 
 ```C#
-	var parser = new CsvParser<T>();
-	parser.LineAction((obj, fields) =>
+var parser = new CsvParser<T>();
+parser.LineAction((obj, fields) =>
+{
+	if (fields == null || obj is not Entity e)
 	{
-		if (fields == null || obj is not Entity e)
-		{
-			return;
-		}
-		// Create an hash value using all parsed columns of a CSV line
-		e.HashCode = HashCodeLine(fields);
-	});
+		return;
+	}
+	// Create an hash value using all parsed columns of a CSV line
+	e.HashCode = HashCodeLine(fields);
+});
 ```
 
 Have a look at the test case [BackTick](https://github.com/travelr/FluentCsvMachine/blob/d2128dd90c2938f185a8179112e027ae1814f716/test/CsvWithHeader.cs#L74) for another example
@@ -121,13 +121,13 @@ Then you need to use [CsvNoHeaderAttribute](https://travelr.github.io/FluentCsvM
 as an attribute to your properties to define the column order.
 
 ```C#
-	internal class BasicString
-    {
-        [CsvNoHeader(columnIndex: 0)] public string? A { get; set; }
-        [CsvNoHeader(columnIndex: 1)] public string? B { get; set; }
-        public string? C { get; set; } // This column won't be mapped
-        [CsvNoHeader(columnIndex: 2)] public string? D { get; set; }
-    }
+internal class BasicString
+{
+    [CsvNoHeader(columnIndex: 0)] public string? A { get; set; }
+    [CsvNoHeader(columnIndex: 1)] public string? B { get; set; }
+    public string? C { get; set; } // This column won't be mapped
+    [CsvNoHeader(columnIndex: 2)] public string? D { get; set; }
+}
 ```
 
 
