@@ -39,7 +39,7 @@ namespace FluentCsvMachine.Machine.Values
         {
             if (_charCount >= _inputFormat.Length)
             {
-                ThrowHelper.ThrowCsvMalformedException($"Cannot parse DateTime. Column is longer than the input format ({_inputFormat}");
+                ThrowHelper.ThrowCsvMalformedException($"Cannot parse DateTime. Column is longer than the input format ({_inputFormat})");
             }
 
             var inputChar = _inputFormat[_charCount];

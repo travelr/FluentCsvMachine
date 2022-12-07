@@ -1,6 +1,7 @@
 ﻿using FluentCsvMachine.Helpers;
 using FluentCsvMachine.Machine;
 using FluentCsvMachine.Machine.Values;
+using FluentCsvMachine.Machine.Workflow;
 
 namespace FluentCsvMachine.Property
 {
@@ -22,12 +23,6 @@ namespace FluentCsvMachine.Property
             IsCustom = isCustom;
 
             PropertyType = propertyType;
-            if (propertyType != typeof(DateTime) && propertyType != typeof(DateTime?))
-            {
-                // DateTime requires InputFormat
-                // Therefore it is set by InputFormat.Set
-                ValueParser = ValueParserProvider.GetParser(propertyType);
-            }
         }
 
         /// <summary>
@@ -62,25 +57,14 @@ namespace FluentCsvMachine.Property
         public Type? PropertyType { get; protected set; }
 
 
-        private string? _inputFormat;
-
         /// <summary>
         /// InputFormat for DateTime, ...
         /// </summary>
-        public string? InputFormat
-        {
-            get => _inputFormat;
-            set
-            {
-                _inputFormat = value;
+        public string? InputFormat { get; set; }
 
-                if (PropertyType == typeof(DateTime) || PropertyType == typeof(DateTime?))
-                {
-                    ValueParser = ValueParserProvider.GetParser(PropertyType, value);
-                }
-            }
-        }
-
+        /// <summary>
+        /// ValueParser, set in <see cref="WorkflowInput{T}.SetParsers"/> 
+        /// </summary>
         internal ValueParser? ValueParser { get; set; }
     }
 }

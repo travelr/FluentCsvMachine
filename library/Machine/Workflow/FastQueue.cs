@@ -150,8 +150,6 @@ namespace FluentCsvMachine.Machine.Workflow
                     continue;
                 }
 
-                // Null as a finish marker was seen, CSV file is done, complete this task
-                InsertInternal(null);
                 break;
             }
 
@@ -166,12 +164,11 @@ namespace FluentCsvMachine.Machine.Workflow
         {
             lock (sync)
             {
+                _consumerDied = true;
                 if (_prodBlocked)
                 {
                     Monitor.Pulse(sync);
                 }
-
-                _consumerDied = true;
             }
         }
     }

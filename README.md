@@ -11,7 +11,7 @@
 -> results in a blazing fast execution while having a low memory footprint  
 <sub>(does **not** follow the usual pattern: read the line, split it, parse the fields)</sub>  
 - Supports all [CSV](https://en.wikipedia.org/wiki/Comma-separated_values#Basic_rules) variants, test cases are implemented against those
-- Types are parsed directly. All types support also [nullable](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types) except Enums
+- Types are parsed directly. [Nullable](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types) is also supported on all types except Enums
 	- Simple types (int, long, double, decimal, ...)
 	- string
 	- DateTime -> requires an specific [InputFormat](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings)
@@ -70,8 +70,8 @@ The benchmark ranges from 1 thousand to 1 million CSV lines / entities.
 
 > ## Background
 
-This started as CSV library for my personal private projects. 
-My thought back then was the following: Do not test a dozen libraries, just write one of your one.
+This started as a CSV library for my personal private projects. 
+My thought back then was the following: Do not test a dozen of libraries, just write one of your one.
 Since then it has been rewritten a few times. Mostly to show off that I can still write effient code while my occupation doesn't include any programming anymore.
 Finally I tried to make it as fast as possible while still returning a typed result and not just a set of strings. 
 

@@ -28,8 +28,9 @@ namespace FluentCsvMachine.Machine.Workflow
             {
                 ThrowHelper.ThrowCsvConfigurationException("Please choose a larger queue size. Values larger 20 are valid");
             }
-        }
 
+            SetParsers();
+        }
 
         internal Stream Stream { get; }
 
@@ -41,5 +42,27 @@ namespace FluentCsvMachine.Machine.Workflow
         internal CsvConfiguration Config { get; }
 
         internal List<Action<T, IReadOnlyList<object?>>>? LineActions { get; set; }
+
+        /// <summary>
+        /// Sets ValueParser of the Properties
+        /// </summary>
+        private void SetParsers()
+        {
+            var parserProvider = new ValueParserProvider();
+
+            foreach (var p in Properties)
+            {
+                if (p.PropertyType != typeof(DateTime) && p.PropertyType != typeof(DateTime?))
+                {
+                    // DateTime requires InputFormat
+                    // Therefore it is set by InputFormat.Set
+                    p.ValueParser = parserProvider.GetParser(p.PropertyType!);
+                }
+                else
+                {
+                    p.ValueParser = parserProvider.GetParser(p.PropertyType, p.InputFormat);
+                }
+            }
+        }
     }
 }

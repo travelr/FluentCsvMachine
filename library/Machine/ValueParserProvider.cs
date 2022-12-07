@@ -4,12 +4,12 @@ using FluentCsvMachine.Machine.Values;
 namespace FluentCsvMachine.Machine
 {
     /// <summary>
-    /// Static class to provide ValueParsers
-    /// Make sure that you assign ValueParser.Config
+    /// Provides ValueParsers, cannot be static due to parallel use
+    /// Make sure that you assign ValueParser.Config -> WorkflowInput
     /// </summary>
-    internal static class ValueParserProvider
+    internal class ValueParserProvider
     {
-        private static readonly Dictionary<Type, ValueParser> ValueParsers = new()
+        private readonly Dictionary<Type, ValueParser> _valueParsers = new()
         {
             { typeof(string), new StringParser() },
             { typeof(char), new CharParser(nullable: false) },
@@ -38,7 +38,7 @@ namespace FluentCsvMachine.Machine
             { typeof(decimal?), new FloatingPointParser<decimal>(nullable: true) },
         };
 
-        private static readonly Dictionary<(string, bool), ValueParser> DateParsers = new();
+        private readonly Dictionary<(string, bool), ValueParser> _dateParsers = new();
 
 
         /// <summary>
@@ -49,14 +49,14 @@ namespace FluentCsvMachine.Machine
         /// <returns>ValueParser for the type</returns>
         /// <exception cref="InvalidOperationException">Creation of an Enum parser failed</exception>
         /// <exception cref="KeyNotFoundException">Parser does not exist</exception>
-        internal static ValueParser GetParser(Type type, string? inputFormat = null)
+        internal ValueParser GetParser(Type type, string? inputFormat = null)
         {
             Guard.IsNotNull(type);
 
-            if (type.IsEnum && !ValueParsers.ContainsKey(type))
+            if (type.IsEnum && !_valueParsers.ContainsKey(type))
             {
                 var enumMachine = (ValueParser?)Activator.CreateInstance(typeof(EnumParser<>).MakeGenericType(type), type);
-                ValueParsers[type] = enumMachine ?? throw new InvalidOperationException($"Couldn't create EnumParser<> of type {type}");
+                _valueParsers[type] = enumMachine ?? throw new InvalidOperationException($"Couldn't create EnumParser<> of type {type}");
             }
             else if (type == typeof(DateTime))
             {
@@ -67,7 +67,7 @@ namespace FluentCsvMachine.Machine
                 return GetDateParser(inputFormat, true);
             }
 
-            if (!ValueParsers.TryGetValue(type, out ValueParser? returnValue))
+            if (!_valueParsers.TryGetValue(type, out ValueParser? returnValue))
             {
                 throw new KeyNotFoundException($"Unknown ValueParser type {type}! Please create a bug ticket!");
             }
@@ -75,20 +75,20 @@ namespace FluentCsvMachine.Machine
             return returnValue;
         }
 
-        private static ValueParser GetDateParser(string? inputFormat, bool nullable)
+        private ValueParser GetDateParser(string? inputFormat, bool nullable)
         {
             if (string.IsNullOrEmpty(inputFormat))
             {
                 ThrowHelper.ThrowCsvConfigurationException("Each DateTime column requires InputFormat()");
             }
 
-            if (DateParsers.TryGetValue((inputFormat, nullable), out var dateParser))
+            if (_dateParsers.TryGetValue((inputFormat, nullable), out var dateParser))
             {
                 return dateParser;
             }
 
             dateParser = new DateTimeParser(inputFormat, nullable);
-            DateParsers.Add((inputFormat, nullable), dateParser);
+            _dateParsers.Add((inputFormat, nullable), dateParser);
 
             return dateParser;
         }
