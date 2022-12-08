@@ -67,7 +67,6 @@ namespace FluentCsvMachine.Machine.Values
         {
             if (!Nullable)
             {
-                // ToDo: Catch in Line and rethrow
                 ThrowHelper.ThrowCsvMalformedException("Cannot convert null to 'type' because it is a non-nullable value type");
             }
 

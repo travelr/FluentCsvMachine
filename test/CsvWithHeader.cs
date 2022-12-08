@@ -11,9 +11,6 @@ namespace FluentCsvMachine.Test
     [TestClass]
     public class CsvWithHeader
     {
-        // ToDo: Configuration tests (same col name, same setter, ...)
-
-
         /// <summary>
         /// a,b,c
         /// 1,2,3
@@ -222,9 +219,6 @@ namespace FluentCsvMachine.Test
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count == 7268);
-
-            //ToDo: Support Milliseconds, UTC (Z)
-            //ToDo: Last column to enum
         }
 
 
@@ -369,8 +363,6 @@ namespace FluentCsvMachine.Test
 
             // Line 4578 has an open quote: "2015-12-02T21:07:16.730Z,46.5141667,-122.59
             // -> CsvMalformedException
-
-            // ToDo: Limit StringParser
         }
 
         /// <summary>

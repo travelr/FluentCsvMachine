@@ -73,9 +73,15 @@ namespace FluentCsvMachine.Helpers
         /// CSV cannot be parsed
         /// </summary>
         /// <param name="message">Concrete issue</param>
+        /// <param name="lineNumber">Error occurred in line</param>
         [DoesNotReturn]
-        public static void ThrowCsvMalformedException(string message)
+        public static void ThrowCsvMalformedException(string message, int? lineNumber = null)
         {
+            if (lineNumber.HasValue)
+            {
+                message = message + " in line " + lineNumber.Value.ToString();
+            }
+
             throw new CsvMalformedException(message);
         }
 

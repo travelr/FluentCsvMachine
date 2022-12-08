@@ -13,9 +13,6 @@ namespace FluentCsvMachine.Machine.Values
             Finished
         }
 
-        // ToDo: Nullable Enum?
-
-
         public new States State { get; private set; } = States.Parsing;
 
         private readonly TreeNode _root;
