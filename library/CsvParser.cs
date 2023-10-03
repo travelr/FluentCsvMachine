@@ -98,11 +98,17 @@ namespace FluentCsvMachine
         /// </summary>
         /// <param name="stream">Stream of the CSV file</param>
         /// <param name="config">CsvConfiguration object, if not defined defaults are used</param>
+        /// <param name="resetStream">Shoudl the stream read from the beginning?</param>
         /// <returns>List of parsed objects of type T</returns>
-        public Task<IReadOnlyList<T>> ParseStream(Stream stream, CsvConfiguration? config = null)
+        public Task<IReadOnlyList<T>> ParseStream(Stream stream, CsvConfiguration? config = null, bool resetStream = true)
         {
             Guard.IsNotNull(stream);
             CheckPreconditionsWithHeader();
+
+            if (resetStream)
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+            }
 
             var result = StartWorkflow(stream, true, config);
 
